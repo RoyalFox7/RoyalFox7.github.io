@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>SoundSphere - Ultimate Edition</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* --- CSS Variables & Reset --- */
+      :root {
+        --space-bg-dark: #050710;
+        --space-bg-light: #1a1d2e;
+        --glass-bg: rgba(255, 255, 255, 0.04);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --glass-highlight: rgba(255, 255, 255, 0.15);
+        --neon-primary: #00e5ff;
+        --neon-secondary: #c45cff;
+        --text-main: #ffffff;
+        --text-dim: #a3a8b8;
+        --danger: #ff4757;
+        --footer-height: 96px;
+        --border-radius-lg: 20px;
+        --border-radius-md: 12px;
+        --transition-speed: 0.25s;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+      }
+
+      body {
+        background-color: var(--space-bg-dark);
+        background-image: radial-gradient(
+            circle at 20% 40%,
+            rgba(196, 92, 255, 0.12) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            circle at 80% 60%,
+            rgba(0, 229, 255, 0.1) 0%,
+            transparent 40%
+          );
+        color: var(--text-main);
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      /* --- Custom Scrollbar --- */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* --- Stars Background --- */
+      .stars-container {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: -1;
+        overflow: hidden;
+      }
+      .star-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 200%;
+        background-size: 200px 200px;
+        background-repeat: repeat;
+        mask-image: linear-gradient(to bottom, white 80%, transparent 100%);
+      }
+      .stars-1 {
+        background-image: radial-gradient(
+            1.5px 1.5px at 30px 50px,
+            #fff,
+            transparent
+          ),
+          radial-gradient(1.5px 1.5px at 150px 180px, #ddd, transparent);
+        opacity: 0.2;
+        animation: space-flight 120s linear infinite;
+      }
+      .stars-2 {
+        background-image: radial-gradient(
+            2px 2px at 80px 20px,
+            #fff,
+            transparent
+          ),
+          radial-gradient(2px 2px at 40px 160px, #eee, transparent);
+        background-size: 300px 300px;
+        opacity: 0.3;
+        animation: space-flight 80s linear infinite;
+      }
+      .stars-3 {
+        background-image: radial-gradient(
+            2.5px 2.5px at 120px 90px,
+            #fff,
+            transparent
+          ),
+          radial-gradient(2.5px 2.5px at 180px 40px, #fff, transparent);
+        background-size: 400px 400px;
+        opacity: 0.5;
+        animation: space-flight 45s linear infinite;
+      }
+      @keyframes space-flight {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-50%);
+        }
+      }
+
+      /* --- UI Components --- */
+      button {
+        background: none;
+        border: none;
+        color: inherit;
+        cursor: pointer;
+        transition: all var(--transition-speed) ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+      button:active:not(.disabled) {
+        transform: scale(0.92);
+      }
+      button.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+
+      .glass-panel {
+        background: var(--glass-bg);
+        backdrop-filter: blur(24px) saturate(120%);
+        -webkit-backdrop-filter: blur(24px) saturate(120%);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--border-radius-lg);
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        transition: border-color var(--transition-speed);
+      }
+
+      /* --- LAYOUT GRID --- */
+      .main-container {
+        display: grid;
+        grid-template-columns: 260px 1fr 320px;
+        gap: 20px;
+        padding: 20px;
+        height: calc(100vh - var(--footer-height));
+      }
+
+      /* --- SIDEBAR --- */
+      .sidebar {
+        padding: 24px;
+      }
+      .logo {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 36px;
+        letter-spacing: -0.5px;
+        background: linear-gradient(
+          135deg,
+          var(--neon-primary),
+          var(--neon-secondary)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px;
+        border-radius: var(--border-radius-md);
+        margin-bottom: 6px;
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 15px;
+        transition: all var(--transition-speed);
+        position: relative;
+        overflow: hidden;
+      }
+      .nav-item::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--neon-primary);
+        opacity: 0;
+        transition: opacity var(--transition-speed);
+        z-index: -1;
+      }
+      .nav-item:hover {
+        color: white;
+      }
+      .nav-item:hover::before {
+        opacity: 0.08;
+      }
+      .nav-item.active {
+        color: var(--neon-primary);
+      }
+      .nav-item.active::before {
+        opacity: 0.12;
+      }
+      .nav-item.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        height: 60%;
+        width: 3px;
+        background: var(--neon-primary);
+        border-radius: 0 4px 4px 0;
+      }
+
+      /* --- MAIN CONTENT --- */
+      .universe-panel {
+        padding: 0 24px;
+        overflow-y: auto;
+      }
+
+      /* Planets */
+      .planets-orbit {
+        display: flex;
+        gap: 24px;
+        padding: 16px 0 40px;
+      }
+      /* --- PLANET CARD (Đã sửa lỗi Glitch) --- */
+      .planet-card {
+        text-align: center;
+        cursor: pointer;
+        width: 110px;
+        opacity: 0.8;
+        /* Thêm padding để mở rộng vùng nhận diện chuột, tránh bị mất hover ở rìa */
+        padding: 10px 0;
+        /* Chỉ transition độ mờ, KHÔNG transition vị trí của khung chứa */
+        transition: opacity var(--transition-speed);
+      }
+
+      /* Khi hover vào khung chứa: Chỉ tăng độ rõ, KHÔNG di chuyển khung */
+      .planet-card:hover:not(.disabled) {
+        opacity: 1;
+      }
+
+      /* --- XỬ LÝ HÌNH ẢNH BÊN TRONG --- */
+      .planet-img-wrapper {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 12px;
+        border-radius: 50%;
+        padding: 0; /* Đã sửa thành 0 theo yêu cầu trước đó */
+        background: transparent;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        /* Chuyển hiệu ứng chuyển động vào đây */
+        transition: all var(--transition-speed)
+          cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      /* Khi hover vào thẻ cha -> Hình ảnh con mới bay lên */
+      .planet-card:hover:not(.disabled) .planet-img-wrapper {
+        /* Di chuyển hình ảnh, nhưng khung cha vẫn đứng yên giữ chuột */
+        transform: translateY(-8px) scale(1.05);
+        background: linear-gradient(
+          135deg,
+          var(--neon-primary),
+          rgba(0, 0, 0, 0)
+        );
+        box-shadow: 0 15px 30px rgba(0, 229, 255, 0.5); /* Tăng độ sáng glow */
+      }
+
+      .planet-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        border: none;
+        display: block;
+        /* Giữ nguyên fix phóng to ảnh để che viền đen nếu cần */
+        transform: scale(1.1);
+      }
+
+      /* --- TIÊU ĐỀ CŨNG BAY LÊN THEO --- */
+      .planet-title {
+        font-weight: 600;
+        font-size: 13px;
+        letter-spacing: 0.5px;
+        transition: transform var(--transition-speed),
+          color var(--transition-speed);
+      }
+
+      /* Tiêu đề bay nhẹ lên và đổi màu khi hover */
+      .planet-card:hover:not(.disabled) .planet-title {
+        transform: translateY(-4px);
+        color: var(--neon-primary);
+      }
+
+      /* Trạng thái Disabled */
+      .planet-card.disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .planet-card.disabled .planet-img {
+        filter: grayscale(1) brightness(0.7);
+      }
+      /* Song List */
+      .song-list-header {
+        position: sticky;
+        top: 0;
+        background: var(--space-bg-dark);
+        z-index: 10;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--glass-border);
+        margin-bottom: 16px;
+        font-size: 20px;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+      }
+      .song-item {
+        display: grid;
+        grid-template-columns: 48px 1fr auto 60px;
+        align-items: center;
+        padding: 12px 16px;
+        border-radius: var(--border-radius-md);
+        border: 1px solid transparent;
+        margin-bottom: 6px;
+        transition: all var(--transition-speed);
+        cursor: default;
+      }
+      .song-item-clickable {
+        display: contents;
+        cursor: pointer;
+      }
+      .song-item:hover {
+        background: rgba(255, 255, 255, 0.03);
+        border-color: var(--glass-border);
+      }
+      .song-item.active {
+        background: linear-gradient(
+          90deg,
+          rgba(0, 229, 255, 0.08),
+          transparent
+        );
+        border-color: rgba(0, 229, 255, 0.2);
+      }
+      .song-item.active .song-title {
+        color: var(--neon-primary);
+      }
+      .song-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .song-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .song-artist {
+        font-size: 13px;
+        color: var(--text-dim);
+      }
+      .song-duration {
+        font-size: 13px;
+        color: var(--text-dim);
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+      .btn-heart-list {
+        padding: 8px;
+        color: var(--text-dim);
+        opacity: 0;
+        transform: translateX(10px);
+        transition: all var(--transition-speed);
+      }
+      .song-item:hover .btn-heart-list {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      .btn-heart-list.liked {
+        opacity: 1;
+        transform: translateX(0);
+        color: var(--neon-secondary);
+      }
+      .btn-heart-list:hover {
+        color: var(--text-main);
+      }
+
+      /* Wave Animation */
+      .playing-gif {
+        display: flex;
+        gap: 3px;
+        height: 16px;
+        align-items: flex-end;
+        visibility: hidden;
+      }
+      .song-item.active .playing-gif {
+        visibility: visible;
+      }
+      .bar {
+        width: 3px;
+        background: var(--neon-primary);
+        border-radius: 2px;
+        animation: wave 0.8s ease-in-out infinite alternate;
+      }
+      .bar:nth-child(1) {
+        height: 60%;
+        animation-delay: -0.2s;
+      }
+      .bar:nth-child(2) {
+        height: 100%;
+        animation-delay: 0s;
+      }
+      .bar:nth-child(3) {
+        height: 80%;
+        animation-delay: -0.4s;
+      }
+      @keyframes wave {
+        0% {
+          height: 20%;
+          opacity: 0.5;
+        }
+        100% {
+          height: 100%;
+          opacity: 1;
+        }
+      }
+
+      /* --- RIGHT PANEL --- */
+      .right-panel {
+        align-items: center;
+        text-align: center;
+        padding: 40px 24px;
+      }
+      .right-panel-header {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-dim);
+        margin-bottom: 30px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        align-self: flex-start;
+      }
+      .disc-wrapper {
+        width: 240px;
+        height: 240px;
+        border-radius: 50%;
+        padding: 8px;
+        margin-bottom: 32px;
+        position: relative;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 255, 255, 0.1),
+          rgba(255, 255, 255, 0)
+        );
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      }
+      .disc-wrapper::after {
+        content: "";
+        position: absolute;
+        inset: 8px;
+        border-radius: 50%;
+        box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+        z-index: 2;
+      }
+      .disc-img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+        animation: rotate 24s linear infinite;
+        animation-play-state: paused;
+        border: 4px solid var(--space-bg-dark);
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .disc-wrapper.playing .disc-img {
+        animation-play-state: running;
+        transform: scale(1.05);
+      }
+      @keyframes rotate {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .current-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+      .current-artist {
+        font-size: 15px;
+        color: var(--text-dim);
+        font-weight: 500;
+      }
+
+      /* --- FOOTER --- */
+      .control-deck {
+        height: var(--footer-height);
+        background: rgba(5, 7, 16, 0.95);
+        border-top: 1px solid var(--glass-border);
+        backdrop-filter: blur(32px);
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1000;
+        display: grid;
+        grid-template-columns: 30% 40% 30%;
+        padding: 0 32px;
+        align-items: center;
+        box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Footer Left */
+      .footer-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        overflow: hidden;
+      }
+      .footer-cover-wrapper img {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: transform var(--transition-speed);
+      }
+      .footer-left:hover .footer-cover-wrapper img {
+        transform: scale(1.05);
+      }
+      .footer-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+        flex: 1;
+      }
+      #footerTitle {
+        font-size: 15px;
+        font-weight: 600;
+        color: white;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .artist-name {
+        font-size: 13px;
+        color: var(--text-dim);
+        margin-top: 2px;
+      }
+      .btn-like-footer {
+        color: var(--text-dim);
+        padding: 10px;
+        font-size: 18px;
+        transition: all var(--transition-speed);
+      }
+      .btn-like-footer:hover {
+        color: white;
+        transform: scale(1.1);
+      }
+      .btn-like-footer.liked {
+        color: var(--neon-secondary);
+      }
+
+      /* Footer Center */
+      .footer-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+      }
+      .player-controls {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+      .btn-control {
+        color: var(--text-dim);
+        font-size: 20px;
+        padding: 8px;
+        transition: all var(--transition-speed);
+        position: relative;
+      }
+      .btn-control:hover {
+        color: white;
+      }
+      .btn-control.active {
+        color: var(--neon-primary);
+      }
+      .btn-control.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        background: currentColor;
+        border-radius: 50%;
+      }
+      .btn-control.secondary {
+        font-size: 18px;
+        opacity: 0.8;
+      }
+      .btn-play-hero {
+        width: 48px;
+        height: 48px;
+        background: white;
+        color: var(--space-bg-dark);
+        border-radius: 50%;
+        font-size: 20px;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        transition: all var(--transition-speed)
+          cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .btn-play-hero:hover {
+        transform: scale(1.1);
+        background: var(--neon-primary);
+        color: var(--space-bg-dark);
+        box-shadow: 0 0 30px rgba(0, 229, 255, 0.4);
+      }
+
+      /* Progress Bar */
+      .progress-bar-wrapper {
+        width: 100%;
+        max-width: 600px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .time-text {
+        font-size: 12px;
+        color: var(--text-dim);
+        min-width: 40px;
+        text-align: center;
+        font-variant-numeric: tabular-nums;
+        font-weight: 500;
+      }
+
+      /* Sliders */
+      .slider-container {
+        flex-grow: 1;
+        position: relative;
+        height: 6px;
+        display: flex;
+        align-items: center;
+        border-radius: 3px;
+      }
+      .seek-slider,
+      .volume-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        background: transparent;
+        position: absolute;
+        z-index: 2;
+        cursor: pointer;
+        outline: none;
+      }
+      .slider-track-bg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 3px;
+        z-index: 0;
+      }
+      .progress-fill,
+      .volume-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 0%;
+        background: var(--neon-primary);
+        border-radius: 3px;
+        z-index: 1;
+        transition: background var(--transition-speed);
+      }
+      .volume-fill {
+        background: white;
+      }
+      .slider-container:hover .volume-fill {
+        background: var(--neon-primary);
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: white;
+        cursor: pointer;
+        opacity: 0;
+        transition: all var(--transition-speed);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 3;
+        margin-top: -4px;
+      }
+      .slider-container:hover input[type="range"]::-webkit-slider-thumb {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+      .slider-container:hover .slider-track-bg {
+        background: rgba(255, 255, 255, 0.15);
+      }
+
+      /* Footer Right */
+      .footer-right {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 16px;
+      }
+      .volume-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 140px;
+      }
+      .btn-volume {
+        color: var(--text-dim);
+        width: 24px;
+        text-align: center;
+        transition: color var(--transition-speed);
+      }
+      .volume-box:hover .btn-volume {
+        color: white;
+      }
+
+      /* --- TOAST --- */
+      .toast-container {
+        position: fixed;
+        bottom: calc(var(--footer-height) + 24px);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 1100;
+        pointer-events: none;
+      }
+      .toast {
+        background: rgba(20, 20, 30, 0.95);
+        border: 1px solid var(--glass-border);
+        color: white;
+        padding: 14px 24px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+        opacity: 0;
+        transform: translateY(30px) scale(0.9);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        pointer-events: auto;
+        font-weight: 500;
+      }
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      .toast i {
+        color: var(--neon-primary);
+        font-size: 18px;
+      }
+      .toast.error i {
+        color: var(--danger);
+      }
+
+      /* --- RESPONSIVE --- */
+      @media (max-width: 1024px) {
+        .main-container {
+          grid-template-columns: 80px 1fr;
+        }
+        .right-panel {
+          display: none;
+        }
+        .sidebar .logo span,
+        .sidebar .nav-item span {
+          display: none;
+        }
+        .sidebar .nav-item {
+          justify-content: center;
+          padding: 16px;
+        }
+        .sidebar .logo {
+          justify-content: center;
+          margin-bottom: 40px;
+        }
+        .nav-item.active::after {
+          display: none;
+        }
+        .nav-item.active {
+          background: rgba(0, 229, 255, 0.15);
+          color: var(--neon-primary);
+          border-left: none;
+          border-radius: var(--border-radius-md);
+        }
+      }
+      @media (max-width: 768px) {
+        .main-container {
+          grid-template-columns: 1fr;
+          padding: 16px;
+        }
+        .sidebar {
+          display: none;
+        }
+        .universe-panel {
+          padding: 0;
+        }
+        .song-item {
+          grid-template-columns: 48px 1fr auto;
+          gap: 12px;
+        }
+        .song-duration {
+          display: none;
+        }
+        .control-deck {
+          grid-template-columns: 1fr auto;
+          padding: 0 16px;
+          height: 76px;
+        }
+        .footer-center,
+        .footer-right {
+          display: none;
+        }
+        .footer-cover-wrapper img {
+          width: 52px;
+          height: 52px;
+        }
+        .control-deck::after {
+          content: "\f04b";
+          font-family: "Font Awesome 6 Free";
+          font-weight: 900;
+          color: white;
+          font-size: 24px;
+          position: absolute;
+          right: 24px;
+          width: 48px;
+          height: 48px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(255, 255, 255, 0.1);
+          border-radius: 50%;
+        }
+        .control-deck.playing::after {
+          content: "\f04c";
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="stars-container">
+      <div class="star-layer stars-1"></div>
+      <div class="star-layer stars-2"></div>
+      <div class="star-layer stars-3"></div>
+    </div>
+    <audio id="audioPlayer" preload="metadata"></audio>
+    <audio id="audioPlayer"></audio>
+
+    <div class="main-container">
+      <div class="glass-panel sidebar">
+        <div class="logo">
+          <i class="fa-solid fa-rocket"></i> <span>SoundSphere</span>
+        </div>
+        <div class="nav-item active">
+          <i class="fa-solid fa-compass"></i> <span>Khám phá</span>
+        </div>
+        <div class="nav-item">
+          <i class="fa-solid fa-music"></i> <span>Thư viện</span>
+        </div>
+        <div class="nav-item">
+          <i class="fa-solid fa-heart"></i> <span>Yêu thích</span>
+        </div>
+        <div style="flex-grow: 1"></div>
+        <div class="nav-item">
+          <i class="fa-solid fa-gear"></i> <span>Cài đặt</span>
+        </div>
+      </div>
+
+      <div class="universe-panel">
+        <div class="planets-orbit">
+          <div class="planet-card">
+            <div class="planet-img-wrapper">
+              <img
+                src="images/Tops Hits.jpg"
+                class="planet-img"
+                alt="Top Hits"
+              />
+            </div>
+            <div class="planet-title">Top Hits</div>
+          </div>
+
+          <div class="planet-card">
+            <div class="planet-img-wrapper">
+              <img
+                src="images/Chill Vibe.jpg"
+                class="planet-img"
+                alt="Chill Vibe"
+              />
+            </div>
+            <div class="planet-title">Chill Vibes</div>
+          </div>
+
+          <div class="planet-card">
+            <div class="planet-img-wrapper">
+              <img
+                src="images/EDM World.jpg"
+                class="planet-img"
+                alt="EDM World"
+              />
+            </div>
+            <div class="planet-title">EDM World</div>
+          </div>
+
+          <div
+            class="planet-card disabled"
+            title="Tính năng chỉ dành cho Premium"
+          >
+            <div
+              class="planet-img-wrapper"
+              style="
+                background: rgba(255, 255, 255, 0.1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+              "
+            >
+              <img
+                src="https://cdn-icons-png.flaticon.com/512/2534/2534183.png"
+                class="planet-img"
+                style="
+                  width: 50%;
+                  height: 50%;
+                  object-fit: contain;
+                  filter: invert(1);
+                "
+              />
+            </div>
+            <div class="planet-title">
+              <i class="fa-solid fa-lock"></i> Premium
+            </div>
+          </div>
+        </div>
+
+        <div class="song-list-header">Dải Ngân Hà</div>
+        <div id="songList"></div>
+      </div>
+
+      <div class="glass-panel right-panel">
+        <div class="right-panel-header">Đang phát</div>
+        <div class="disc-wrapper" id="discWrapper">
+          <img
+            src="https://via.placeholder.com/300/1a1d2e/ffffff?text=SoundSphere"
+            class="disc-img"
+            id="currentCover"
+          />
+        </div>
+        <h2 id="currentTitle" class="current-title">Chưa chọn bài hát</h2>
+        <p id="currentArtist" class="current-artist">...</p>
+      </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="control-deck" id="controlDeck">
+      <div class="footer-left">
+        <div class="footer-cover-wrapper">
+          <img
+            src="https://via.placeholder.com/80/1a1d2e/ffffff?text=Music"
+            id="footerCover"
+            alt="cover"
+          />
+        </div>
+        <div class="footer-info">
+          <div class="marquee-container">
+            <span id="footerTitle">SoundSphere Player</span>
+          </div>
+          <span class="artist-name" id="footerArtist">Chọn bài để bắt đầu</span>
+        </div>
+        <button
+          class="btn-like-footer"
+          id="footerLikeBtn"
+          onclick="toggleFooterLike()"
+        >
+          <i class="fa-regular fa-heart"></i>
+        </button>
+      </div>
+
+      <div class="footer-center">
+        <div class="player-controls">
+          <button
+            class="btn-control secondary"
+            id="shuffleBtn"
+            title="Trộn bài (S)"
+            onclick="toggleShuffle()"
+          >
+            <i class="fa-solid fa-shuffle"></i>
+          </button>
+          <button
+            class="btn-control"
+            title="Bài trước (K)"
+            onclick="prevSong()"
+          >
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+
+          <button
+            class="btn-play-hero"
+            id="playPauseBtn"
+            onclick="togglePlay()"
+            title="Phát/Tạm dừng (Space)"
+          >
+            <i class="fa-solid fa-play" id="playIcon"></i>
+          </button>
+
+          <button class="btn-control" title="Bài sau (L)" onclick="nextSong()">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+          <button
+            class="btn-control secondary"
+            id="repeatBtn"
+            title="Lặp lại (R)"
+            onclick="toggleRepeat()"
+          >
+            <i class="fa-solid fa-repeat"></i>
+          </button>
+        </div>
+
+        <div class="progress-bar-wrapper">
+          <span class="time-text" id="currentTime">0:00</span>
+          <div class="slider-container">
+            <div class="slider-track-bg"></div>
+            <div class="progress-fill" id="progressFill"></div>
+            <input
+              type="range"
+              id="progressBar"
+              min="0"
+              value="0"
+              step="0.1"
+              class="seek-slider"
+              oninput="seekSong()"
+            />
+          </div>
+          <span class="time-text" id="duration">0:00</span>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <button class="btn-control secondary" title="Lời bài hát">
+          <i class="fa-solid fa-microphone-lines"></i>
+        </button>
+        <button class="btn-control secondary" title="Danh sách phát">
+          <i class="fa-solid fa-list-music"></i>
+        </button>
+
+        <div class="volume-box">
+          <button class="btn-volume" id="volumeIconBtn" onclick="toggleMute()">
+            <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
+          </button>
+          <div class="slider-container" style="width: 100px">
+            <div class="slider-track-bg"></div>
+            <div class="volume-fill" id="volumeFill" style="width: 80%"></div>
+            <input
+              type="range"
+              class="volume-slider"
+              id="volumeSlider"
+              min="0"
+              max="1"
+              step="0.01"
+              value="0.8"
+              oninput="setVolume()"
+            />
+          </div>
+        </div>
+        <button class="btn-control secondary" title="Toàn màn hình">
+          <i class="fa-solid fa-expand"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // --- DỮ LIỆU BÀI HÁT ---
+      const songs = [
+        {
+          id: 1,
+          title: "Nơi này có anh",
+          artist: "Sơn Tùng M-TP",
+          cover: "images/Nơi này có anh.jpg",
+          src: "musics/Nơi Này Có Anh.mp3",
+        },
+        {
+          id: 2,
+          title: "Making My Way",
+          artist: "Sơn Tùng M-TP",
+          cover: "images/making my way.jpg",
+          src: "musics/making-my-way-son-tung-m-tp.mp3",
+        },
+        {
+          id: 3,
+          title: "Chúng Ta Của Hiện Tại",
+          artist: "Sơn Tùng M-TP",
+          cover: "images/Chúng_ta_của_hiện_tại.jpg",
+          src: "musics/Chúng Ta Của Hiện Tại.mp3",
+        },
+        {
+          id: 4,
+          title: "Muộn Rồi Mà Sao Còn",
+          artist: "Sơn Tùng M-TP",
+          cover: "images/muộn rồi mà sao còn.jpg",
+          src: "musics/Muộn Rồi Mà Sao Còn.mp3",
+        },
+      ];
+
+      // --- TRẠNG THÁI ---
+      let state = {
+        isPlaying: false,
+        currentSongIndex: 0,
+        isShuffled: false,
+        repeatMode: 0, // 0: None, 1: All, 2: One
+        likedSongs: new Set(),
+        lastVolume: 0.8,
+      };
+
+      // --- DOM ELEMENTS ---
+      const audio = document.getElementById("audioPlayer");
+      const songListEl = document.getElementById("songList");
+      const discWrapper = document.getElementById("discWrapper");
+      const discImg = document.getElementById("currentCover"); // Lấy trực tiếp ảnh
+      const playIcon = document.getElementById("playIcon");
+      const progressBar = document.getElementById("progressBar");
+      const progressFill = document.getElementById("progressFill");
+      const currentTimeEl = document.getElementById("currentTime");
+      const durationEl = document.getElementById("duration");
+      const shuffleBtn = document.getElementById("shuffleBtn");
+      const repeatBtn = document.getElementById("repeatBtn");
+      const volumeSlider = document.getElementById("volumeSlider");
+      const volumeFill = document.getElementById("volumeFill");
+      const volumeIcon = document.getElementById("volumeIcon");
+      const footerLikeBtn = document.getElementById("footerLikeBtn");
+      const controlDeck = document.getElementById("controlDeck");
+
+      // --- INIT ---
+      function init() {
+        renderSongList();
+        loadSong(state.currentSongIndex);
+        audio.volume = state.lastVolume;
+        setVolumeUI(state.lastVolume);
+        setupEventListeners();
+      }
+
+      // --- CORE LOGIC ---
+      function renderSongList() {
+        songListEl.innerHTML = songs
+          .map((song, index) => {
+            const isActive = index === state.currentSongIndex;
+            const isLiked = state.likedSongs.has(song.id);
+            return `
+              <div class="song-item ${isActive ? "active" : ""}">
+                  <div class="song-item-clickable" onclick="playSpecificSong(${index})">
+                      <div class="playing-gif">
+                          <div class="bar"></div><div class="bar"></div><div class="bar"></div>
+                      </div>
+                      <div class="song-info">
+                          <div class="song-title">${song.title}</div>
+                          <div class="song-artist">${song.artist}</div>
+                      </div>
+                  </div>
+                  <button class="btn-heart-list ${isLiked ? "liked" : ""}"
+                          onclick="toggleLikeInList(this, ${song.id}, '${
+              song.title
+            }')">
+                      <i class="${
+                        isLiked ? "fa-solid" : "fa-regular"
+                      } fa-heart"></i>
+                  </button>
+                  <div class="song-duration">--:--</div>
+              </div>
+            `;
+          })
+          .join("");
+      }
+
+      function loadSong(index) {
+        state.currentSongIndex = index;
+        const song = songs[index];
+
+        audio.src = song.src;
+        audio.load();
+
+        updateUIInfo(song);
+
+        // Reset trạng thái UI
+        discWrapper.classList.remove("playing");
+        playIcon.className = "fa-solid fa-play";
+        state.isPlaying = false;
+        controlDeck.classList.remove("playing");
+
+        // Reset animation xoay đĩa
+        discImg.style.animation = "none";
+        discImg.offsetHeight; /* Trigger reflow */
+        discImg.style.animation = "rotate 20s linear infinite";
+        discImg.style.animationPlayState = "paused";
+
+        renderSongList();
+        updateFooterLikeBtnState();
+
+        // Reset progress bar
+        progressBar.value = 0;
+        progressFill.style.width = "0%";
+        currentTimeEl.innerText = "0:00";
+        durationEl.innerText = "--:--";
+      }
+
+      function updateUIInfo(song) {
+        document.getElementById("footerTitle").innerText = song.title;
+        document.getElementById("footerArtist").innerText = song.artist;
+        document.getElementById("footerCover").src = song.cover;
+        document.getElementById("currentTitle").innerText = song.title;
+        document.getElementById("currentArtist").innerText = song.artist;
+        document.getElementById("currentCover").src = song.cover;
+      }
+
+      function togglePlay() {
+        if (!audio.src) {
+          showToast("Chưa có bài hát nào được chọn!", "error");
+          return;
+        }
+
+        if (audio.paused) {
+          audio
+            .play()
+            .then(() => {
+              playIcon.className = "fa-solid fa-pause";
+              discWrapper.classList.add("playing");
+              discImg.style.animationPlayState = "running"; // Chạy xoay
+              state.isPlaying = true;
+              controlDeck.classList.add("playing");
+            })
+            .catch((error) => {
+              console.error(error);
+              showToast("Lỗi phát nhạc. Kiểm tra link!", "error");
+              playIcon.className = "fa-solid fa-play";
+            });
+        } else {
+          audio.pause();
+          playIcon.className = "fa-solid fa-play";
+          discWrapper.classList.remove("playing");
+          discImg.style.animationPlayState = "paused"; // Dừng xoay
+          state.isPlaying = false;
+          controlDeck.classList.remove("playing");
+        }
+      }
+
+      function playSpecificSong(index) {
+        if (index === state.currentSongIndex && state.isPlaying) {
+          togglePlay();
+        } else {
+          loadSong(index);
+          togglePlay();
+        }
+      }
+
+      function nextSong() {
+        let nextIndex;
+        if (state.isShuffled) {
+          do {
+            nextIndex = Math.floor(Math.random() * songs.length);
+          } while (nextIndex === state.currentSongIndex && songs.length > 1);
+        } else {
+          nextIndex = (state.currentSongIndex + 1) % songs.length;
+        }
+        loadSong(nextIndex);
+        togglePlay();
+      }
+
+      function prevSong() {
+        if (audio.currentTime > 3) {
+          audio.currentTime = 0;
+        } else {
+          let prevIndex;
+          if (state.isShuffled) {
+            do {
+              prevIndex = Math.floor(Math.random() * songs.length);
+            } while (prevIndex === state.currentSongIndex && songs.length > 1);
+          } else {
+            prevIndex =
+              (state.currentSongIndex - 1 + songs.length) % songs.length;
+          }
+          loadSong(prevIndex);
+          togglePlay();
+        }
+      }
+
+      // --- EVENT LISTENERS (AUDIO) ---
+      audio.addEventListener("loadedmetadata", () => {
+        progressBar.max = audio.duration;
+        durationEl.innerText = formatTime(audio.duration);
+      });
+
+      let isDraggingSlider = false;
+      audio.addEventListener("timeupdate", () => {
+        if (!isDraggingSlider) {
+          const current = audio.currentTime;
+          const duration = audio.duration || 1;
+          const percent = (current / duration) * 100;
+          progressBar.value = current;
+          progressFill.style.width = `${percent}%`;
+          currentTimeEl.innerText = formatTime(current);
+        }
+      });
+
+      audio.addEventListener("ended", () => {
+        if (state.repeatMode === 2) {
+          audio.currentTime = 0;
+          audio.play();
+        } else {
+          nextSong();
+        }
+      });
+
+      // --- SEEK BAR ---
+      progressBar.addEventListener(
+        "mousedown",
+        () => (isDraggingSlider = true)
+      );
+      progressBar.addEventListener(
+        "touchstart",
+        () => (isDraggingSlider = true)
+      );
+
+      function seekSong() {
+        const val = progressBar.value;
+        const percent = (val / progressBar.max) * 100;
+        progressFill.style.width = `${percent}%`;
+        currentTimeEl.innerText = formatTime(val);
+      }
+
+      progressBar.addEventListener("change", () => {
+        isDraggingSlider = false;
+        audio.currentTime = progressBar.value;
+        if (!state.isPlaying) togglePlay();
+      });
+
+      // --- CONTROLS ---
+      function toggleShuffle() {
+        state.isShuffled = !state.isShuffled;
+        shuffleBtn.classList.toggle("active", state.isShuffled);
+        showToast(
+          state.isShuffled ? "Đã bật trộn bài" : "Đã tắt trộn bài",
+          "",
+          '<i class="fa-solid fa-shuffle"></i>'
+        );
+      }
+
+      function toggleRepeat() {
+        state.repeatMode = (state.repeatMode + 1) % 3;
+        const icon = repeatBtn.querySelector("i");
+        let msg = "";
+        switch (state.repeatMode) {
+          case 0:
+            repeatBtn.classList.remove("active");
+            icon.className = "fa-solid fa-repeat";
+            msg = "Không lặp lại";
+            break;
+          case 1:
+            repeatBtn.classList.add("active");
+            icon.className = "fa-solid fa-repeat";
+            msg = "Lặp lại danh sách";
+            break;
+          case 2:
+            repeatBtn.classList.add("active");
+            icon.className = "fa-solid fa-repeat-1";
+            msg = "Lặp lại bài hiện tại";
+            break;
+        }
+        showToast(msg, "", icon.outerHTML);
+      }
+
+      function setVolume() {
+        let vol = volumeSlider.value;
+        audio.volume = vol;
+        setVolumeUI(vol);
+        if (vol > 0) state.lastVolume = vol;
+      }
+
+      function toggleMute() {
+        if (audio.volume > 0) {
+          state.lastVolume = audio.volume;
+          audio.volume = 0;
+          setVolumeUI(0);
+        } else {
+          audio.volume = state.lastVolume || 0.5;
+          setVolumeUI(audio.volume);
+        }
+      }
+
+      function setVolumeUI(vol) {
+        volumeSlider.value = vol;
+        volumeFill.style.width = `${vol * 100}%`;
+        if (vol == 0) volumeIcon.className = "fa-solid fa-volume-xmark";
+        else if (vol < 0.5) volumeIcon.className = "fa-solid fa-volume-low";
+        else volumeIcon.className = "fa-solid fa-volume-high";
+      }
+
+      // --- LIKE SYSTEM ---
+      function toggleFooterLike() {
+        const song = songs[state.currentSongIndex];
+        toggleLikeState(song.id, song.title);
+      }
+
+      function toggleLikeInList(btn, id, title) {
+        toggleLikeState(id, title);
+      }
+
+      function toggleLikeState(id, title) {
+        if (state.likedSongs.has(id)) {
+          state.likedSongs.delete(id);
+          showToast(`Đã xóa <b>${title}</b> khỏi Yêu thích`);
+        } else {
+          state.likedSongs.add(id);
+          showToast(
+            `Đã thêm <b>${title}</b> vào Yêu thích`,
+            "",
+            '<i class="fa-solid fa-heart" style="color:var(--neon-secondary)"></i>'
+          );
+        }
+        renderSongList();
+        updateFooterLikeBtnState();
+      }
+
+      function updateFooterLikeBtnState() {
+        const id = songs[state.currentSongIndex].id;
+        const isLiked = state.likedSongs.has(id);
+        const icon = footerLikeBtn.querySelector("i");
+        if (isLiked) {
+          footerLikeBtn.classList.add("liked");
+          icon.className = "fa-solid fa-heart";
+        } else {
+          footerLikeBtn.classList.remove("liked");
+          icon.className = "fa-regular fa-heart";
+        }
+      }
+
+      // --- UTILS ---
+      function formatTime(s) {
+        if (isNaN(s) || s === Infinity) return "0:00";
+        const min = Math.floor(s / 60);
+        const sec = Math.floor(s % 60);
+        return `${min}:${sec < 10 ? "0" + sec : sec}`;
+      }
+
+      function showToast(
+        msg,
+        type = "info",
+        iconHtml = '<i class="fa-solid fa-info-circle"></i>'
+      ) {
+        const container = document.getElementById("toastContainer");
+        while (container.firstChild)
+          container.removeChild(container.firstChild);
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `${iconHtml} <span>${msg}</span>`;
+        container.appendChild(toast);
+        requestAnimationFrame(() => toast.classList.add("show"));
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => toast.remove(), 400);
+        }, 3000);
+      }
+
+      function setupEventListeners() {
+        document.addEventListener("keydown", (e) => {
+          if (e.target.tagName === "INPUT") return;
+          switch (e.code) {
+            case "Space":
+              e.preventDefault();
+              togglePlay();
+              break;
+            case "KeyK":
+              e.preventDefault();
+              prevSong();
+              break;
+            case "KeyL":
+              e.preventDefault();
+              nextSong();
+              break;
+          }
+        });
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        init();
+      });
+    </script>
+  </body>
+</html>
