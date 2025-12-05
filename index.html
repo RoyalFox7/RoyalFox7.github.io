@@ -7,17 +7,21 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>SoundSphere - Ultimate Edition</title>
+
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
     <style>
-      /* --- 1. BIẾN & RESET --- */
+      /* --- 1. CSS VARIABLES & RESET --- */
       :root {
         --space-bg-dark: #050710;
         --space-bg-light: #1a1d2e;
@@ -27,6 +31,8 @@
         --neon-secondary: #c45cff;
         --text-main: #ffffff;
         --text-dim: #a3a8b8;
+        --success: #00ff88; /* Màu xanh BẬT */
+        --inactive: #ff4757; /* Màu đỏ TẮT */
         --danger: #ff4757;
         --footer-height: 96px;
         --border-radius-lg: 20px;
@@ -61,9 +67,11 @@
         overflow: hidden;
       }
 
-      /* Scrollbar */
       ::-webkit-scrollbar {
         width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
       }
       ::-webkit-scrollbar-thumb {
         background: rgba(255, 255, 255, 0.1);
@@ -73,12 +81,13 @@
         background: rgba(255, 255, 255, 0.2);
       }
 
-      /* --- 2. HIỆU ỨNG SAO BAY --- */
+      /* --- 2. BACKGROUND SAO BAY --- */
       .stars-container {
         position: fixed;
         inset: 0;
         pointer-events: none;
         z-index: -1;
+        overflow: hidden;
       }
       .star-layer {
         position: absolute;
@@ -97,7 +106,6 @@
             transparent
           ),
           radial-gradient(1.5px 1.5px at 150px 180px, #ddd, transparent);
-        background-size: 200px 200px;
         opacity: 0.2;
         animation: space-flight 120s linear infinite;
       }
@@ -121,7 +129,7 @@
           radial-gradient(2.5px 2.5px at 180px 40px, #fff, transparent);
         background-size: 400px 400px;
         opacity: 0.5;
-        animation: space-flight 45s linear infinite;
+        animation: space-flight 30s linear infinite;
       }
 
       @keyframes space-flight {
@@ -133,7 +141,7 @@
         }
       }
 
-      /* --- 3. UI CHUNG --- */
+      /* --- 3. UI COMPONENTS --- */
       button {
         background: none;
         border: none;
@@ -151,9 +159,8 @@
       .glass-panel {
         background: var(--glass-bg);
         backdrop-filter: blur(24px);
-        -webkit-backdrop-filter: blur(24px);
         border: 1px solid var(--glass-border);
-        border-radius: var(--border-radius-lg);
+        border-radius: 20px;
         display: flex;
         flex-direction: column;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -167,7 +174,7 @@
         height: calc(100vh - var(--footer-height));
       }
 
-      /* --- 4. SIDEBAR --- */
+      /* SIDEBAR */
       .sidebar {
         padding: 24px;
       }
@@ -198,6 +205,7 @@
         font-size: 15px;
         transition: 0.2s;
         position: relative;
+        cursor: pointer;
       }
       .nav-item:hover {
         color: white;
@@ -219,7 +227,7 @@
         border-radius: 0 4px 4px 0;
       }
 
-      /* --- 5. MAIN CONTENT (PLANETS) --- */
+      /* MAIN CONTENT */
       .universe-panel {
         padding: 0 24px;
         overflow-y: auto;
@@ -248,6 +256,7 @@
         height: 90px;
         margin: 0 auto 12px;
         border-radius: 50%;
+        overflow: hidden;
         padding: 0;
         background: transparent;
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -258,13 +267,13 @@
         background: linear-gradient(135deg, var(--neon-primary), transparent);
         box-shadow: 0 15px 30px rgba(0, 229, 255, 0.4);
       }
-
       .planet-img {
         width: 100%;
         height: 100%;
-        border-radius: 50%;
         object-fit: cover;
         transform: scale(1.1);
+        border: none;
+        display: block;
       }
       .planet-title {
         font-weight: 600;
@@ -280,7 +289,7 @@
         cursor: not-allowed;
       }
 
-      /* --- 6. SONG LIST --- */
+      /* SONG LIST */
       .song-list-header {
         position: sticky;
         top: 0;
@@ -302,6 +311,7 @@
         border: 1px solid transparent;
         margin-bottom: 6px;
         transition: 0.2s;
+        cursor: default;
       }
       .song-item:hover {
         background: rgba(255, 255, 255, 0.03);
@@ -318,7 +328,6 @@
       .song-item.active .song-title {
         color: var(--neon-primary);
       }
-
       .song-item-clickable {
         display: contents;
         cursor: pointer;
@@ -343,10 +352,8 @@
         font-size: 13px;
         color: var(--text-dim);
         text-align: right;
-        font-feature-settings: "tnum";
+        font-variant-numeric: tabular-nums;
       }
-
-      /* Heart Button List */
       .btn-heart-list {
         padding: 8px;
         color: var(--text-dim);
@@ -404,7 +411,7 @@
         }
       }
 
-      /* --- 7. RIGHT PANEL (DISC) --- */
+      /* RIGHT PANEL (DISC) */
       .right-panel {
         align-items: center;
         text-align: center;
@@ -419,7 +426,6 @@
         text-transform: uppercase;
         align-self: flex-start;
       }
-
       .disc-wrapper {
         width: 240px;
         height: 240px;
@@ -434,18 +440,20 @@
         );
         box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       }
+
+      /* --- CSS CHO ĐĨA XOAY --- */
       .disc-img {
         width: 100%;
         height: 100%;
         border-radius: 50%;
         object-fit: cover;
         border: 4px solid var(--space-bg-dark);
-        animation: rotate 24s linear infinite;
-        animation-play-state: paused;
+        animation: rotate 20s linear infinite; /* Định nghĩa xoay */
+        animation-play-state: paused; /* Mặc định dừng */
         transition: transform 0.5s ease;
       }
       .disc-wrapper.playing .disc-img {
-        animation-play-state: running;
+        animation-play-state: running; /* Khi có class playing thì chạy */
         transform: scale(1.05);
       }
       @keyframes rotate {
@@ -468,7 +476,7 @@
         font-weight: 500;
       }
 
-      /* --- 8. FOOTER PLAYER --- */
+      /* --- 4. FOOTER PLAYER --- */
       .control-deck {
         height: var(--footer-height);
         background: rgba(5, 7, 16, 0.95);
@@ -485,7 +493,6 @@
         align-items: center;
         box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
       }
-
       .footer-left {
         display: flex;
         align-items: center;
@@ -516,10 +523,14 @@
       .artist-name {
         font-size: 13px;
         color: var(--text-dim);
+        margin-top: 2px;
       }
       .btn-like-footer {
         color: var(--text-dim);
         font-size: 18px;
+        cursor: pointer;
+        border: none;
+        background: none;
       }
       .btn-like-footer:hover {
         color: white;
@@ -529,7 +540,6 @@
         color: var(--neon-secondary);
       }
 
-      /* Controls */
       .footer-center {
         display: flex;
         flex-direction: column;
@@ -546,6 +556,9 @@
         font-size: 20px;
         padding: 8px;
         position: relative;
+        cursor: pointer;
+        border: none;
+        background: none;
       }
       .btn-control:hover {
         color: white;
@@ -565,13 +578,15 @@
         border-radius: 50%;
         font-size: 20px;
         transition: transform 0.2s;
+        cursor: pointer;
+        border: none;
       }
       .btn-play-hero:hover {
         transform: scale(1.1);
         background: var(--neon-primary);
       }
 
-      /* FIX ICON REPEAT 1 (Huy hiệu số 1) */
+      /* Icon Repeat One */
       .icon-repeat-one {
         position: relative;
         display: inline-flex;
@@ -612,7 +627,6 @@
         text-align: center;
         font-variant-numeric: tabular-nums;
       }
-
       .slider-container {
         flex-grow: 1;
         position: relative;
@@ -629,6 +643,7 @@
         position: absolute;
         z-index: 2;
         cursor: pointer;
+        outline: none;
       }
       .slider-track-bg {
         position: absolute;
@@ -636,16 +651,18 @@
         height: 100%;
         background: rgba(255, 255, 255, 0.1);
         border-radius: 3px;
+        z-index: 0;
       }
       .progress-fill,
       .volume-fill {
         position: absolute;
         left: 0;
         height: 100%;
+        width: 0%;
         background: var(--neon-primary);
         border-radius: 3px;
-        width: 0%;
         z-index: 1;
+        transition: background var(--transition-speed);
       }
       .volume-fill {
         background: white;
@@ -653,7 +670,6 @@
       .slider-container:hover .volume-fill {
         background: var(--neon-primary);
       }
-
       input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 14px;
@@ -672,7 +688,6 @@
         transform: scale(1.2);
       }
 
-      /* Volume */
       .footer-right {
         display: flex;
         align-items: center;
@@ -686,15 +701,18 @@
         width: 140px;
       }
       .btn-volume {
+        color: var(--text-dim);
         width: 24px;
         text-align: center;
-        color: var(--text-dim);
+        cursor: pointer;
+        border: none;
+        background: none;
       }
       .volume-box:hover .btn-volume {
         color: white;
       }
 
-      /* --- TOAST --- */
+      /* --- 5. TOAST --- */
       .toast-container {
         position: fixed;
         bottom: 120px;
@@ -725,15 +743,27 @@
         opacity: 1;
         transform: translateY(0);
       }
-      .toast i {
-        color: var(--neon-primary);
-        font-size: 16px;
+
+      /* Màu Toast */
+      .toast.success {
+        border-color: var(--success);
+        box-shadow: 0 5px 20px rgba(0, 255, 136, 0.2);
+      }
+      .toast.success i {
+        color: var(--success);
+      }
+      .toast.off {
+        border-color: var(--inactive);
+        box-shadow: 0 5px 20px rgba(255, 71, 87, 0.2);
+      }
+      .toast.off i {
+        color: var(--inactive);
       }
       .toast.error i {
         color: var(--danger);
       }
 
-      /* --- RESPONSIVE --- */
+      /* RESPONSIVE */
       @media (max-width: 1024px) {
         .main-container {
           grid-template-columns: 80px 1fr;
@@ -827,19 +857,23 @@
         <div class="planets-orbit">
           <div class="planet-card">
             <div class="planet-img-wrapper">
-              <img src="images/Tops Hits.jpg" class="planet-img" />
+              <img
+                src="images/Tops Hits.jpg"
+                class="planet-img"
+                alt="Top Hits"
+              />
             </div>
             <div class="planet-title">Top Hits</div>
           </div>
           <div class="planet-card">
             <div class="planet-img-wrapper">
-              <img src="images/Chill Vibe.jpg" class="planet-img" />
+              <img src="images/Chill Vibe.jpg" class="planet-img" alt="Chill" />
             </div>
             <div class="planet-title">Chill Vibes</div>
           </div>
           <div class="planet-card">
             <div class="planet-img-wrapper">
-              <img src="images/EDM World.jpg" class="planet-img" />
+              <img src="images/EDM World.jpg" class="planet-img" alt="EDM" />
             </div>
             <div class="planet-title">EDM World</div>
           </div>
@@ -861,7 +895,6 @@
             <div class="planet-title">Premium</div>
           </div>
         </div>
-
         <div class="song-list-header">Dải Ngân Hà</div>
         <div id="songList"></div>
       </div>
@@ -871,7 +904,7 @@
         <div class="disc-wrapper" id="discWrapper">
           <img src="images/sontung.jpg" class="disc-img" id="currentCover" />
         </div>
-        <h2 id="currentTitle" class="current-title">Chưa chọn bài</h2>
+        <h2 id="currentTitle" class="current-title">...</h2>
         <p id="currentArtist" class="current-artist">...</p>
       </div>
     </div>
@@ -884,8 +917,8 @@
           <img src="images/sontung.jpg" id="footerCover" />
         </div>
         <div class="footer-info">
-          <span id="footerTitle">SoundSphere</span
-          ><span class="artist-name" id="footerArtist">Player</span>
+          <span id="footerTitle">...</span
+          ><span class="artist-name" id="footerArtist">...</span>
         </div>
         <button
           class="btn-like-footer"
@@ -974,7 +1007,6 @@
     </div>
 
     <script>
-      // --- DỮ LIỆU ---
       const songs = [
         {
           id: 1,
@@ -1049,9 +1081,8 @@
         likedSongs: new Set(),
         lastVolume: 0.8,
       };
-
       const audio = document.getElementById("audioPlayer");
-      const elements = {
+      const el = {
         list: document.getElementById("songList"),
         disc: document.getElementById("discWrapper"),
         currentCover: document.getElementById("currentCover"),
@@ -1061,127 +1092,125 @@
         footerArtist: document.getElementById("footerArtist"),
         footerCover: document.getElementById("footerCover"),
         playIcon: document.getElementById("playIcon"),
-        progressBar: document.getElementById("progressBar"),
-        progressFill: document.getElementById("progressFill"),
+        progress: document.getElementById("progressBar"),
+        fill: document.getElementById("progressFill"),
         currentTime: document.getElementById("currentTime"),
         duration: document.getElementById("duration"),
-        controlDeck: document.getElementById("controlDeck"),
-        footerLikeBtn: document.getElementById("footerLikeBtn"),
+        deck: document.getElementById("controlDeck"),
+        likeBtn: document.getElementById("footerLikeBtn"),
         shuffleBtn: document.getElementById("shuffleBtn"),
         repeatBtn: document.getElementById("repeatBtn"),
       };
 
-      // --- LOGIC CHÍNH ---
       document.addEventListener("DOMContentLoaded", () => {
         init();
       });
 
       function init() {
-        renderSongList();
+        renderList();
         loadSong(state.currentSongIndex, false);
-        audio.volume = state.lastVolume;
         setVolumeUI(state.lastVolume);
-        setupEventListeners();
+        setupEvents();
         loadAllDurations();
       }
 
-      function renderSongList() {
-        elements.list.innerHTML = songs
-          .map((song, index) => {
-            const isActive = index === state.currentSongIndex;
-            const isLiked = state.likedSongs.has(song.id);
-            const duration = song.duration || "--:--";
+      function renderList() {
+        el.list.innerHTML = songs
+          .map((s, i) => {
+            const isActive = i === state.currentSongIndex;
+            const isLiked = state.likedSongs.has(s.id);
             return `
             <div class="song-item ${isActive ? "active" : ""}">
-              <div class="song-item-clickable" onclick="playSpecificSong(${index})">
-                <div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
-                <div class="song-info">
-                  <div class="song-title">${song.title}</div>
-                  <div class="song-artist">${song.artist}</div>
-                </div>
-              </div>
-              <button class="btn-heart-list ${
-                isLiked ? "liked" : ""
-              }" onclick="toggleLikeInList(this, ${song.id}, '${song.title}')">
-                <i class="${isLiked ? "fa-solid" : "fa-regular"} fa-heart"></i>
-              </button>
-              <div class="song-duration" id="duration-${index}">${duration}</div>
-            </div>
-          `;
+               <div class="song-item-clickable" onclick="playSong(${i})">
+                 <div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
+                 <div class="song-info"><div class="song-title">${
+                   s.title
+                 }</div><div class="song-artist">${s.artist}</div></div>
+               </div>
+               <button class="btn-heart-list ${
+                 isLiked ? "liked" : ""
+               }" onclick="toggleLikeInList(${s.id}, '${s.title}')">
+                 <i class="${isLiked ? "fa-solid" : "fa-regular"} fa-heart"></i>
+               </button>
+               <div class="song-duration" id="dur-${i}">${
+              s.duration || "--:--"
+            }</div>
+            </div>`;
           })
           .join("");
       }
 
-      function loadSong(index, autoPlay = true) {
-        state.currentSongIndex = index;
-        const song = songs[index];
-        audio.src = song.src;
+      function loadSong(i, play = true) {
+        state.currentSongIndex = i;
+        audio.src = songs[i].src;
 
-        elements.currentTitle.innerText = elements.footerTitle.innerText =
-          song.title;
-        elements.currentArtist.innerText = elements.footerArtist.innerText =
-          song.artist;
-        elements.currentCover.src = elements.footerCover.src = song.cover;
+        // Cập nhật thông tin bài hát
+        el.currentTitle.innerText = el.footerTitle.innerText = songs[i].title;
+        el.currentArtist.innerText = el.footerArtist.innerText =
+          songs[i].artist;
+        el.currentCover.src = el.footerCover.src = songs[i].cover;
 
-        renderSongList(); // Update active class
-        updateFooterLikeBtnState();
+        renderList();
+        updateLikeBtn();
 
-        elements.disc.classList.remove("playing");
-        elements.playIcon.className = "fa-solid fa-play";
+        // --- SỬA LỖI ĐĨA XOAY TẠI ĐÂY ---
+
+        // 1. Reset trạng thái UI về Tắt
+        el.disc.classList.remove("playing");
+        el.playIcon.className = "fa-solid fa-play";
         state.isPlaying = false;
-        elements.controlDeck.classList.remove("playing");
+        el.deck.classList.remove("playing");
 
-        // Reset disc animation
-        const img = elements.disc.querySelector(".disc-img");
+        // 2. Reset góc quay đĩa về 0 độ
+        const img = el.disc.querySelector(".disc-img");
+        // Xóa animation hiện tại
         img.style.animation = "none";
-        img.offsetHeight;
-        img.style.animation = "rotate 24s linear infinite";
-        img.style.animationPlayState = "paused";
+        img.offsetHeight; /* Trigger reflow (bắt buộc để reset) */
+        // Xóa style inline để CSS class có thể hoạt động trở lại
+        img.style.animation = "";
 
-        if (autoPlay) togglePlay();
+        if (play) togglePlay();
       }
 
       function togglePlay() {
-        if (!audio.src) return showToast("Chưa chọn bài hát!", "error");
+        if (!audio.src) return showToast("Chưa chọn bài!", "error");
 
         if (audio.paused) {
           audio
             .play()
             .then(() => {
-              elements.playIcon.className = "fa-solid fa-pause";
-              elements.disc.classList.add("playing");
-              elements.controlDeck.classList.add("playing");
+              // Chuyển sang trạng thái PLAY
+              el.playIcon.className = "fa-solid fa-pause";
+              el.disc.classList.add("playing"); // Class này kích hoạt xoay trong CSS
+              el.deck.classList.add("playing");
               state.isPlaying = true;
             })
-            .catch((e) => showToast("Lỗi phát nhạc!", "error"));
+            .catch((e) => {
+              console.error(e);
+              showToast("Lỗi phát nhạc (Link hỏng?)", "error");
+            });
         } else {
+          // Chuyển sang trạng thái PAUSE
           audio.pause();
-          elements.playIcon.className = "fa-solid fa-play";
-          elements.disc.classList.remove("playing");
-          elements.controlDeck.classList.remove("playing");
+          el.playIcon.className = "fa-solid fa-play";
+          el.disc.classList.remove("playing"); // Xóa class để dừng xoay
+          el.deck.classList.remove("playing");
           state.isPlaying = false;
         }
       }
 
-      function playSpecificSong(index) {
-        if (index === state.currentSongIndex && state.isPlaying) togglePlay();
-        else loadSong(index, true);
+      function playSong(i) {
+        if (i === state.currentSongIndex && state.isPlaying) togglePlay();
+        else loadSong(i, true);
       }
 
       function nextSong() {
-        let nextIndex;
-        if (state.isShuffled) {
-          do {
-            nextIndex = Math.floor(Math.random() * songs.length);
-          } while (nextIndex === state.currentSongIndex && songs.length > 1);
-        } else {
-          nextIndex = state.currentSongIndex + 1;
-          if (nextIndex >= songs.length) {
-            if (state.repeatMode === 1) nextIndex = 0; // Repeat All
-            else return; // Stop at end
-          }
-        }
-        loadSong(nextIndex, true);
+        let next = state.isShuffled
+          ? Math.floor(Math.random() * songs.length)
+          : state.currentSongIndex + 1;
+        if (next >= songs.length)
+          next = state.repeatMode === 1 ? 0 : songs.length - 1;
+        loadSong(next, true);
       }
 
       function prevSong() {
@@ -1189,118 +1218,108 @@
           audio.currentTime = 0;
           return;
         }
-        let prevIndex;
-        if (state.isShuffled) {
-          do {
-            prevIndex = Math.floor(Math.random() * songs.length);
-          } while (prevIndex === state.currentSongIndex && songs.length > 1);
-        } else {
-          prevIndex = state.currentSongIndex - 1;
-          if (prevIndex < 0) prevIndex = songs.length - 1;
-        }
-        loadSong(prevIndex, true);
+        let prev = state.isShuffled
+          ? Math.floor(Math.random() * songs.length)
+          : state.currentSongIndex - 1;
+        if (prev < 0) prev = songs.length - 1;
+        loadSong(prev, true);
       }
 
-      // --- EVENTS ---
+      // Audio Events
       audio.addEventListener("timeupdate", () => {
         if (!isDragging) {
           const pct = (audio.currentTime / (audio.duration || 1)) * 100;
-          elements.progressBar.value = audio.currentTime;
-          elements.progressFill.style.width = `${pct}%`;
-          elements.currentTime.innerText = formatTime(audio.currentTime);
+          el.progress.value = audio.currentTime;
+          el.fill.style.width = `${pct}%`;
+          el.currentTime.innerText = formatTime(audio.currentTime);
         }
       });
-
       audio.addEventListener("loadedmetadata", () => {
-        elements.progressBar.max = audio.duration;
-        elements.duration.innerText = formatTime(audio.duration);
+        el.progress.max = audio.duration;
+        el.duration.innerText = formatTime(audio.duration);
       });
-
       audio.addEventListener("ended", () => {
         if (state.repeatMode === 2) {
           audio.currentTime = 0;
           audio.play();
-        } // Repeat One
-        else nextSong();
+        } else nextSong();
       });
 
       let isDragging = false;
-      elements.progressBar.addEventListener(
-        "mousedown",
-        () => (isDragging = true)
-      );
-      elements.progressBar.addEventListener(
-        "touchstart",
-        () => (isDragging = true)
-      );
-      elements.progressBar.addEventListener("change", () => {
+      el.progress.addEventListener("mousedown", () => (isDragging = true));
+      el.progress.addEventListener("input", () => {
+        const pct = (el.progress.value / el.progress.max) * 100;
+        el.fill.style.width = `${pct}%`;
+        el.currentTime.innerText = formatTime(el.progress.value);
+      });
+      el.progress.addEventListener("change", () => {
         isDragging = false;
-        audio.currentTime = elements.progressBar.value;
+        audio.currentTime = el.progress.value;
         if (!state.isPlaying) togglePlay();
       });
-      // Fix visual dragging
-      elements.progressBar.addEventListener("input", () => {
-        const pct =
-          (elements.progressBar.value / elements.progressBar.max) * 100;
-        elements.progressFill.style.width = `${pct}%`;
-        elements.currentTime.innerText = formatTime(elements.progressBar.value);
-      });
+      function seekSong() {}
 
-      function seekSong() {
-        /* handled by listener */
-      }
-
-      // --- CONTROLS ---
+      // Controls
       function toggleShuffle() {
         state.isShuffled = !state.isShuffled;
-        elements.shuffleBtn.classList.toggle("active", state.isShuffled);
+        el.shuffleBtn.classList.toggle("active", state.isShuffled);
         showToast(
-          state.isShuffled ? "Đã bật trộn bài" : "Đã tắt trộn bài",
-          "info",
+          state.isShuffled ? "Đã BẬT trộn bài" : "Đã TẮT trộn bài",
+          state.isShuffled ? "success" : "off",
           '<i class="fa-solid fa-shuffle"></i>'
         );
       }
 
       function toggleRepeat() {
         state.repeatMode = (state.repeatMode + 1) % 3;
-        const icon = elements.repeatBtn.querySelector("i");
-        elements.repeatBtn.classList.remove("active");
+        const icon = el.repeatBtn.querySelector("i");
+        el.repeatBtn.classList.remove("active");
         icon.className = "fa-solid fa-repeat";
-        icon.classList.remove("icon-repeat-one"); // Xóa số 1
+        icon.classList.remove("icon-repeat-one");
 
-        let msg = "Không lặp lại";
-        if (state.repeatMode === 1) {
-          elements.repeatBtn.classList.add("active");
-          msg = "Lặp lại danh sách";
-        } else if (state.repeatMode === 2) {
-          elements.repeatBtn.classList.add("active");
-          icon.classList.add("icon-repeat-one"); // Thêm số 1
-          msg = "Lặp lại bài hiện tại";
+        if (state.repeatMode === 0)
+          showToast(
+            "Đã TẮT lặp lại",
+            "off",
+            '<i class="fa-solid fa-repeat"></i>'
+          );
+        else if (state.repeatMode === 1) {
+          el.repeatBtn.classList.add("active");
+          showToast(
+            "Lặp danh sách",
+            "success",
+            '<i class="fa-solid fa-repeat"></i>'
+          );
+        } else {
+          el.repeatBtn.classList.add("active");
+          icon.classList.add("icon-repeat-one");
+          showToast(
+            "Lặp 1 bài",
+            "success",
+            '<i class="fa-solid fa-repeat"></i>'
+          );
         }
-        showToast(msg, "info", icon.outerHTML);
       }
 
-      // --- UTILS ---
+      // Utils
       function loadAllDurations() {
         songs.forEach((s, i) => {
           if (!s.duration) {
             const t = new Audio(s.src);
             t.addEventListener("loadedmetadata", () => {
               s.duration = formatTime(t.duration);
-              const el = document.getElementById(`duration-${i}`);
-              if (el) el.innerText = s.duration;
+              const d = document.getElementById(`dur-${i}`);
+              if (d) d.innerText = s.duration;
             });
           }
         });
       }
-
       function formatTime(s) {
         if (isNaN(s)) return "0:00";
         const m = Math.floor(s / 60);
         const sec = Math.floor(s % 60);
         return `${m}:${sec < 10 ? "0" + sec : sec}`;
       }
-
       function showToast(msg, type = "info", icon = "") {
         const c = document.getElementById("toastContainer");
         const t = document.createElement("div");
@@ -1314,35 +1333,104 @@
         }, 2000);
       }
 
-      function setupEventListeners() {
+      // Setup Phím Tắt Chuẩn (Arrow Keys)
+      function setupEvents() {
         document.addEventListener("keydown", (e) => {
           if (e.target.tagName === "INPUT") return;
-          if (e.code === "Space") {
-            e.preventDefault();
-            togglePlay();
+          switch (e.code) {
+            case "Space":
+              e.preventDefault();
+              togglePlay();
+              break;
+            case "ArrowRight":
+              nextSong();
+              break;
+            case "ArrowLeft":
+              prevSong();
+              break;
+            case "ArrowUp":
+              e.preventDefault();
+              audio.volume = Math.min(1, audio.volume + 0.05);
+              setVolumeUI(audio.volume);
+              break;
+            case "ArrowDown":
+              e.preventDefault();
+              audio.volume = Math.max(0, audio.volume - 0.05);
+              setVolumeUI(audio.volume);
+              break;
+            case "KeyS":
+              toggleShuffle();
+              break;
+            case "KeyR":
+              toggleRepeat();
+              break;
+            case "KeyM":
+              toggleMute();
+              break;
           }
-          if (e.code === "ArrowRight") nextSong();
-          if (e.code === "ArrowLeft") prevSong();
         });
       }
 
-      // Volume & Like funcs
+      // Volume & Like
+      // 1. Hàm khi kéo thanh trượt Volume
       function setVolume() {
-        const v = document.getElementById("volumeSlider").value;
-        audio.volume = v;
-        document.getElementById("volumeFill").style.width = `${v * 100}%`;
-        state.lastVolume = v;
+        const vol = document.getElementById("volumeSlider").value;
+        audio.volume = vol;
+        setVolumeUI(vol);
+
+        // QUAN TRỌNG: Nếu volume > 0, cập nhật biến nhớ lastVolume
+        // Để sau này Mute rồi Unmute nó biết quay về đâu
+        if (vol > 0) {
+          state.lastVolume = vol;
+        }
       }
+
+      // 2. Hàm khi bấm nút Loa (Tắt/Bật tiếng)
       function toggleMute() {
-        audio.volume = audio.volume > 0 ? 0 : state.lastVolume || 0.8;
-        document.getElementById("volumeSlider").value = audio.volume;
-        setVolume();
+        if (audio.volume > 0) {
+          // --- ĐANG CÓ TIẾNG -> TẮT TIẾNG ---
+          state.lastVolume = audio.volume; // Lưu lại mức hiện tại trước khi tắt
+          audio.volume = 0;
+          setVolumeUI(0); // Cập nhật giao diện về 0
+        } else {
+          // --- ĐANG TẮT TIẾNG -> BẬT LẠI ---
+          // Nếu mức cũ lưu là 0 (do người dùng kéo tay về 0), thì mặc định bật lên 100% (1.0)
+          // Nếu không thì lấy đúng mức cũ đã lưu
+          let targetVolume = state.lastVolume > 0 ? state.lastVolume : 1.0;
+
+          audio.volume = targetVolume;
+          setVolumeUI(targetVolume);
+        }
+      }
+
+      // 3. Hàm cập nhật giao diện Volume (Icon, Thanh trượt, Màu)
+      function setVolumeUI(vol) {
+        const slider = document.getElementById("volumeSlider");
+        const fill = document.getElementById("volumeFill");
+        const icon = document.getElementById("volumeIcon");
+
+        // Cập nhật vị trí thanh trượt
+        slider.value = vol;
+
+        // Cập nhật độ dài màu thanh trượt
+        fill.style.width = `${vol * 100}%`;
+
+        // Cập nhật Icon theo mức âm lượng
+        if (vol == 0) {
+          icon.className = "fa-solid fa-volume-xmark"; // Icon chéo (Tắt)
+        } else if (vol < 0.5) {
+          icon.className = "fa-solid fa-volume-low"; // Icon loa nhỏ
+        } else {
+          icon.className = "fa-solid fa-volume-high"; // Icon loa to
+        }
       }
       function toggleFooterLike() {
-        const id = songs[state.currentSongIndex].id;
-        toggleLikeState(id, songs[state.currentSongIndex].title);
+        toggleLikeState(
+          songs[state.currentSongIndex].id,
+          songs[state.currentSongIndex].title
+        );
       }
-      function toggleLikeInList(btn, id, title) {
+      function toggleLikeInList(id, title) {
         toggleLikeState(id, title);
       }
       function toggleLikeState(id, title) {
@@ -1350,29 +1438,28 @@
           state.likedSongs.delete(id);
           showToast(
             "Đã bỏ thích",
-            "info",
+            "off",
             '<i class="fa-regular fa-heart"></i>'
           );
         } else {
           state.likedSongs.add(id);
           showToast(
             "Đã thêm vào yêu thích",
-            "info",
+            "success",
             '<i class="fa-solid fa-heart"></i>'
           );
         }
-        renderSongList();
-        updateFooterLikeBtnState();
+        renderList();
+        updateLikeBtn();
       }
-      function updateFooterLikeBtnState() {
+      function updateLikeBtn() {
         const id = songs[state.currentSongIndex].id;
-        const icon = elements.footerLikeBtn.querySelector("i");
         if (state.likedSongs.has(id)) {
-          elements.footerLikeBtn.classList.add("liked");
-          icon.className = "fa-solid fa-heart";
+          el.likeBtn.classList.add("liked");
+          el.likeBtn.querySelector("i").className = "fa-solid fa-heart";
         } else {
-          elements.footerLikeBtn.classList.remove("liked");
-          icon.className = "fa-regular fa-heart";
+          el.likeBtn.classList.remove("liked");
+          el.likeBtn.querySelector("i").className = "fa-regular fa-heart";
         }
       }
     </script>
