@@ -1112,6 +1112,10 @@
         setVolumeUI(state.lastVolume);
         setupEvents();
         loadAllDurations();
+        // Khởi tạo volume mặc định là 80% (hoặc giá trị bạn muốn)
+        state.lastVolume = 0.8;
+        audio.volume = state.lastVolume;
+        setVolumeUI(state.lastVolume);
       }
 
       function renderList() {
@@ -1342,10 +1346,10 @@
               e.preventDefault();
               togglePlay();
               break;
-            case "ArrowRight":
+            case "KeyL":
               nextSong();
               break;
-            case "ArrowLeft":
+            case "KeyK":
               prevSong();
               break;
             case "ArrowUp":
