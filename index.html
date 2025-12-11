@@ -433,12 +433,12 @@
         border-radius: 50%;
         object-fit: cover;
         border: 4px solid var(--space-bg-dark);
-        animation: rotate 24s linear infinite;
-        animation-play-state: paused;
-        transition: transform 0.5s ease;
+        animation: rotate 24s linear infinite paused;
+        transition: transform 0.4s ease;
       }
+
       .disc-wrapper.playing .disc-img {
-        animation-play-state: running;
+        animation-play-state: running !important; /* Thêm !important */
         transform: scale(1.05);
       }
       @keyframes rotate {
@@ -850,7 +850,7 @@
         <div class="nav-item">
           <i class="fa-solid fa-music"></i> <span>Thư viện</span>
         </div>
-        <div class="nav-item">
+        <div class="nav-item" id="navFavorite" onclick="showFavoritePlaylist()">
           <i class="fa-solid fa-heart"></i> <span>Yêu thích</span>
         </div>
         <div style="flex-grow: 1"></div>
@@ -901,7 +901,7 @@
             <div class="planet-title">Premium</div>
           </div>
         </div>
-        <div class="song-list-header">Dải Ngân Hà</div>
+        <div class="song-list-header" id="playlistTitle">Dải Ngân Hà</div>
         <div id="songList"></div>
       </div>
 
@@ -1143,6 +1143,15 @@
       }
 
       function renderList() {
+        const currentPlaylistTitle =
+          document.getElementById("playlistTitle")?.innerText || "Dải Ngân Hà";
+
+        // Nếu đang ở tab Yêu thích → không render lại danh sách chính
+        if (currentPlaylistTitle === "Bài hát yêu thích") {
+          return; // để hàm showFavoritePlaylist() tự quản lý
+        }
+
+        // Nếu đang ở danh sách chính → render bình thường
         el.list.innerHTML = songs
           .map((s, i) => {
             const isActive = i === state.currentSongIndex;
@@ -1160,9 +1169,7 @@
       <div class="song-item ${
         isActive ? "active" : ""
       }" onclick="playSong(${i})">
-         <div class="song-index-wrapper">
-             ${indexContent}
-         </div>
+         <div class="song-index-wrapper">${indexContent}</div>
 
          <div class="song-info">
              <div class="song-title" style="color: ${
@@ -1176,7 +1183,7 @@
                      data-id="${s.id}"
                      onclick="event.stopPropagation(); toggleLikeInList(${
                        s.id
-                     }, '${s.title}')">
+                     })">
                  <i class="${isLiked ? "fa-solid" : "fa-regular"} fa-heart"></i>
              </button>
          </div>
@@ -1190,57 +1197,67 @@
       function loadSong(i, play = true) {
         state.currentSongIndex = i;
         const song = songs[i];
-        audio.src = song.src;
 
-        // Update Text Info
+        // Cập nhật thông tin
         el.currentTitle.innerText = el.footerTitle.innerText = song.title;
         el.currentArtist.innerText = el.footerArtist.innerText = song.artist;
         el.currentCover.src = el.footerCover.src = song.cover;
 
-        // Reset Time Display in Right Panel
+        // RESET ĐĨA VỀ 0° MƯỢT (không giật)
+        const discImg = el.disc.querySelector(".disc-img");
+        discImg.style.animation = "none"; // dừng animation cũ
+        discImg.style.transform = "rotate(0deg) scale(1)";
+        el.disc.classList.remove("playing");
+        void discImg.offsetWidth; // force reflow
+        discImg.style.animation = "rotate 24s linear infinite paused";
+
+        audio.src = song.src;
+
+        // Cập nhật like + thời gian
+        const isLiked = state.likedSongs.has(song.id);
+        updateLikeStatusUI(song.id, isLiked);
         el.timeCurrentMain.innerText = "0:00";
         el.timeDurationMain.innerText = song.duration || "0:00";
 
-        // Update Like State in all 3 places
-        const isLiked = state.likedSongs.has(song.id);
-        updateLikeStatusUI(song.id, isLiked);
-
-        // Update List UI (active state)
         renderList();
 
-        el.disc.classList.remove("playing");
-        el.playIcon.className = "fa-solid fa-play";
-        state.isPlaying = false;
-        el.deck.classList.remove("playing");
-
-        const img = el.disc.querySelector(".disc-img");
-        img.style.animation = "none";
-        img.offsetHeight;
-        img.style.animation = "rotate 24s linear infinite";
-        img.style.animationPlayState = "paused";
-
-        if (play) togglePlay();
+        if (play) {
+          audio
+            .play()
+            .then(() => {
+              state.isPlaying = true;
+              el.playIcon.className = "fa-solid fa-pause";
+              el.disc.classList.add("playing"); // BẬT XOAY Ở ĐÂY
+              el.deck.classList.add("playing");
+              renderList();
+            })
+            .catch(() => {
+              el.playIcon.className = "fa-solid fa-play";
+              state.isPlaying = false;
+            });
+        } else {
+          el.playIcon.className = "fa-solid fa-play";
+          state.isPlaying = false;
+        }
       }
 
       function togglePlay() {
         if (!audio.src) return showToast("Chưa chọn bài!", "error");
+
         if (audio.paused) {
-          audio
-            .play()
-            .then(() => {
-              el.playIcon.className = "fa-solid fa-pause";
-              el.disc.classList.add("playing");
-              el.deck.classList.add("playing");
-              state.isPlaying = true;
-              renderList(); // Update Gif animation
-            })
-            .catch((e) => showToast("Lỗi phát nhạc!", "error"));
+          audio.play().then(() => {
+            state.isPlaying = true;
+            el.playIcon.className = "fa-solid fa-pause";
+            el.disc.classList.add("playing"); // bật xoay
+            el.deck.classList.add("playing");
+            renderList();
+          });
         } else {
           audio.pause();
-          el.playIcon.className = "fa-solid fa-play";
-          el.disc.classList.remove("playing");
-          el.deck.classList.remove("playing");
           state.isPlaying = false;
+          el.playIcon.className = "fa-solid fa-play";
+          el.disc.classList.remove("playing"); // tắt xoay
+          el.deck.classList.remove("playing");
           renderList();
         }
       }
@@ -1401,36 +1418,54 @@
           songs[state.currentSongIndex].title
         );
       }
-      function toggleLikeInList(id, title) {
-        toggleLikeState(id, title);
+      function toggleLikeInList(id) {
+        const song = songs.find((s) => s.id === id);
+        if (song) toggleLikeState(id, song.title);
       }
 
       function toggleLikeState(id, title) {
-        let isLiked = false;
-        if (state.likedSongs.has(id)) {
-          state.likedSongs.delete(id);
-          showToast(
-            `Đã bỏ thích`,
-            "off",
-            '<i class="fa-regular fa-heart"></i>'
-          );
-        } else {
+        const wasLiked = state.likedSongs.has(id);
+        const isLiked = !wasLiked;
+
+        if (isLiked) {
           state.likedSongs.add(id);
           showToast(
-            `Đã thêm vào yêu thích`,
+            `Đã thêm “${title}” vào yêu thích`,
             "success",
             '<i class="fa-solid fa-heart"></i>'
           );
-          isLiked = true;
+        } else {
+          state.likedSongs.delete(id);
+          showToast(
+            `Đã bỏ thích “${title}”`,
+            "off",
+            '<i class="fa-regular fa-heart"></i>'
+          );
         }
 
-        // Nếu bài đang phát chính là bài vừa like/unlike thì update Footer và Main Panel
-        if (id === songs[state.currentSongIndex].id) {
-          updateLikeStatusUI(id, isLiked);
+        // CẬP NHẬT GIAO DIỆN NGAY LẬP TỨC (quan trọng!)
+        const currentSongId = songs[state.currentSongIndex].id;
+        if (currentSongId === id) {
+          updateLikeStatusUI(id, isLiked); // cập nhật tim footer + panel phải
         }
 
-        // Cập nhật lại list (để icon trong list đổi màu)
-        renderList();
+        // Cập nhật nút tim trong danh sách (tất cả các nút có data-id = id)
+        document
+          .querySelectorAll(`.btn-heart-list[data-id="${id}"]`)
+          .forEach((btn) => {
+            btn.classList.toggle("liked", isLiked);
+            const icon = btn.querySelector("i");
+            icon.className = isLiked
+              ? "fa-solid fa-heart"
+              : "fa-regular fa-heart";
+          });
+        // TỰ ĐỘNG CẬP NHẬT DANH SÁCH YÊU THÍCH NẾU ĐANG MỞ
+        if (
+          document.getElementById("playlistTitle")?.innerText ===
+          "Bài hát yêu thích"
+        ) {
+          updateFavoriteList();
+        }
       }
 
       // Hàm update giao diện nút Tim ở Footer và Right Panel
@@ -1517,6 +1552,86 @@
           }
         });
       }
+      // === HÀM HIỂN THỊ PLAYLIST YÊU THÍCH ===
+      function showFavoritePlaylist() {
+        document.getElementById("playlistTitle").innerText =
+          "Bài hát yêu thích";
+
+        // Đánh dấu tab active
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        document.getElementById("navFavorite").classList.add("active");
+
+        updateFavoriteList(); // gọi hàm cập nhật danh sách
+      }
+
+      function updateFavoriteList() {
+        const favoriteSongs = songs.filter((s) => state.likedSongs.has(s.id));
+
+        if (favoriteSongs.length === 0) {
+          el.list.innerHTML = `
+      <div style="text-align:center; padding:80px 20px; color:var(--text-dim);">
+        <i class="fa-regular fa-heart" style="font-size:64px; margin-bottom:20px; opacity:0.3;"></i>
+        <div style="font-size:16px;">Chưa có bài hát nào được yêu thích</div>
+        <div style="font-size:14px; margin-top:8px; opacity:0.7;">Nhấn vào để thêm bài hát vào đây nhé</div>
+      </div>`;
+          return;
+        }
+
+        el.list.innerHTML = favoriteSongs
+          .map((s, displayIdx) => {
+            const originalIndex = songs.findIndex((song) => song.id === s.id);
+            const isActive = originalIndex === state.currentSongIndex;
+
+            let indexContent = `<span class="song-index">${
+              displayIdx + 1
+            }</span>`;
+            if (isActive && state.isPlaying) {
+              indexContent = `<div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
+            } else if (isActive) {
+              indexContent = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
+            }
+
+            return `
+      <div class="song-item ${
+        isActive ? "active" : ""
+      }" onclick="playSong(${originalIndex})">
+         <div class="song-index-wrapper">${indexContent}</div>
+         <div class="song-info">
+             <div class="song-title" style="color: ${
+               isActive ? "var(--neon-primary)" : "white"
+             }">${s.title}</div>
+             <div class="song-artist">${s.artist}</div>
+         </div>
+         <div style="display:flex; align-items:center; justify-content:center;">
+             <button class="btn-heart-list liked" 
+                     data-id="${s.id}"
+                     onclick="event.stopPropagation(); toggleLikeInList(${
+                       s.id
+                     })">
+                 <i class="fa-solid fa-heart"></i>
+             </button>
+         </div>
+         <div class="song-duration">${s.duration || "--:--"}</div>
+      </div>`;
+          })
+          .join("");
+      }
+
+      // === QUAY LẠI DANH SÁCH CHÍNH KHI CLICK "KHÁM PHÁ" ===
+      function showMainPlaylist() {
+        document.getElementById("playlistTitle").innerText = "Dải Ngân Hà";
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        document.querySelector(".nav-item.active")?.classList.remove("active");
+        document.querySelectorAll(".nav-item")[0].classList.add("active"); // "Khám phá"
+        renderList();
+      }
+
+      // Gắn sự kiện click cho "Khám phá"
+      document.querySelectorAll(".nav-item")[0].onclick = showMainPlaylist;
     </script>
   </body>
 </html>
