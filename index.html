@@ -818,15 +818,15 @@
         color: var(--inactive);
       }
 
-      /* ==================== RESPONSIVE & MOBILE FIX ==================== */
+      /* ==================== OPTIMIZED RESPONSIVE SYSTEM ==================== */
 
-      /* MOBILE HEADER & OVERLAY (Mặc định ẩn trên PC) */
+      /* 1. CẤU HÌNH CHUNG CHO MOBILE ELEMENTS (Mặc định ẩn trên PC) */
       .mobile-header {
         display: none;
         align-items: center;
         justify-content: space-between;
-        padding: 16px 24px;
-        background: rgba(5, 7, 16, 0.8);
+        padding: 16px 20px;
+        background: rgba(5, 7, 16, 0.9);
         backdrop-filter: blur(12px);
         position: sticky;
         top: 0;
@@ -849,13 +849,14 @@
         -webkit-text-fill-color: transparent;
       }
       .btn-menu-mobile {
-        font-size: 20px;
+        font-size: 22px;
         color: white;
       }
+
       .mobile-overlay {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.6);
+        background: rgba(0, 0, 0, 0.7);
         z-index: 1050;
         opacity: 0;
         visibility: hidden;
@@ -867,206 +868,198 @@
         visibility: visible;
       }
 
-      /* --- TABLET (iPad, Laptop nhỏ: < 1024px) --- */
+      /* ==================== TABLET (iPad, Laptop nhỏ: < 1024px) ==================== */
       @media (max-width: 1024px) {
+        /* Ẩn panel bên phải (Lời bài hát/Đĩa nhạc to) để tiết kiệm chỗ */
         .right-panel {
-          display: none !important; /* Ẩn panel bên phải */
-        }
-        .main-container {
-          grid-template-columns: 240px 1fr; /* Chia lại cột: Sidebar + Content */
-        }
-      }
-
-      /* --- MOBILE (Điện thoại: < 768px) --- */
-      /* ==================== MOBILE & TABLET (MÀN HÌNH NHỎ) ==================== */
-      @media (max-width: 768px) {
-
-        /* 1. Ẩn Sidebar & Right Panel */
-        .sidebar, .right-panel { display: none !important; }
-
-        /* 2. Layout chính: 1 cột duy nhất */
-        .main-container {
-          display: block;
-          padding: 0 0 100px 0; /* Padding đáy để không bị Player che */
-        }
-
-        /* 3. Header Mobile (nếu bạn đã thêm HTML mobile header) */
-        .mobile-header { display: flex; }
-
-        /* 4. Danh sách bài hát (gọn gàng hơn) */
-        .song-item {
-          margin: 0 16px 8px;
-          padding: 12px;
-          grid-template-columns: 40px 1fr 40px; /* Bỏ cột thời lượng */
-        }
-        .song-duration { display: none; }
-        .song-list-header { padding: 0 24px; font-size: 22px; }
-
-        /* 5. PLAYER ĐIỀU KHIỂN (PHẦN QUAN TRỌNG NHẤT) */
-        .control-deck {
-          height: 80px;
-          bottom: 16px;
-          left: 16px;
-          width: calc(100% - 32px); /* Cách lề 2 bên */
-          border-radius: 16px;
-          background: rgba(11, 15, 25, 0.95); /* Màu nền tối sẫm */
-          border: 1px solid rgba(255,255,255,0.1);
-          box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-
-          /* Chia 2 phần: Trái (Tên) - Phải (Nút) */
-          display: grid !important;
-          grid-template-columns: 1fr auto !important;
-          padding: 0 16px;
-          gap: 0;
-        }
-
-        /* --- PHẦN BÊN TRÁI: ẢNH & TÊN --- */
-        .footer-left {
-          gap: 12px;
-          max-width: 100%;
-        }
-        .footer-cover-wrapper img {
-          width: 48px; height: 48px;
-          border-radius: 8px;
-        }
-        #footerTitle {
-          font-size: 14px;
-          max-width: 140px; /* Giới hạn độ dài tên để không đè nút */
-        }
-        .artist-name { font-size: 12px; color: #888; }
-        .btn-like-footer { display: none; } /* Ẩn tim ở footer */
-
-        /* --- PHẦN BÊN PHẢI: 3 NÚT (SHUFFLE - PLAY - REPEAT) --- */
-        .footer-center {
-          width: auto;
-          display: flex !important;
-          align-items: center;
-          justify-content: flex-end;
-        }
-        .player-controls {
-          display: flex;
-          align-items: center;
-          gap: 12px; /* Khoảng cách giữa các nút */
-        }
-
-        /* Mặc định ẩn hết các nút */
-        .player-controls .btn-control { display: none !important; }
-
-        /* Chỉ hiện lại 3 nút cần thiết */
-        #shuffleBtn,
-        #playIconBtn,
-        #repeatBtn {
-          display: flex !important;
-        }
-
-        /* Style nút Shuffle & Repeat (nhỏ, màu xám) */
-        #shuffleBtn, #repeatBtn {
-          font-size: 18px;
-          color: #64748b;
-          background: none; border: none;
-          padding: 8px;
-        }
-        #shuffleBtn.active, #repeatBtn.active {
-          color: #00e5ff; /* Khi bật thì sáng màu xanh */
-        }
-        /* Style riêng cho nút Repeat số 1 nhỏ */
-        #repeatBtn.repeat-one::after {
-            right: -4px; top: -4px;
-        }
-
-        /* Style nút Play (Tròn, Xanh Neon - Giống hình mẫu) */
-        .btn-play-hero {
-          width: 48px; height: 48px;
-          border-radius: 50%;
-          background: #00e5ff; /* Xanh Cyan Neon */
-          color: #000;         /* Icon màu đen */
-          font-size: 18px;
-          box-shadow: 0 4px 15px rgba(0, 229, 255, 0.4);
-          margin: 0 4px;
-        }
-        .btn-play-hero:active { transform: scale(0.9); }
-
-        /* Ẩn các phần thừa */
-        .footer-right { display: none !important; }
-
-        /* Thanh thời gian (mảnh, nằm trên cùng) */
-        .progress-bar-wrapper {
-          position: absolute;
-          top: -1px; left: 16px;
-          width: calc(100% - 32px);
-          height: 2px;
-        }
-        .slider-container { height: 2px; }
-        .slider-track-bg { background: rgba(255,255,255,0.15); }
-        .progress-fill { background: #00e5ff; }
-        /* Ẩn số thời gian */
-        .progress-bar-wrapper .time-text { display: none; }
-        /* Ẩn cục tròn kéo tua để nhìn cho phẳng */
-        input[type="range"]::-webkit-slider-thumb { transform: scale(0); }
-      }
-
-
-        /* Các nút điều khiển Footer */
-        .player-controls {
-          gap: 16px;
-        }
-        .player-controls .btn-control:not(.btn-play-hero):not(:nth-child(4)) {
-          display: none; /* Ẩn Shuffle, Prev, Repeat. Chỉ giữ Play + Next */
-        }
-        .btn-play-hero {
-          width: 44px;
-          height: 44px;
-          font-size: 18px;
-          background: var(--neon-primary); /* Luôn sáng màu */
-          color: #000;
-        }
-
-        /* Footer Phải: Ẩn hết Volume */
-        .footer-right {
           display: none !important;
         }
 
-        /* Toast thông báo */
-        .toast-container {
-          bottom: 100px;
-          width: 90%;
+        /* Chia lại cột: Chỉ còn Sidebar + List nhạc */
+        .main-container {
+          grid-template-columns: 240px 1fr;
+          gap: 16px;
         }
       }
 
-      @media (max-width: 480px) {
-        .control-deck {
-          height: 82px;
+      /* ==================== MOBILE (Điện thoại: < 768px) ==================== */
+      @media (max-width: 768px) {
+        /* 1. LAYOUT TỔNG THỂ & SCROLL APP-LIKE */
+        body {
+          overflow: hidden; /* Khóa cuộn trang chính */
         }
-        .btn-play-hero {
-          width: 58px;
-          height: 58px;
-          font-size: 24px;
+        .main-container {
+          display: block;
+          padding: 0;
+          height: auto;
+        }
+
+        /* Vùng danh sách bài hát: Tạo thanh cuộn riêng biệt */
+        .universe-panel {
+          /* Chiều cao = 100% màn hình - Header(60px) - Footer(80px) */
+          height: calc(100vh - 140px);
+          overflow-y: auto; /* Cho phép cuộn dọc */
+          padding-bottom: 20px;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iPhone */
+        }
+
+        .mobile-header {
+          display: flex;
+        }
+        .song-list-header {
+          display: none;
+        }
+        .sidebar {
+          display: block !important;
+          position: fixed;
+          top: 0;
+          left: -280px;
+          width: 260px;
+          height: 100vh;
+          z-index: 1100;
+          background: #0b0f19;
+          transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+        .sidebar.active {
+          left: 0;
+        }
+
+        /* Danh sách bài hát gọn gàng */
+        .song-item {
+          margin: 0 16px 8px;
+          padding: 12px;
+          grid-template-columns: 40px 1fr 40px;
+          background: rgba(255, 255, 255, 0.03);
+        }
+        .song-duration {
+          display: none;
+        }
+
+        /* 2. PLAYER CONTROL (SHUFFLE - PLAY - REPEAT) */
+        .control-deck {
+          position: fixed;
+          bottom: 16px;
+          left: 16px;
+          width: calc(100% - 32px);
+          height: 76px;
+          background: #0f131f;
+          border-radius: 16px;
+          border: 1px solid rgba(255, 255, 255, 0.08);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+          display: flex !important;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0 16px;
+          grid-template-columns: none !important;
+          z-index: 1000;
+        }
+
+        /* Trái: Thông tin bài */
+        .footer-left {
+          flex: 1;
+          gap: 12px;
+          margin-right: 10px;
+          overflow: hidden;
+        }
+        .footer-cover-wrapper img {
+          width: 48px;
+          height: 48px;
+          border-radius: 8px;
         }
         #footerTitle {
           font-size: 15px;
+          font-weight: 700;
+          max-width: 130px;
         }
         .artist-name {
-          font-size: 13px;
+          font-size: 12px;
+          color: #9ca3af;
         }
-      }
-      .back-to-top {
-        position: fixed;
-        bottom: 100px;
-        right: 20px;
-        width: 48px;
-        height: 48px;
-        background: var(--neon-primary);
-        color: #000;
-        border-radius: 50%;
-        font-size: 20px;
-        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.5);
-        z-index: 999;
-        display: none;
-        align-items: center;
-        justify-content: center;
-      }
-      .universe-panel {
-        scroll-behavior: smooth;
+        .btn-like-footer {
+          display: none;
+        }
+
+        /* Giữa: Cụm nút bấm */
+        .footer-center {
+          width: auto !important;
+          display: flex !important;
+          flex-direction: row !important;
+          gap: 0;
+        }
+        .player-controls {
+          gap: 14px;
+        }
+
+        /* --- LOGIC HIỂN THỊ NÚT: SHUFFLE - PLAY - REPEAT --- */
+
+        /* Hiện Shuffle (nút số 1) */
+        .player-controls .btn-control:nth-child(1) {
+          display: block !important;
+          order: 1;
+          font-size: 18px;
+          color: #888;
+        }
+
+        /* Nút Play (ở giữa) */
+        #playIconBtn {
+          display: flex !important;
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background: #00e5ff;
+          color: #000;
+          font-size: 20px;
+          box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+          order: 2;
+        }
+
+        /* Hiện Repeat (nút số 5) */
+        .player-controls .btn-control:nth-child(5) {
+          display: block !important;
+          order: 3;
+          font-size: 18px;
+          color: #888;
+        }
+
+        /* Ẩn Prev (2) và Next (4) */
+        .player-controls .btn-control:nth-child(2),
+        .player-controls .btn-control:nth-child(4) {
+          display: none !important;
+        }
+
+        /* Ẩn các phần thừa khác */
+        .footer-right {
+          display: none !important;
+        }
+        .progress-bar-wrapper .time-text {
+          display: none;
+        }
+        .slider-container input {
+          display: none;
+        }
+
+        /* Thanh progress mảnh */
+        .progress-bar-wrapper {
+          position: absolute;
+          top: -1px;
+          left: 16px;
+          width: calc(100% - 32px);
+          height: 3px;
+        }
+        .slider-track-bg {
+          background: transparent;
+        }
+        .progress-fill {
+          background: #00e5ff;
+          border-radius: 10px;
+          box-shadow: 0 0 5px #00e5ff;
+        }
+
+        .toast-container {
+          bottom: 110px;
+        }
       }
     </style>
   </head>
@@ -1079,12 +1072,7 @@
         <i class="fa-solid fa-bars"></i>
       </button>
     </div>
-
-    <div
-      class="mobile-overlay"
-      id="mobileOverlay"
-      onclick="toggleMobileSidebar()"
-    ></div>
+    <div class="mobile-overlay" id="mobileOverlay"></div>
     <div class="stars-container">
       <div class="star-layer stars-1"></div>
       <div class="star-layer stars-2"></div>
@@ -1982,6 +1970,19 @@
           );
         }
       }
+      // === MOBILE MENU LOGIC (Đã tối ưu) ===
+      function toggleMobileSidebar() {
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("mobileOverlay");
+        // Thêm class active để kích hoạt CSS trượt ra
+        sidebar.classList.toggle("active");
+        overlay.classList.toggle("active");
+      }
+
+      // Đóng menu khi click vào overlay (Vùng tối bên ngoài)
+      document
+        .getElementById("mobileOverlay")
+        .addEventListener("click", toggleMobileSidebar);
     </script>
     <button
       class="back-to-top"
