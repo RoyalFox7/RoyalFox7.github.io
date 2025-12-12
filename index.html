@@ -960,12 +960,38 @@
         .universe-panel {
           /* Chiều cao = 100% màn hình - Header(60px) - Footer(80px) */
           height: calc(100vh - 140px);
-          overflow-y: auto; /* Cho phép cuộn dọc */
+          overflow-x: hidden !important;
+          overflow-y: auto !important;
           padding-bottom: 120px !important;
           scroll-behavior: smooth;
           -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iPhone */
         }
 
+        .planets-orbit {
+          display: flex;
+
+          /* --- CHO PHÉP CUỘN NGANG Ở ĐÂY --- */
+          overflow-x: auto !important;
+          /* -------------------------------- */
+
+          gap: 16px;
+          padding: 10px 4px 20px 4px; /* Padding dưới giúp bóng đổ không bị cắt */
+          width: 100%;
+
+          /* Hiệu ứng lướt từng cái một (như Netflix/Spotify) */
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+        }
+        /* Đảm bảo các thẻ hành tinh không bị co nhỏ lại */
+        .planet-card {
+          min-width: 110px; /* Chiều rộng cố định để lướt */
+          scroll-snap-align: start; /* Khi thả tay sẽ dừng đúng ngay đầu thẻ */
+        }
+
+        /* Ẩn thanh cuộn xấu xí của phần hành tinh */
+        .planets-orbit::-webkit-scrollbar {
+          display: none;
+        }
         .mobile-header {
           display: flex;
         }
