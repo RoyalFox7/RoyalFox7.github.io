@@ -171,6 +171,68 @@
         opacity: 0.5;
         animation: space-flight 30s linear infinite;
       }
+      /* --- CÁC HÀNH TINH NỀN (MỚI THÊM) --- */
+      .bg-planet {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px); /* Làm mờ để tạo cảm giác xa xăm */
+        z-index: -1; /* Nằm sau các lớp sao nhỏ */
+        opacity: 0.5;
+        animation: planet-float 120s ease-in-out infinite alternate;
+      }
+
+      /* Hành tinh 1: To, màu tím, ở góc trên trái */
+      .planet-large-purple {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(
+          circle at 30% 30%,
+          var(--neon-secondary),
+          transparent 70%
+        );
+        top: -10%;
+        left: -5%;
+        opacity: 0.3;
+        animation-duration: 150s;
+      }
+
+      /* Hành tinh 2: Vừa, màu xanh cyan, ở góc dưới phải */
+      .planet-medium-cyan {
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(
+          circle at 70% 70%,
+          var(--neon-primary),
+          transparent 60%
+        );
+        bottom: 10%;
+        right: -10%;
+        opacity: 0.25;
+        animation-delay: -30s;
+      }
+
+      /* Hành tinh 3: Nhỏ, màu xanh đậm, ở giữa bên phải */
+      .planet-small-deep {
+        width: 150px;
+        height: 150px;
+        background: radial-gradient(circle, #223355, transparent);
+        top: 40%;
+        right: 20%;
+        opacity: 0.4;
+        filter: blur(40px);
+        animation-duration: 90s;
+        animation-delay: -60s;
+      }
+
+      /* Hiệu ứng trôi nhẹ nhàng cho các hành tinh */
+      @keyframes planet-float {
+        0% {
+          transform: translate(0, 0) scale(1);
+        }
+        100% {
+          transform: translate(30px, -50px) scale(1.05);
+        }
+      }
       @keyframes space-flight {
         from {
           transform: translateY(0);
@@ -1077,6 +1139,10 @@
       <div class="star-layer stars-1"></div>
       <div class="star-layer stars-2"></div>
       <div class="star-layer stars-3"></div>
+
+      <div class="bg-planet planet-large-purple"></div>
+      <div class="bg-planet planet-medium-cyan"></div>
+      <div class="bg-planet planet-small-deep"></div>
     </div>
     <audio id="audioPlayer" preload="metadata"></audio>
 
