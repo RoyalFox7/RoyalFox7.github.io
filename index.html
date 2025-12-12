@@ -1122,6 +1122,32 @@
         .toast-container {
           bottom: 110px;
         }
+        /* --- SỬA LỖI NÚT TIM TRÊN MOBILE --- */
+
+        /* 1. Định nghĩa lại cột: Số TT - Tên - Nút Tim */
+        .song-item {
+          grid-template-columns: 40px 1fr 40px !important;
+        }
+
+        /* 2. Bắt buộc hiển thị nút tim (không cần hover) */
+        .btn-heart-list {
+          opacity: 1 !important; /* Luôn hiện */
+          transform: scale(1) !important; /* Không bị thu nhỏ */
+          display: flex !important;
+          justify-content: center;
+          color: rgba(255, 255, 255, 0.4); /* Màu xám mờ khi chưa like */
+        }
+
+        /* 3. Màu khi đã Like */
+        .btn-heart-list.liked {
+          color: var(--neon-secondary) !important;
+          opacity: 1 !important;
+        }
+
+        /* 4. Đảm bảo ẩn thời lượng để nhường chỗ cho tim */
+        .song-duration {
+          display: none !important;
+        }
       }
     </style>
   </head>
