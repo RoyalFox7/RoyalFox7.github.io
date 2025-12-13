@@ -13,15 +13,12 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
-    <!-- FONT MỚI SIÊU ĐẸP -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- Outfit – chữ O tròn cực đẹp, hợp đĩa nhạc & hành tinh -->
     <link
       href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <!-- Plus Jakarta Sans – nội dung mượt hơn Inter, chuẩn 2025 -->
     <link
       href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
@@ -45,7 +42,6 @@
         --transition-speed: 0.25s;
       }
 
-      /* FONT CHÍNH – PLUS JAKARTA SANS CHO TOÀN BỘ */
       * {
         margin: 0;
         padding: 0;
@@ -57,16 +53,15 @@
         text-rendering: optimizeLegibility;
       }
 
-      /* OUTFIT CHO TIÊU ĐỀ – CHỮ O TRÒN HOÀN HẢO, SIÊU HỢP ĐĨA NHẠC */
       .logo,
       .song-list-header,
       .current-title,
       #footerTitle,
-      .right-panel-header {
+      .right-panel-header,
+      .fs-title,
+      .fs-btn-play,
+      #repeatBtn.repeat-one::after {
         font-family: "Outfit", sans-serif;
-        font-weight: 800;
-        letter-spacing: -0.8px;
-        line-height: 1.1;
       }
 
       .song-title {
@@ -74,25 +69,6 @@
         font-weight: 700;
         letter-spacing: -0.4px;
         font-size: 15.5px;
-      }
-
-      /* Nội dung phụ – mượt mà, dễ đọc */
-      .song-artist,
-      .artist-name,
-      .nav-item span,
-      .time-text,
-      .song-duration,
-      .toast span {
-        font-weight: 500;
-        letter-spacing: 0.2px;
-        opacity: 0.92;
-      }
-
-      /* Logo nổi bật hơn */
-      .logo {
-        font-size: 24px;
-        font-weight: 900;
-        letter-spacing: -1.2px;
       }
 
       body {
@@ -122,14 +98,18 @@
         border-radius: 3px;
       }
 
-      /* --- BACKGROUND SAO --- */
+      /* --- BACKGROUND SAO & HÀNH TINH --- */
+      /* --- BACKGROUND SAO & HÀNH TINH (PERFORMANCE BOOST) --- */
       .stars-container {
         position: fixed;
         inset: 0;
         pointer-events: none;
         z-index: -1;
         overflow: hidden;
+        /* Tối ưu: Ngăn trình duyệt vẽ lại vùng này liên tục */
+        contain: strict;
       }
+
       .star-layer {
         position: absolute;
         top: 0;
@@ -137,8 +117,20 @@
         width: 100%;
         height: 200%;
         background-repeat: repeat;
-        mask-image: linear-gradient(to bottom, white 80%, transparent 100%);
+        /* Giữ nguyên gradient nhưng thêm mask nhẹ hơn */
+        mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          black 80%,
+          transparent 100%
+        );
+
+        /* QUAN TRỌNG: Ép GPU xử lý */
+        will-change: transform;
+        backface-visibility: hidden;
+        transform: translateZ(0);
       }
+
       .stars-1 {
         background-image: radial-gradient(
             1.5px 1.5px at 30px 50px,
@@ -146,8 +138,8 @@
             transparent
           ),
           radial-gradient(1.5px 1.5px at 150px 180px, #ddd, transparent);
-        opacity: 0.2;
-        animation: space-flight 100s linear infinite;
+        opacity: 0.3; /* Tăng nhẹ độ sáng để bù cho tốc độ */
+        animation: space-flight 60s linear infinite; /* Giảm thời gian để mượt hơn */
       }
       .stars-2 {
         background-image: radial-gradient(
@@ -157,8 +149,8 @@
           ),
           radial-gradient(2px 2px at 40px 160px, #eee, transparent);
         background-size: 300px 300px;
-        opacity: 0.3;
-        animation: space-flight 80s linear infinite;
+        opacity: 0.4;
+        animation: space-flight 45s linear infinite;
       }
       .stars-3 {
         background-image: radial-gradient(
@@ -168,77 +160,77 @@
           ),
           radial-gradient(2.5px 2.5px at 180px 40px, #fff, transparent);
         background-size: 400px 400px;
-        opacity: 0.5;
-        animation: space-flight 30s linear infinite;
+        opacity: 0.6;
+        animation: space-flight 25s linear infinite;
       }
-      /* --- CÁC HÀNH TINH NỀN (MỚI THÊM) --- */
+
+      /* Tối ưu hành tinh nền (Blur rất nặng, cần xử lý kỹ) */
       .bg-planet {
         position: absolute;
         border-radius: 50%;
-        filter: blur(60px); /* Làm mờ để tạo cảm giác xa xăm */
-        z-index: -1; /* Nằm sau các lớp sao nhỏ */
-        opacity: 0.5;
-        animation: planet-float 120s ease-in-out infinite alternate;
+        /* Giảm blur chút xíu để nhẹ máy hơn, nhưng vẫn ảo */
+        filter: blur(50px);
+        z-index: -1;
+        opacity: 0.6;
+        /* Ép GPU */
+        will-change: transform;
+        transform: translateZ(0);
+        animation: planet-float 20s ease-in-out infinite alternate;
       }
 
-      /* Hành tinh 1: To, màu tím, ở góc trên trái */
       .planet-large-purple {
-        width: 400px;
-        height: 400px;
+        width: 350px;
+        height: 350px; /* Thu nhỏ xíu cho nhẹ */
         background: radial-gradient(
           circle at 30% 30%,
           var(--neon-secondary),
           transparent 70%
         );
-        top: -10%;
+        top: -5%;
         left: -5%;
         opacity: 0.3;
-        animation-duration: 150s;
+        animation-duration: 25s;
       }
-
-      /* Hành tinh 2: Vừa, màu xanh cyan, ở góc dưới phải */
       .planet-medium-cyan {
-        width: 300px;
-        height: 300px;
+        width: 250px;
+        height: 250px;
         background: radial-gradient(
           circle at 70% 70%,
           var(--neon-primary),
           transparent 60%
         );
-        bottom: 10%;
-        right: -10%;
+        bottom: 5%;
+        right: -5%;
         opacity: 0.25;
-        animation-delay: -30s;
+        animation-delay: -5s;
       }
-
-      /* Hành tinh 3: Nhỏ, màu xanh đậm, ở giữa bên phải */
       .planet-small-deep {
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
         background: radial-gradient(circle, #223355, transparent);
         top: 40%;
-        right: 20%;
+        right: 15%;
         opacity: 0.4;
-        filter: blur(40px);
-        animation-duration: 90s;
-        animation-delay: -60s;
+        filter: blur(30px);
+        animation-duration: 18s;
+        animation-delay: -10s;
       }
 
-      /* Hiệu ứng trôi nhẹ nhàng cho các hành tinh */
+      /* Animation dùng translate3d để kích hoạt GPU */
       @keyframes planet-float {
         0% {
-          transform: translate(0, 0) scale(1);
+          transform: translate3d(0, 0, 0) scale(1);
         }
         100% {
-          transform: translate(30px, -50px) scale(1.05);
+          transform: translate3d(20px, -30px, 0) scale(1.05);
         }
       }
       @keyframes space-flight {
         from {
-          transform: translateY(0);
+          transform: translate3d(0, 0, 0);
         }
         to {
-          transform: translateY(-50%);
+          transform: translate3d(0, -50%, 0);
         }
       }
 
@@ -400,7 +392,7 @@
       .song-item {
         display: grid;
         grid-template-columns: 48px 1fr 40px 60px;
-        align-items: center;
+        alignitems: center;
         padding: 10px 16px;
         border-radius: 12px;
         border: 1px solid transparent;
@@ -541,8 +533,11 @@
         border-radius: 50%;
         object-fit: cover;
         border: 4px solid var(--space-bg-dark);
+        /* Thêm will-change để xoay mượt không bị răng cưa */
+        will-change: transform;
+        transform: translateZ(0);
         animation: rotate 24s linear infinite paused;
-        transition: transform 0.4s ease;
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
       .disc-wrapper.playing .disc-img {
         animation-play-state: running !important;
@@ -566,8 +561,6 @@
         color: var(--text-dim);
         font-weight: 500;
       }
-
-      /* BTN LIKE MAIN */
       .btn-like-main {
         color: var(--text-dim);
         background: none;
@@ -660,7 +653,6 @@
         color: var(--neon-secondary);
       }
 
-      /* Footer Center & Right */
       .footer-center {
         display: flex;
         flex-direction: column;
@@ -705,14 +697,13 @@
         transform: scale(1.1);
         background: var(--neon-primary);
       }
-      /* REPEAT 1 BÀI – SIÊU ĐẸP, CHUẨN 2025 */
+
       #repeatBtn {
         position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
       }
-
       #repeatBtn.repeat-one::after {
         content: "1";
         position: absolute;
@@ -722,7 +713,6 @@
         height: 14px;
         background: var(--neon-primary);
         color: #000;
-        font-family: "Outfit", sans-serif;
         font-weight: 900;
         font-size: 9px;
         border-radius: 50%;
@@ -734,10 +724,10 @@
         z-index: 10;
         pointer-events: none;
       }
-
       #repeatBtn.active {
         color: var(--neon-primary) !important;
       }
+
       .progress-bar-wrapper {
         width: 100%;
         max-width: 600px;
@@ -787,7 +777,9 @@
         background: var(--neon-primary);
         border-radius: 3px;
         z-index: 1;
-        transition: background var(--transition-speed);
+        /* Tăng tốc độ transition để khớp với sự kiện timeupdate của JS */
+        transition: width 0.1s linear;
+        will-change: width;
       }
       .volume-fill {
         background: white;
@@ -810,6 +802,7 @@
         opacity: 1;
         transform: scale(1.2);
       }
+
       .footer-right {
         display: flex;
         align-items: center;
@@ -834,7 +827,6 @@
         color: white;
       }
 
-      /* TOAST */
       .toast-container {
         position: fixed;
         bottom: 120px;
@@ -882,7 +874,7 @@
 
       /* ==================== OPTIMIZED RESPONSIVE SYSTEM ==================== */
 
-      /* 1. CẤU HÌNH CHUNG CHO MOBILE ELEMENTS (Mặc định ẩn trên PC) */
+      /* MOBILE ELEMENTS */
       .mobile-header {
         display: none;
         align-items: center;
@@ -914,7 +906,6 @@
         font-size: 22px;
         color: white;
       }
-
       .mobile-overlay {
         position: fixed;
         inset: 0;
@@ -930,67 +921,50 @@
         visibility: visible;
       }
 
-      /* ==================== TABLET (iPad, Laptop nhỏ: < 1024px) ==================== */
+      /* TABLET */
       @media (max-width: 1024px) {
-        /* Ẩn panel bên phải (Lời bài hát/Đĩa nhạc to) để tiết kiệm chỗ */
         .right-panel {
           display: none !important;
         }
-
-        /* Chia lại cột: Chỉ còn Sidebar + List nhạc */
         .main-container {
           grid-template-columns: 240px 1fr;
           gap: 16px;
         }
       }
 
-      /* ==================== MOBILE (Điện thoại: < 768px) ==================== */
+      /* MOBILE (< 768px) */
       @media (max-width: 768px) {
-        /* 1. LAYOUT TỔNG THỂ & SCROLL APP-LIKE */
         body {
-          overflow: hidden; /* Khóa cuộn trang chính */
+          overflow: hidden;
         }
         .main-container {
           display: block;
           padding: 0;
           height: auto;
         }
-
-        /* Vùng danh sách bài hát: Tạo thanh cuộn riêng biệt */
         .universe-panel {
-          /* Chiều cao = 100% màn hình - Header(60px) - Footer(80px) */
           height: calc(100vh - 140px);
           overflow-x: hidden !important;
           overflow-y: auto !important;
           padding-bottom: 160px !important;
           scroll-behavior: smooth;
-          -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iPhone */
+          -webkit-overflow-scrolling: touch;
         }
-
         .planets-orbit {
           display: flex;
-
-          /* --- CHO PHÉP CUỘN NGANG Ở ĐÂY --- */
           overflow-x: auto !important;
-          /* -------------------------------- */
-
           gap: 16px;
-          padding: 10px 4px 20px 4px; /* Padding dưới giúp bóng đổ không bị cắt */
+          padding: 10px 4px 20px 4px;
           width: 100%;
-
-          /* Hiệu ứng lướt từng cái một (như Netflix/Spotify) */
           scroll-snap-type: x mandatory;
           -webkit-overflow-scrolling: touch;
         }
-        /* Đảm bảo các thẻ hành tinh không bị co nhỏ lại */
-        .planet-card {
-          min-width: 110px; /* Chiều rộng cố định để lướt */
-          scroll-snap-align: start; /* Khi thả tay sẽ dừng đúng ngay đầu thẻ */
-        }
-
-        /* Ẩn thanh cuộn xấu xí của phần hành tinh */
         .planets-orbit::-webkit-scrollbar {
           display: none;
+        }
+        .planet-card {
+          min-width: 110px;
+          scroll-snap-align: start;
         }
         .mobile-header {
           display: flex;
@@ -1013,19 +987,16 @@
         .sidebar.active {
           left: 0;
         }
-
-        /* Danh sách bài hát gọn gàng */
         .song-item {
           margin: 0 16px 8px;
           padding: 12px;
-          grid-template-columns: 40px 1fr 40px;
+          grid-template-columns: 40px 1fr 40px !important;
           background: rgba(255, 255, 255, 0.03);
         }
         .song-duration {
-          display: none;
+          display: none !important;
         }
 
-        /* 2. PLAYER CONTROL (SHUFFLE - PLAY - REPEAT) */
         .control-deck {
           position: fixed;
           bottom: 16px;
@@ -1043,8 +1014,6 @@
           grid-template-columns: none !important;
           z-index: 1000;
         }
-
-        /* Trái: Thông tin bài */
         .footer-left {
           flex: 1;
           gap: 12px;
@@ -1068,8 +1037,6 @@
         .btn-like-footer {
           display: none;
         }
-
-        /* Giữa: Cụm nút bấm */
         .footer-center {
           width: auto !important;
           display: flex !important;
@@ -1079,18 +1046,12 @@
         .player-controls {
           gap: 14px;
         }
-
-        /* --- LOGIC HIỂN THỊ NÚT: SHUFFLE - PLAY - REPEAT --- */
-
-        /* Hiện Shuffle (nút số 1) */
         .player-controls .btn-control:nth-child(1) {
           display: block !important;
           order: 1;
           font-size: 18px;
           color: #888;
         }
-
-        /* Nút Play (ở giữa) */
         #playIconBtn {
           display: flex !important;
           width: 50px;
@@ -1102,39 +1063,28 @@
           box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
           order: 2;
         }
-
-        /* Hiện Repeat (nút số 5) */
         .player-controls .btn-control:nth-child(5) {
           display: block !important;
           order: 3;
           font-size: 18px;
           color: #888;
         }
-
-        /* Ẩn Prev (2) và Next (4) */
         .player-controls .btn-control:nth-child(2),
         .player-controls .btn-control:nth-child(4) {
           display: none !important;
         }
-
-        /* Ẩn các phần thừa khác */
-        .footer-right {
+        .footer-right,
+        .progress-bar-wrapper .time-text,
+        .slider-container input {
           display: none !important;
         }
-        .progress-bar-wrapper .time-text {
-          display: none;
-        }
-        .slider-container input {
-          display: none;
-        }
-
-        /* Thanh progress mảnh */
         .progress-bar-wrapper {
           position: absolute;
           top: -1px;
           left: 16px;
           width: calc(100% - 32px);
           height: 3px;
+          display: block !important;
         }
         .slider-track-bg {
           background: transparent;
@@ -1144,156 +1094,351 @@
           border-radius: 10px;
           box-shadow: 0 0 5px #00e5ff;
         }
-
         .toast-container {
           bottom: 110px;
         }
-        /* --- SỬA LỖI NÚT TIM TRÊN MOBILE --- */
-
-        /* 1. Định nghĩa lại cột: Số TT - Tên - Nút Tim */
-        .song-item {
-          grid-template-columns: 40px 1fr 40px !important;
-        }
-
-        /* 2. Bắt buộc hiển thị nút tim (không cần hover) */
         .btn-heart-list {
-          opacity: 1 !important; /* Luôn hiện */
-          transform: scale(1) !important; /* Không bị thu nhỏ */
+          opacity: 1 !important;
+          transform: scale(1) !important;
           display: flex !important;
           justify-content: center;
-          color: rgba(255, 255, 255, 0.4); /* Màu xám mờ khi chưa like */
+          color: rgba(255, 255, 255, 0.4);
         }
-
-        /* 3. Màu khi đã Like */
         .btn-heart-list.liked {
           color: var(--neon-secondary) !important;
           opacity: 1 !important;
         }
-
-        /* 4. Đảm bảo ẩn thời lượng để nhường chỗ cho tim */
-        .song-duration {
-          display: none !important;
-        }
       }
-      /* ==================== LANDSCAPE MOBILE FIX (XOAY NGANG) ==================== */
+
+      /* LANDSCAPE MOBILE */
       @media (max-height: 500px) and (orientation: landscape) {
-        /* 1. HEADER & LAYOUT: Thu gọn tối đa */
         .mobile-header {
-          height: 45px;
+          height: 40px;
           padding: 0 20px;
         }
         .logo-mobile {
+          font-size: 15px;
+        }
+        .btn-menu-mobile {
           font-size: 16px;
         }
         .main-container {
           padding: 0;
         }
-
-        /* Ẩn bớt hành tinh để nhường chỗ cho list nhạc */
         .planets-orbit {
           display: none !important;
         }
         .song-list-header {
           display: block !important;
-          padding: 8px 16px;
+          padding: 4px 16px;
           margin: 0;
-          font-size: 16px;
+          font-size: 14px;
           color: var(--neon-primary);
         }
-
-        /* 2. KHU VỰC LIST NHẠC */
         .universe-panel {
-          height: calc(100vh - 110px) !important; /* Tính toán lại chiều cao */
-          padding-bottom: 80px !important; /* Chừa chỗ cho Player ngang */
+          height: calc(100vh - 40px) !important;
+          padding-bottom: 80px !important;
         }
         .song-item {
-          padding: 6px 12px;
-          margin: 0 16px 6px;
+          padding: 4px 12px;
+          margin: 0 16px 4px;
+          grid-template-columns: 30px 1fr 30px !important;
         }
-
-        /* 3. PLAYER BAR (THANH PHÁT NHẠC) - ĐƯỢC LÀM LẠI */
+        .song-index-wrapper {
+          font-size: 11px;
+        }
         .control-deck {
-          height: 56px !important; /* Chiều cao nhỏ gọn */
-          width: 94% !important; /* Không full màn hình, chừa lề 2 bên */
-          left: 3% !important; /* Căn giữa: (100% - 94%) / 2 */
-          bottom: 6px !important;
-          border-radius: 50px !important; /* Bo tròn như viên thuốc */
+          height: 50px !important;
+          width: 80% !important;
+          left: 10% !important;
+          bottom: 10px !important;
+          border-radius: 50px !important;
           padding: 0 16px !important;
-
-          /* Flexbox để dàn hàng ngang */
+          background: rgba(15, 19, 31, 0.95) !important;
           display: flex !important;
           align-items: center;
           justify-content: space-between;
           gap: 10px;
         }
-
-        /* --- PHẦN BÊN TRÁI: ẢNH + TÊN (XỬ LÝ TRÀN CHỮ) --- */
         .footer-left {
-          flex: 1; /* Chiếm hết khoảng trống còn lại */
-          min-width: 0; /* QUAN TRỌNG: Để text-overflow hoạt động trong Flexbox */
+          flex: 1;
           margin-right: 10px;
+          min-width: 0;
         }
         .footer-cover-wrapper img {
-          width: 36px;
-          height: 36px;
+          width: 34px;
+          height: 34px;
           border-radius: 50%;
-        } /* Ảnh tròn nhỏ */
-
+        }
         .footer-info {
           display: flex;
           flex-direction: column;
           justify-content: center;
-          min-width: 0; /* Cho phép co nhỏ */
+          min-width: 0;
         }
-
-        /* Cắt chữ nếu quá dài */
         #footerTitle {
           font-size: 13px;
-          margin-bottom: 2px;
+          margin-bottom: 0;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
-          max-width: 100%;
         }
         .artist-name {
-          font-size: 11px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          max-width: 100%;
+          display: none;
         }
-
-        /* --- PHẦN GIỮA: CÁC NÚT BẤM (GỌN GÀNG) --- */
         .footer-center {
           width: auto !important;
-          flex-shrink: 0; /* Không bị co lại */
+          flex-shrink: 0;
         }
         .player-controls {
-          gap: 12px !important;
+          gap: 15px !important;
         }
-
-        /* Chỉnh lại nút Play nhỏ xinh */
         #playIconBtn {
-          width: 38px;
-          height: 38px;
+          width: 34px;
+          height: 34px;
           font-size: 14px;
+          background: var(--neon-primary);
+          color: #000;
+          box-shadow: none;
         }
-        /* Nút Shuffle & Repeat nhỏ hơn */
         .player-controls .btn-control {
           font-size: 16px;
-          padding: 4px;
+          padding: 0;
         }
-
-        /* Ẩn thanh thời gian (Progress bar) & Nút Âm lượng */
-        .progress-bar-wrapper {
+        .player-controls .btn-control:nth-child(2),
+        .player-controls .btn-control:nth-child(4) {
           display: none !important;
-        } /* Ẩn thanh chạy cho thoáng */
-        .footer-right {
-          display: none !important;
-        } /* Ẩn Volume */
+        }
+        .progress-bar-wrapper,
+        .footer-right,
         .btn-like-footer {
           display: none !important;
-        } /* Ẩn tim ở footer landscape */
+        }
+      }
+
+      /* ==================== FULL SCREEN PLAYER (FIXED CSS) ==================== */
+      /* ĐÃ DI CHUYỂN VÀO THẺ STYLE ĐỂ SỬA LỖI */
+      .fs-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2000;
+        background: #050710;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+        transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .fs-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .fs-backdrop {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-size: cover;
+        background-position: center;
+        filter: blur(80px) brightness(0.4);
+        transition: background 0.5s;
+      }
+      .fs-close-btn {
+        position: absolute;
+        top: calc(env(safe-area-inset-top) + 16px);
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.6);
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        cursor: pointer;
+      }
+      .fs-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 40px;
+        gap: 40px;
+        width: 100%;
+        padding-bottom: calc(env(safe-area-inset-bottom) + 20px);
+      }
+      .fs-left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex: 1;
+      }
+      .fs-disc-wrapper {
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        position: relative;
+        box-shadow: 0 0 40px rgba(0, 229, 255, 0.3);
+        border: 4px solid rgba(255, 255, 255, 0.1);
+      }
+      .fs-disc-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        will-change: transform; /* Quan trọng */
+        transform: translateZ(0);
+        animation: rotate 20s linear infinite paused;
+      }
+      .fs-disc-wrapper.playing .fs-disc-img {
+        animation-play-state: running;
+      }
+      .fs-right {
+        flex: 1.5;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        max-width: 400px;
+        width: 100%;
+      }
+      .fs-info {
+        text-align: center;
+        width: 100%;
+      }
+      .fs-title {
+        font-size: 24px;
+        color: white;
+        margin-bottom: 8px;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .fs-artist {
+        font-size: 16px;
+        color: var(--neon-secondary);
+        margin-bottom: 32px;
+        display: block;
+      }
+      .fs-progress-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 32px;
+        font-size: 13px;
+        color: #ccc;
+        width: 100%;
+      }
+      .fs-progress-bar {
+        flex: 1;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 2px;
+        overflow: hidden;
+        position: relative;
+      }
+      .fs-progress-fill {
+        height: 100%;
+        background: var(--neon-primary);
+        width: 0%;
+        box-shadow: 0 0 10px var(--neon-primary);
+        transition: width 0.1s linear;
+      }
+      .fs-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 32px;
+        width: 100%;
+      }
+      .fs-btn-control {
+        font-size: 28px;
+        color: white;
+        opacity: 0.8;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+      .fs-btn-play {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--neon-primary);
+        color: #000;
+        font-size: 28px;
+        padding-left: 4px;
+        box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+        transition: transform 0.2s;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .fs-btn-play:active {
+        transform: scale(0.9);
+      }
+
+      /* Full Screen Responsive */
+      @media (orientation: portrait) {
+        .fs-content {
+          flex-direction: column;
+          gap: 30px;
+          justify-content: flex-start;
+          padding-top: 60px;
+        }
+        .fs-right {
+          width: 100%;
+        }
+        .fs-disc-wrapper {
+          width: 75vw;
+          height: 75vw;
+          max-width: 280px;
+          max-height: 280px;
+          margin-top: 20px;
+        }
+        .fs-title {
+          font-size: 26px;
+          margin-top: 10px;
+        }
+      }
+      @media (orientation: landscape) and (max-height: 600px) {
+        .fs-content {
+          flex-direction: row;
+          padding: 10px 40px;
+          gap: 40px;
+          align-items: center;
+        }
+        .fs-left {
+          flex: 0.8;
+        }
+        .fs-disc-wrapper {
+          width: 180px;
+          height: 180px;
+        }
+        .fs-info {
+          text-align: left;
+        }
+        .fs-title {
+          font-size: 20px;
+        }
+        .fs-artist {
+          margin-bottom: 12px;
+        }
+        .fs-progress-container {
+          margin-bottom: 12px;
+        }
+        .fs-btn-play {
+          width: 56px;
+          height: 56px;
+          font-size: 22px;
+        }
       }
     </style>
   </head>
@@ -1311,7 +1456,6 @@
       <div class="star-layer stars-1"></div>
       <div class="star-layer stars-2"></div>
       <div class="star-layer stars-3"></div>
-
       <div class="bg-planet planet-large-purple"></div>
       <div class="bg-planet planet-medium-cyan"></div>
       <div class="bg-planet planet-small-deep"></div>
@@ -1391,7 +1535,6 @@
         </div>
         <h2 id="currentTitle" class="current-title">...</h2>
         <p id="currentArtist" class="current-artist">...</p>
-
         <button
           class="btn-like-main"
           id="mainLikeBtn"
@@ -1472,12 +1615,6 @@
       </div>
 
       <div class="footer-right">
-        <button class="btn-control secondary">
-          <i class="fa-solid fa-microphone-lines"></i>
-        </button>
-        <button class="btn-control secondary">
-          <i class="fa-solid fa-list-music"></i>
-        </button>
         <div class="volume-box">
           <button class="btn-volume" id="volumeIconBtn" onclick="toggleMute()">
             <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
@@ -1497,14 +1634,49 @@
             />
           </div>
         </div>
-        <button class="btn-control secondary">
-          <i class="fa-solid fa-expand"></i>
-        </button>
+      </div>
+    </div>
+
+    <div id="fullScreenPlayer" class="fs-overlay">
+      <button class="fs-close-btn" onclick="closeFullScreen()">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+      <div class="fs-backdrop" id="fsBackdrop"></div>
+      <div class="fs-content">
+        <div class="fs-left">
+          <div class="fs-disc-wrapper" id="fsDiscWrapper">
+            <img src="" class="fs-disc-img" id="fsCover" />
+          </div>
+        </div>
+        <div class="fs-right">
+          <div class="fs-info">
+            <h2 id="fsTitle" class="fs-title">Title</h2>
+            <p id="fsArtist" class="fs-artist">Artist</p>
+          </div>
+          <div class="fs-progress-container">
+            <span id="fsCurrentTime">0:00</span>
+            <div class="fs-progress-bar">
+              <div class="fs-progress-fill" id="fsProgressFill"></div>
+            </div>
+            <span id="fsDuration">0:00</span>
+          </div>
+          <div class="fs-controls">
+            <button class="fs-btn-control" onclick="prevSong()">
+              <i class="fa-solid fa-backward-step"></i>
+            </button>
+            <button class="fs-btn-play" id="fsPlayBtn" onclick="togglePlay()">
+              <i class="fa-solid fa-play"></i>
+            </button>
+            <button class="fs-btn-control" onclick="nextSong()">
+              <i class="fa-solid fa-forward-step"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // DỮ LIỆU BÀI HÁT (ĐÃ CHUẨN HÓA TÊN FILE KHÔNG DẤU)
+      // DỮ LIỆU BÀI HÁT
       const songs = [
         {
           id: 1,
@@ -1586,7 +1758,7 @@
         {
           id: 12,
           title: "Chuyện đôi ta (Lofi Version)",
-          artist: "Emcee L(Da LAB) ft. Muội (Freak D Lofi Ver.)",
+          artist: "Emcee L(Da LAB) ft. Muội",
           cover: "images/chuyen-doi-ta(lofi).jpg",
           src: "musics/chuyen-doi-ta(lofi).mp3",
         },
@@ -1607,7 +1779,7 @@
         {
           id: 15,
           title: "Duyên âm (Remix)",
-          artist: "Hoàng Thùy Linh (VisconC Remix)",
+          artist: "Hoàng Thùy Linh",
           cover: "images/duyen-am(remix).jpg",
           src: "musics/duyen-am(remix).mp3",
         },
@@ -1621,28 +1793,28 @@
         {
           id: 17,
           title: "Lệ lưu ly (Remix)",
-          artist: "Vũ Phụng Tiên x DT Tập Rap, (Masew Remix) ",
+          artist: "Vũ Phụng Tiên x DT Tập Rap",
           cover: "images/le-luu-ly(remix).jpg",
           src: "musics/le-luu-ly(remix).mp3",
         },
         {
           id: 18,
           title: "Nắm đôi bàn tay (Remix)",
-          artist: "Kay Trần (Cukak Remix)",
+          artist: "Kay Trần",
           cover: "images/nam-doi-ban-tay(remix).jpg",
           src: "musics/nam-doi-ban-tay(remix).mp3",
         },
         {
           id: 19,
           title: "Nắng dưới chân mây (Remix)",
-          artist: "Nguyễn Hữu Kha (Thazh x Đông Remix)",
+          artist: "Nguyễn Hữu Kha",
           cover: "images/nang-duoi-chan-may(remix).jpg",
           src: "musics/nang-duoi-chan-may(remix).mp3",
         },
         {
           id: 20,
           title: "Ngáo ngơ",
-          artist: "HIEUTHUHAI, Atus, Jsol, Erik ft. Orange",
+          artist: "HIEUTHUHAI, Atus",
           cover: "images/ngao-ngo.jpg",
           src: "musics/ngao-ngo.mp3",
         },
@@ -1656,7 +1828,7 @@
         {
           id: 22,
           title: "Tâm trí lang thang (Remix)",
-          artist: "Ánh Sáng AZA ft. Negav (Zang Remix)",
+          artist: "Ánh Sáng AZA",
           cover: "images/tam-tri-lang-thang(remix).jpg",
           src: "musics/tam-tri-lang-thang(remix).mp3",
         },
@@ -1684,7 +1856,7 @@
         {
           id: 26,
           title: "Vì yêu cứ đâm đầu",
-          artist: "MIN x Đen Vâu x Justatee",
+          artist: "MIN x Đen Vâu",
           cover: "images/vi-yeu-cu-dam-dau.jpg",
           src: "musics/vi-yeu-cu-dam-dau.mp3",
         },
@@ -1698,7 +1870,7 @@
         {
           id: 28,
           title: "IKIGAI",
-          artist: "Tăng Duy Tân ft. Bích Phương, 2pillz",
+          artist: "Tăng Duy Tân",
           cover: "images/ikigai.jpg",
           src: "musics/ikigai.mp3",
         },
@@ -1719,11 +1891,9 @@
         currentCover: document.getElementById("currentCover"),
         currentTitle: document.getElementById("currentTitle"),
         currentArtist: document.getElementById("currentArtist"),
-        // Added elements for Main Panel
         mainLikeBtn: document.getElementById("mainLikeBtn"),
         timeCurrentMain: document.getElementById("timeCurrentMain"),
         timeDurationMain: document.getElementById("timeDurationMain"),
-
         footerTitle: document.getElementById("footerTitle"),
         footerArtist: document.getElementById("footerArtist"),
         footerCover: document.getElementById("footerCover"),
@@ -1757,51 +1927,43 @@
       function renderList() {
         const currentPlaylistTitle =
           document.getElementById("playlistTitle")?.innerText || "Dải Ngân Hà";
+        if (currentPlaylistTitle === "Bài hát yêu thích") return;
 
-        // Nếu đang ở tab Yêu thích → không render lại danh sách chính
-        if (currentPlaylistTitle === "Bài hát yêu thích") {
-          return; // để hàm showFavoritePlaylist() tự quản lý
-        }
-
-        // Nếu đang ở danh sách chính → render bình thường
         el.list.innerHTML = songs
           .map((s, i) => {
             const isActive = i === state.currentSongIndex;
             const isLiked = state.likedSongs.has(s.id);
             const duration = s.duration || "--:--";
-
             let indexContent = `<span class="song-index">${i + 1}</span>`;
             if (isActive && state.isPlaying) {
               indexContent = `<div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
             } else if (isActive) {
               indexContent = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
             }
-
             return `
-      <div class="song-item ${
-        isActive ? "active" : ""
-      }" onclick="playSong(${i})">
-         <div class="song-index-wrapper">${indexContent}</div>
-
-         <div class="song-info">
-             <div class="song-title" style="color: ${
-               isActive ? "var(--neon-primary)" : "white"
-             }">${s.title}</div>
-             <div class="song-artist">${s.artist}</div>
-         </div>
-
-         <div style="display:flex; align-items:center; justify-content:center;">
-             <button class="btn-heart-list ${isLiked ? "liked" : ""}" 
-                     data-id="${s.id}"
-                     onclick="event.stopPropagation(); toggleLikeInList(${
-                       s.id
-                     })">
-                 <i class="${isLiked ? "fa-solid" : "fa-regular"} fa-heart"></i>
-             </button>
-         </div>
-
-         <div class="song-duration" id="dur-${i}">${duration}</div>
-      </div>`;
+            <div class="song-item ${
+              isActive ? "active" : ""
+            }" onclick="playSong(${i})">
+               <div class="song-index-wrapper">${indexContent}</div>
+               <div class="song-info">
+                   <div class="song-title" style="color: ${
+                     isActive ? "var(--neon-primary)" : "white"
+                   }">${s.title}</div>
+                   <div class="song-artist">${s.artist}</div>
+               </div>
+               <div style="display:flex; align-items:center; justify-content:center;">
+                   <button class="btn-heart-list ${
+                     isLiked ? "liked" : ""
+                   }" data-id="${
+              s.id
+            }" onclick="event.stopPropagation(); toggleLikeInList(${s.id})">
+                       <i class="${
+                         isLiked ? "fa-solid" : "fa-regular"
+                       } fa-heart"></i>
+                   </button>
+               </div>
+               <div class="song-duration" id="dur-${i}">${duration}</div>
+            </div>`;
           })
           .join("");
       }
@@ -1809,28 +1971,22 @@
       function loadSong(i, play = true) {
         state.currentSongIndex = i;
         const song = songs[i];
-
-        // Cập nhật thông tin
         el.currentTitle.innerText = el.footerTitle.innerText = song.title;
         el.currentArtist.innerText = el.footerArtist.innerText = song.artist;
         el.currentCover.src = el.footerCover.src = song.cover;
 
-        // RESET ĐĨA VỀ 0° MƯỢT (không giật)
         const discImg = el.disc.querySelector(".disc-img");
-        discImg.style.animation = "none"; // dừng animation cũ
+        discImg.style.animation = "none";
         discImg.style.transform = "rotate(0deg) scale(1)";
         el.disc.classList.remove("playing");
-        void discImg.offsetWidth; // force reflow
+        void discImg.offsetWidth;
         discImg.style.animation = "rotate 24s linear infinite paused";
 
         audio.src = song.src;
-
-        // Cập nhật like + thời gian
         const isLiked = state.likedSongs.has(song.id);
         updateLikeStatusUI(song.id, isLiked);
         el.timeCurrentMain.innerText = "0:00";
         el.timeDurationMain.innerText = song.duration || "0:00";
-
         renderList();
 
         if (play) {
@@ -1839,7 +1995,7 @@
             .then(() => {
               state.isPlaying = true;
               el.playIcon.className = "fa-solid fa-pause";
-              el.disc.classList.add("playing"); // BẬT XOAY Ở ĐÂY
+              el.disc.classList.add("playing");
               el.deck.classList.add("playing");
               renderList();
             })
@@ -1855,12 +2011,11 @@
 
       function togglePlay() {
         if (!audio.src) return showToast("Chưa chọn bài!", "error");
-
         if (audio.paused) {
           audio.play().then(() => {
             state.isPlaying = true;
             el.playIcon.className = "fa-solid fa-pause";
-            el.disc.classList.add("playing"); // bật xoay
+            el.disc.classList.add("playing");
             el.deck.classList.add("playing");
             renderList();
           });
@@ -1868,7 +2023,7 @@
           audio.pause();
           state.isPlaying = false;
           el.playIcon.className = "fa-solid fa-play";
-          el.disc.classList.remove("playing"); // tắt xoay
+          el.disc.classList.remove("playing");
           el.deck.classList.remove("playing");
           renderList();
         }
@@ -1887,6 +2042,7 @@
           next = state.repeatMode === 1 ? 0 : songs.length - 1;
         loadSong(next, true);
       }
+
       function prevSong() {
         if (audio.currentTime > 3) {
           audio.currentTime = 0;
@@ -1899,14 +2055,9 @@
         loadSong(prev, true);
       }
 
-      // Events
       audio.addEventListener("timeupdate", () => {
         const currTimeStr = formatTime(audio.currentTime);
-
-        // Update Main Panel Time
         if (el.timeCurrentMain) el.timeCurrentMain.innerText = currTimeStr;
-
-        // Update Footer Bar
         if (!isDragging) {
           const pct = (audio.currentTime / (audio.duration || 1)) * 100;
           el.progressBar.value = audio.currentTime;
@@ -1918,7 +2069,6 @@
         const durStr = formatTime(audio.duration);
         el.progressBar.max = audio.duration;
         el.duration.innerText = durStr;
-        // Update Main Panel Duration
         if (el.timeDurationMain) el.timeDurationMain.innerText = durStr;
       });
       audio.addEventListener("ended", () => {
@@ -1943,41 +2093,28 @@
       });
       function seekSong() {}
 
-      // Controls & Logic
       function toggleShuffle() {
         state.isShuffled = !state.isShuffled;
         el.shuffleBtn.classList.toggle("active", state.isShuffled);
-        if (state.isShuffled)
-          showToast(
-            "Đã BẬT trộn bài",
-            "success",
-            '<i class="fa-solid fa-shuffle"></i>'
-          );
-        else
-          showToast(
-            "Đã TẮT trộn bài",
-            "off",
-            '<i class="fa-solid fa-shuffle"></i>'
-          );
+        showToast(
+          state.isShuffled ? "Đã BẬT trộn bài" : "Đã TẮT trộn bài",
+          state.isShuffled ? "success" : "off",
+          '<i class="fa-solid fa-shuffle"></i>'
+        );
       }
 
       function toggleRepeat() {
         state.repeatMode = (state.repeatMode + 1) % 3;
         const btn = el.repeatBtn;
-
-        // Reset trạng thái
         btn.classList.remove("active", "repeat-one");
         btn.querySelector("i").className = "fa-solid fa-repeat";
-
-        if (state.repeatMode === 0) {
-          // TẮT LẶP → icon repeat màu đỏ
+        if (state.repeatMode === 0)
           showToast(
             "Đã TẮT lặp lại",
             "off",
             '<i class="fa-solid fa-repeat" style="color:#ff4757;"></i>'
           );
-        } else if (state.repeatMode === 1) {
-          // LẶP DANH SÁCH → icon xanh
+        else if (state.repeatMode === 1) {
           btn.classList.add("active");
           showToast(
             "Lặp toàn bộ danh sách",
@@ -1985,19 +2122,11 @@
             '<i class="fa-solid fa-repeat"></i>'
           );
         } else {
-          // LẶP 1 BÀI → icon xanh + số 1 tròn
           btn.classList.add("active", "repeat-one");
           showToast(
             "Lặp 1 bài",
             "success",
-            '<span style="position:relative;display:inline-flex">' +
-              '<i class="fa-solid fa-repeat"></i>' +
-              '<span style="position:absolute;top:-6px;right:-8px;width:14px;height:14px;' +
-              "background:var(--neon-primary);color:#000;font-family:'Outfit',sans-serif;" +
-              "font-weight:900;font-size:9px;border-radius:50%;display:flex;align-items:center;" +
-              'justify-content:center;border:2px solid #000;box-shadow:0 2px 6px rgba(0,229,255,0.5)">' +
-              "1</span>" +
-              "</span>"
+            '<i class="fa-solid fa-repeat"></i>'
           );
         }
       }
@@ -2027,7 +2156,6 @@
         else el.volIcon.className = "fa-solid fa-volume-high";
       }
 
-      // --- LIKE LOGIC (ĐÃ CHỈNH SỬA VÀ ĐỒNG BỘ) ---
       function toggleFooterLike() {
         toggleLikeState(
           songs[state.currentSongIndex].id,
@@ -2048,7 +2176,6 @@
       function toggleLikeState(id, title) {
         const wasLiked = state.likedSongs.has(id);
         const isLiked = !wasLiked;
-
         if (isLiked) {
           state.likedSongs.add(id);
           showToast(
@@ -2065,50 +2192,34 @@
           );
         }
 
-        // CẬP NHẬT GIAO DIỆN NGAY LẬP TỨC (quan trọng!)
-        const currentSongId = songs[state.currentSongIndex].id;
-        if (currentSongId === id) {
-          updateLikeStatusUI(id, isLiked); // cập nhật tim footer + panel phải
-        }
-
-        // Cập nhật nút tim trong danh sách (tất cả các nút có data-id = id)
+        if (songs[state.currentSongIndex].id === id)
+          updateLikeStatusUI(id, isLiked);
         document
           .querySelectorAll(`.btn-heart-list[data-id="${id}"]`)
           .forEach((btn) => {
             btn.classList.toggle("liked", isLiked);
-            const icon = btn.querySelector("i");
-            icon.className = isLiked
+            btn.querySelector("i").className = isLiked
               ? "fa-solid fa-heart"
               : "fa-regular fa-heart";
           });
-
-        // TỰ ĐỘNG CẬP NHẬT DANH SÁCH YÊU THÍCH NẾU ĐANG MỞ
         if (
           document.getElementById("playlistTitle")?.innerText ===
           "Bài hát yêu thích"
-        ) {
+        )
           updateFavoriteList();
-        }
       }
 
-      // Hàm update giao diện nút Tim ở Footer và Right Panel
       function updateLikeStatusUI(id, isLiked) {
-        // 1. Update Footer Button
         el.likeBtn.classList.toggle("liked", isLiked);
-        const footerIcon = el.likeBtn.querySelector("i");
-        footerIcon.className = isLiked
+        el.likeBtn.querySelector("i").className = isLiked
           ? "fa-solid fa-heart"
           : "fa-regular fa-heart";
-
-        // 2. Update Main Panel Button
         el.mainLikeBtn.classList.toggle("liked", isLiked);
-        const mainIcon = el.mainLikeBtn.querySelector("i");
-        mainIcon.className = isLiked
+        el.mainLikeBtn.querySelector("i").className = isLiked
           ? "fa-solid fa-heart"
           : "fa-regular fa-heart";
       }
 
-      // Utils
       function loadAllDurations() {
         songs.forEach((s, i) => {
           if (!s.duration) {
@@ -2175,121 +2286,96 @@
           }
         });
       }
-      // === HÀM HIỂN THỊ PLAYLIST YÊU THÍCH ===
+
       function showFavoritePlaylist() {
         document.getElementById("playlistTitle").innerText =
           "Bài hát yêu thích";
-
-        // Đánh dấu tab active
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
         document.getElementById("navFavorite").classList.add("active");
-
-        updateFavoriteList(); // gọi hàm cập nhật danh sách
+        updateFavoriteList();
       }
 
       function updateFavoriteList() {
         const favoriteSongs = songs.filter((s) => state.likedSongs.has(s.id));
-
         if (favoriteSongs.length === 0) {
-          el.list.innerHTML = `
-      <div style="text-align:center; padding:80px 20px; color:var(--text-dim);">
-        <i class="fa-regular fa-heart" style="font-size:64px; margin-bottom:20px; opacity:0.3;"></i>
-        <div style="font-size:16px;">Chưa có bài hát nào được yêu thích</div>
-        <div style="font-size:14px; margin-top:8px; opacity:0.7;">Nhấn vào để thêm bài hát vào đây nhé</div>
-      </div>`;
+          el.list.innerHTML = `<div style="text-align:center; padding:80px 20px; color:var(--text-dim);"><i class="fa-regular fa-heart" style="font-size:64px; margin-bottom:20px; opacity:0.3;"></i><div style="font-size:16px;">Chưa có bài hát nào được yêu thích</div></div>`;
           return;
         }
-
         el.list.innerHTML = favoriteSongs
           .map((s, displayIdx) => {
             const originalIndex = songs.findIndex((song) => song.id === s.id);
             const isActive = originalIndex === state.currentSongIndex;
-
             let indexContent = `<span class="song-index">${
               displayIdx + 1
             }</span>`;
-            if (isActive && state.isPlaying) {
+            if (isActive && state.isPlaying)
               indexContent = `<div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
-            } else if (isActive) {
+            else if (isActive)
               indexContent = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
-            }
-
             return `
-      <div class="song-item ${
-        isActive ? "active" : ""
-      }" onclick="playSong(${originalIndex})">
-         <div class="song-index-wrapper">${indexContent}</div>
-         <div class="song-info">
-             <div class="song-title" style="color: ${
-               isActive ? "var(--neon-primary)" : "white"
-             }">${s.title}</div>
-             <div class="song-artist">${s.artist}</div>
-         </div>
-         <div style="display:flex; align-items:center; justify-content:center;">
-             <button class="btn-heart-list liked" 
-                     data-id="${s.id}"
-                     onclick="event.stopPropagation(); toggleLikeInList(${
-                       s.id
-                     })">
-                 <i class="fa-solid fa-heart"></i>
-             </button>
-         </div>
-         <div class="song-duration">${s.duration || "--:--"}</div>
-      </div>`;
+            <div class="song-item ${
+              isActive ? "active" : ""
+            }" onclick="playSong(${originalIndex})">
+               <div class="song-index-wrapper">${indexContent}</div>
+               <div class="song-info">
+                   <div class="song-title" style="color: ${
+                     isActive ? "var(--neon-primary)" : "white"
+                   }">${s.title}</div>
+                   <div class="song-artist">${s.artist}</div>
+               </div>
+               <div style="display:flex; align-items:center; justify-content:center;">
+                   <button class="btn-heart-list liked" data-id="${
+                     s.id
+                   }" onclick="event.stopPropagation(); toggleLikeInList(${
+              s.id
+            })">
+                       <i class="fa-solid fa-heart"></i>
+                   </button>
+               </div>
+               <div class="song-duration">${s.duration || "--:--"}</div>
+            </div>`;
           })
           .join("");
       }
 
-      // === QUAY LẠI DANH SÁCH CHÍNH KHI CLICK "KHÁM PHÁ" ===
       function showMainPlaylist() {
         document.getElementById("playlistTitle").innerText = "Dải Ngân Hà";
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
-        document.querySelector(".nav-item.active")?.classList.remove("active");
-        document.querySelectorAll(".nav-item")[0].classList.add("active"); // "Khám phá"
+        document.querySelectorAll(".nav-item")[0].classList.add("active");
         renderList();
       }
-
-      // Gắn sự kiện click cho "Khám phá"
       document.querySelectorAll(".nav-item")[0].onclick = showMainPlaylist;
-      // === MOBILE MENU LOGIC ===
+
       function toggleMobileSidebar() {
         const sidebar = document.querySelector(".sidebar");
         const overlay = document.getElementById("mobileOverlay");
-
         sidebar.classList.toggle("active");
         overlay.classList.toggle("active");
       }
-
-      // Tự động đóng menu khi chọn mục trong sidebar
       document.querySelectorAll(".sidebar .nav-item").forEach((item) => {
         item.addEventListener("click", () => {
-          if (window.innerWidth <= 768) {
-            toggleMobileSidebar();
-          }
+          if (window.innerWidth <= 768) toggleMobileSidebar();
         });
       });
-      // ======================================================
-      // === TÍNH NĂNG VUỐT (SWIPE) CHO MOBILE/TABLET ===
-      // ======================================================
+      document
+        .getElementById("mobileOverlay")
+        .addEventListener("click", toggleMobileSidebar);
 
+      // SWIPE LOGIC
       let touchStartX = 0;
       let touchEndX = 0;
-      const minSwipeDistance = 50; // Cần vuốt ít nhất 50px mới tính
-
-      // Danh sách các vùng hỗ trợ vuốt
+      const minSwipeDistance = 50;
       const swipeTargets = [
-        document.getElementById("controlDeck"), // Thanh player dưới đáy
-        document.getElementById("discWrapper"), // Đĩa nhạc (nếu hiện)
-        document.querySelector(".mobile-header"), // Header trên mobile
+        document.getElementById("controlDeck"),
+        document.getElementById("discWrapper"),
+        document.querySelector(".mobile-header"),
       ];
-
       swipeTargets.forEach((target) => {
         if (!target) return;
-
         target.addEventListener(
           "touchstart",
           (e) => {
@@ -2297,7 +2383,6 @@
           },
           { passive: true }
         );
-
         target.addEventListener(
           "touchend",
           (e) => {
@@ -2310,30 +2395,22 @@
 
       function handleSwipeGesture() {
         const distance = touchStartX - touchEndX;
-
-        // Vuốt sang Trái (Swipe Left) -> Next Song
         if (distance > minSwipeDistance) {
           nextSong();
-          // Hiệu ứng visual cho nút Next
           const btn = document.querySelector(".fa-forward-step").parentElement;
           btn.classList.add("active");
           setTimeout(() => btn.classList.remove("active"), 200);
-
           showToast(
             "Đã vuốt: Bài tiếp theo",
             "success",
             '<i class="fa-solid fa-forward"></i>'
           );
         }
-
-        // Vuốt sang Phải (Swipe Right) -> Prev Song
         if (distance < -minSwipeDistance) {
           prevSong();
-          // Hiệu ứng visual cho nút Prev
           const btn = document.querySelector(".fa-backward-step").parentElement;
           btn.classList.add("active");
           setTimeout(() => btn.classList.remove("active"), 200);
-
           showToast(
             "Đã vuốt: Bài trước đó",
             "success",
@@ -2341,19 +2418,61 @@
           );
         }
       }
-      // === MOBILE MENU LOGIC (Đã tối ưu) ===
-      function toggleMobileSidebar() {
-        const sidebar = document.querySelector(".sidebar");
-        const overlay = document.getElementById("mobileOverlay");
-        // Thêm class active để kích hoạt CSS trượt ra
-        sidebar.classList.toggle("active");
-        overlay.classList.toggle("active");
+
+      // === LOGIC FULL SCREEN PLAYER (FIXED) ===
+      const fsOverlay = document.getElementById("fullScreenPlayer");
+      const fsElements = {
+        cover: document.getElementById("fsCover"),
+        backdrop: document.getElementById("fsBackdrop"),
+        title: document.getElementById("fsTitle"),
+        artist: document.getElementById("fsArtist"),
+        playBtn: document.getElementById("fsPlayBtn"),
+        discWrapper: document.getElementById("fsDiscWrapper"),
+        currentTime: document.getElementById("fsCurrentTime"),
+        duration: document.getElementById("fsDuration"),
+        progressFill: document.getElementById("fsProgressFill"),
+      };
+
+      const footerImgWrapper = document.querySelector(".footer-cover-wrapper");
+      if (footerImgWrapper) {
+        footerImgWrapper.style.cursor = "pointer";
+        footerImgWrapper.addEventListener("click", openFullScreen);
       }
 
-      // Đóng menu khi click vào overlay (Vùng tối bên ngoài)
-      document
-        .getElementById("mobileOverlay")
-        .addEventListener("click", toggleMobileSidebar);
+      function openFullScreen() {
+        if (window.innerWidth > 1024) return;
+        updateFullScreenUI();
+        fsOverlay.classList.add("active");
+      }
+
+      function closeFullScreen() {
+        fsOverlay.classList.remove("active");
+      }
+
+      function updateFullScreenUI() {
+        const song = songs[state.currentSongIndex];
+        fsElements.cover.src = song.cover;
+        fsElements.backdrop.style.backgroundImage = `url('${song.cover}')`;
+        fsElements.title.innerText = song.title;
+        fsElements.artist.innerText = song.artist;
+
+        if (state.isPlaying) {
+          fsElements.playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+          fsElements.discWrapper.classList.add("playing");
+        } else {
+          fsElements.playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+          fsElements.discWrapper.classList.remove("playing");
+        }
+      }
+
+      audio.addEventListener("timeupdate", () => {
+        if (!fsOverlay.classList.contains("active")) return;
+        const curr = audio.currentTime;
+        const dur = audio.duration || 1;
+        const pct = (curr / dur) * 100;
+        fsElements.currentTime.innerText = formatTime(curr);
+        fsElements.progressFill.style.width = `${pct}%`;
+      });
     </script>
     <button
       class="back-to-top"
