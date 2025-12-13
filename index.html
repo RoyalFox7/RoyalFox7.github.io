@@ -1175,6 +1175,85 @@
           display: none !important;
         }
       }
+      /* ==================== LANDSCAPE MOBILE (TỐI ƯU XOAY NGANG) ==================== */
+      @media (max-height: 500px) and (orientation: landscape) {
+        /* 1. HEADER: Thu nhỏ lại cho gọn */
+        .mobile-header {
+          padding: 5px 20px;
+          height: 45px; /* Cố định chiều cao nhỏ */
+        }
+        .logo-mobile {
+          font-size: 16px;
+        }
+        .btn-menu-mobile {
+          font-size: 18px;
+        }
+
+        /* 2. DANH SÁCH BÀI HÁT: Mở rộng tối đa */
+        .universe-panel {
+          /* Tính toán: 100vh - Header(45px) - Player(65px) - Padding(10px) */
+          height: calc(100vh - 120px);
+          padding-bottom: 70px !important; /* Chừa chỗ cho Player */
+        }
+
+        /* 3. ẨN HÀNH TINH (TOPIC): Để tiết kiệm chiều dọc quý giá */
+        .planets-orbit {
+          display: none !important;
+        }
+
+        /* 4. HIỆN LẠI TIÊU ĐỀ PLAYLIST (Thay thế cho hành tinh đã ẩn) */
+        .song-list-header {
+          display: block !important;
+          padding: 8px 16px;
+          margin-bottom: 0;
+          font-size: 16px;
+          background: transparent;
+          border: none;
+          color: var(--neon-primary);
+        }
+
+        /* 5. ITEM BÀI HÁT: Thu gọn padding */
+        .song-item {
+          margin: 0 16px 4px; /* Giảm khoảng cách giữa các bài */
+          padding: 6px 12px;
+        }
+        .footer-cover-wrapper img {
+          width: 40px;
+          height: 40px;
+        } /* Ảnh bìa nhỏ lại */
+        .song-info .song-title {
+          font-size: 14px;
+        }
+
+        /* 6. PLAYER (THANH PHÁT NHẠC): Tinh tế hơn */
+        .control-deck {
+          height: 60px; /* Thấp hơn bản dọc (76px) */
+          bottom: 10px;
+
+          /* Căn giữa và giới hạn chiều rộng (để không bị dài thượt) */
+          left: 50%;
+          transform: translateX(-50%);
+          width: 90%;
+          max-width: 500px; /* Chỉ rộng tối đa 500px */
+
+          border-radius: 30px; /* Bo tròn nhiều hơn cho giống viên thuốc */
+          padding: 0 12px;
+        }
+
+        /* Chỉnh nút Play nhỏ lại xíu cho cân đối */
+        #playIconBtn {
+          width: 40px;
+          height: 40px;
+          font-size: 16px;
+        }
+
+        /* Chỉnh lại vị trí thanh Progress (Sợi chỉ màu xanh) */
+        .progress-bar-wrapper {
+          top: 0; /* Dính sát mép trên */
+          left: 20px;
+          width: calc(100% - 40px);
+        }
+      }
     </style>
   </head>
   <body>
@@ -1575,7 +1654,7 @@
           cover: "images/vo-tinh.jpg",
           src: "musics/vo-tinh.mp3",
         },
-          {
+        {
           id: 28,
           title: "IKIGAI",
           artist: "Tăng Duy Tân ft. Bích Phương, 2pillz",
@@ -2243,5 +2322,3 @@
     </button>
   </body>
 </html>
-
-
