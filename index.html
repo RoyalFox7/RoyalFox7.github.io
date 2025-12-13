@@ -1502,6 +1502,290 @@
           font-size: 22px; /* ← Giảm từ 28px */
         }
       }
+      /* --- LYRICS MODAL STYLES --- */
+      .lyrics-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1500;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s;
+      }
+      .lyrics-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .lyrics-panel {
+        width: 500px;
+        max-width: 90%;
+        height: 70vh;
+        background: rgba(11, 15, 25, 0.95); /* Nền tối đậm */
+        border: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        transform: scale(0.9);
+        transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        padding: 0 !important; /* Reset padding của glass-panel cũ */
+      }
+      .lyrics-overlay.active .lyrics-panel {
+        transform: scale(1);
+      }
+
+      .lyrics-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .lyrics-header h3 {
+        font-size: 18px;
+        color: var(--neon-primary);
+        margin: 0;
+      }
+      .lyrics-header button {
+        font-size: 20px;
+        color: var(--text-dim);
+      }
+      .lyrics-header button:hover {
+        color: white;
+      }
+
+      .lyrics-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 24px;
+        font-size: 16px;
+        line-height: 1.8;
+        color: #e0e0e0;
+        text-align: center;
+        white-space: pre-wrap; /* Quan trọng: Giữ nguyên xuống dòng */
+      }
+
+      /* Nút Lyrics ở Footer */
+      #lyricsBtn {
+        margin-right: 16px;
+        font-size: 18px;
+      }
+      #lyricsBtn.active {
+        color: var(--neon-primary);
+      }
+      /* ==================== LYRICS FULL SCREEN (BEAUTIFUL UI) ==================== */
+      .lyrics-fs-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2100; /* Cao hơn cả Player Fullscreen */
+        background: #000;
+        display: flex;
+        flex-direction: column;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(100%);
+        transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        overflow: hidden;
+      }
+      .lyrics-fs-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      /* Nền mờ ảo phía sau */
+      .lyrics-fs-backdrop {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background-size: cover;
+        background-position: center;
+        filter: blur(60px) brightness(0.3);
+        transform: scale(1.2);
+        transition: background-image 0.5s;
+      }
+
+      .lyrics-fs-close {
+        position: absolute;
+        top: calc(env(safe-area-inset-top) + 20px);
+        right: 30px;
+        width: 44px;
+        height: 44px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        color: white;
+        font-size: 20px;
+        z-index: 10;
+        backdrop-filter: blur(10px);
+        transition: 0.2s;
+      }
+      .lyrics-fs-close:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.1);
+      }
+
+      .lyrics-fs-content {
+        flex: 1;
+        display: flex;
+        width: 100%;
+        height: 100%;
+        padding: 40px 60px;
+        gap: 60px;
+        padding-top: calc(env(safe-area-inset-top) + 60px);
+      }
+
+      /* --- CỘT TRÁI (INFO) --- */
+      .lyrics-fs-left {
+        flex: 0.8;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .lyrics-disc-wrapper {
+        width: 350px;
+        height: 350px;
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        margin-bottom: 30px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .lyrics-disc-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        /* Không xoay nữa, để tĩnh nhìn sang trọng hơn cho Lyrics view */
+      }
+      .lyrics-info h2 {
+        font-size: 32px;
+        margin-bottom: 10px;
+        color: white;
+        line-height: 1.2;
+      }
+      .lyrics-info p {
+        font-size: 18px;
+        color: var(--neon-primary);
+        font-weight: 600;
+      }
+
+      /* --- CỘT PHẢI (LYRICS TEXT) --- */
+      .lyrics-fs-right {
+        flex: 1.2;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        mask-image: linear-gradient(
+          to bottom,
+          transparent 0%,
+          black 15%,
+          black 85%,
+          transparent 100%
+        );
+        -webkit-mask-image: linear-gradient(
+          to bottom,
+          transparent 0%,
+          black 15%,
+          black 85%,
+          transparent 100%
+        );
+      }
+
+      .lyrics-scroll-area {
+        height: 100%;
+        overflow-y: auto;
+        padding: 40px 0;
+        scrollbar-width: none; /* Ẩn thanh cuộn Firefox */
+        scroll-behavior: smooth;
+      }
+      .lyrics-scroll-area::-webkit-scrollbar {
+        display: none;
+      } /* Ẩn thanh cuộn Chrome */
+
+      .lyrics-line {
+        font-size: 26px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 24px;
+        line-height: 1.5;
+        transition: 0.3s;
+        cursor: default;
+      }
+      .lyrics-line:hover {
+        color: white;
+      }
+      .lyrics-placeholder {
+        font-size: 20px;
+        color: rgba(255, 255, 255, 0.4);
+        font-style: italic;
+        margin-top: 40%;
+        text-align: center;
+      }
+
+      /* --- RESPONSIVE MOBILE --- */
+      @media (max-width: 1024px) {
+        .lyrics-fs-content {
+          flex-direction: column;
+          padding: 20px;
+          gap: 20px;
+          padding-top: 80px;
+        }
+
+        /* Mobile: Thu nhỏ ảnh, đẩy lên trên */
+        .lyrics-fs-left {
+          flex: 0 0 auto;
+          flex-direction: row;
+          gap: 20px;
+          justify-content: flex-start;
+          text-align: left;
+        }
+        .lyrics-disc-wrapper {
+          width: 80px;
+          height: 80px;
+          margin: 0;
+          border-radius: 10px;
+        }
+        .lyrics-info h2 {
+          font-size: 20px;
+          margin-bottom: 5px;
+        }
+        .lyrics-info p {
+          font-size: 14px;
+        }
+
+        /* Mobile: Lời bài hát to rõ */
+        .lyrics-fs-right {
+          mask-image: none;
+          -webkit-mask-image: none;
+        }
+        .lyrics-line {
+          font-size: 22px;
+          text-align: left;
+          margin-bottom: 20px;
+        }
+      }
+
+      /* --- LANDSCAPE MOBILE (XOAY NGANG) --- */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .lyrics-fs-content {
+          flex-direction: row;
+          padding: 10px 40px;
+        }
+        .lyrics-fs-left {
+          display: none;
+        } /* Ẩn luôn ảnh bìa để tập trung đọc lời */
+        .lyrics-fs-right {
+          mask-image: none;
+        }
+        .lyrics-line {
+          font-size: 20px;
+          text-align: center;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1677,6 +1961,14 @@
       </div>
 
       <div class="footer-right">
+        <button
+          class="btn-control"
+          id="lyricsBtn"
+          onclick="openLyricsPage()"
+          title="Lời bài hát"
+        >
+          <i class="fa-solid fa-align-left"></i>
+        </button>
         <div class="volume-box">
           <button class="btn-volume" id="volumeIconBtn" onclick="toggleMute()">
             <i class="fa-solid fa-volume-high" id="volumeIcon"></i>
@@ -1736,7 +2028,32 @@
         </div>
       </div>
     </div>
+    <div id="lyricsFullScreen" class="lyrics-fs-overlay">
+      <div class="lyrics-fs-backdrop" id="lyricsBackdrop"></div>
 
+      <button class="lyrics-fs-close" onclick="closeLyricsPage()">
+        <i class="fa-solid fa-chevron-down"></i>
+      </button>
+
+      <div class="lyrics-fs-content">
+        <div class="lyrics-fs-left">
+          <div class="lyrics-disc-wrapper" id="lyricsDisc">
+            <img src="" class="lyrics-disc-img" id="lyricsCover" />
+          </div>
+          <div class="lyrics-info">
+            <h2 id="lyricsTitle">Tên Bài Hát</h2>
+            <p id="lyricsArtist">Ca sĩ</p>
+          </div>
+        </div>
+
+        <div class="lyrics-fs-right">
+          <div class="lyrics-scroll-area" id="lyricsTextContainer">
+            <div class="lyrics-placeholder">Đang tải lời bài hát...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="data/lyrics.js"></script>
     <script>
       // DỮ LIỆU BÀI HÁT
       const songs = [
@@ -2570,6 +2887,165 @@
       // Thêm event play/pause để sync ngay lập tức
       audio.addEventListener("play", syncFsPlayState);
       audio.addEventListener("pause", syncFsPlayState);
+      // === LOGIC LYRICS ===
+      function toggleLyrics() {
+        const overlay = document.getElementById("lyricsOverlay");
+        const btn = document.getElementById("lyricsBtn");
+        const isActive = overlay.classList.toggle("active");
+        btn.classList.toggle("active", isActive);
+
+        if (isActive) loadLyrics();
+      }
+
+      // Hàm loadLyrics thông minh (Hybrid: Local + Online)
+      async function loadLyrics() {
+        const song = songs[state.currentSongIndex];
+        const content = document.getElementById("lyricsContent");
+
+        // Hiện trạng thái đang tải
+        content.innerHTML =
+          '<div style="margin-top:20px;"><i class="fa-solid fa-spinner fa-spin"></i> Đang tìm lời bài hát...</div>';
+
+        // BƯỚC 1: Kiểm tra trong file lyrics.js (Local) trước
+        // (Ưu tiên lời bạn tự nhập vì nó chính xác nhất)
+        if (lyricsDatabase[song.id]) {
+          console.log("Đã lấy lyrics từ Local Database");
+          content.innerText = lyricsDatabase[song.id];
+          return;
+        }
+
+        // BƯỚC 2: Nếu Local không có, gọi API LRCLIB (Online)
+        try {
+          console.log("Đang tìm lyrics online cho:", song.title);
+
+          // Gọi API
+          const response = await fetch(
+            `https://lrclib.net/api/get?artist_name=${encodeURIComponent(
+              song.artist
+            )}&track_name=${encodeURIComponent(song.title)}&duration=${
+              audio.duration
+            }`
+          );
+
+          if (!response.ok) throw new Error("Not found");
+
+          const data = await response.json();
+
+          // LRCLIB trả về 2 loại: plainLyrics (lời thường) và syncedLyrics (lời chạy karaoke)
+          // Ở đây mình lấy plainLyrics cho đơn giản
+          if (data.plainLyrics) {
+            content.innerText = data.plainLyrics;
+          } else {
+            throw new Error("No plain lyrics");
+          }
+        } catch (error) {
+          console.error("Lỗi tìm lyrics:", error);
+          // Nếu tìm không thấy cả trên mạng
+          content.innerHTML =
+            '<span style="color: #666; font-style: italic;">(Không tìm thấy lời bài hát này)</span>';
+        }
+      }
+
+      // Tự động cập nhật lời khi đổi bài (nếu bảng lyrics đang mở)
+      audio.addEventListener("play", () => {
+        if (
+          document.getElementById("lyricsOverlay").classList.contains("active")
+        ) {
+          loadLyrics();
+        }
+      });
+      // === LOGIC LYRICS FULL SCREEN ===
+      const lyricsPage = document.getElementById("lyricsFullScreen");
+      const lyricsUI = {
+        backdrop: document.getElementById("lyricsBackdrop"),
+        cover: document.getElementById("lyricsCover"),
+        title: document.getElementById("lyricsTitle"),
+        artist: document.getElementById("lyricsArtist"),
+        container: document.getElementById("lyricsTextContainer"),
+      };
+
+      // Hàm mở trang Lyrics (Gán vào nút Lyrics ở Footer)
+      // Tìm nút có id="lyricsBtn" và sửa onclick="openLyricsPage()"
+      async function openLyricsPage() {
+        const song = songs[state.currentSongIndex];
+
+        // 1. Cập nhật UI cơ bản
+        lyricsUI.cover.src = song.cover;
+        lyricsUI.backdrop.style.backgroundImage = `url('${song.cover}')`;
+        lyricsUI.title.innerText = song.title;
+        lyricsUI.artist.innerText = song.artist;
+
+        // 2. Mở giao diện
+        lyricsPage.classList.add("active");
+
+        // 3. Tải lời bài hát
+        await fetchAndRenderLyrics(song);
+      }
+
+      function closeLyricsPage() {
+        lyricsPage.classList.remove("active");
+      }
+
+      // Hàm tải và hiển thị lời
+      async function fetchAndRenderLyrics(song) {
+        lyricsUI.container.innerHTML =
+          '<div class="lyrics-placeholder"><i class="fa-solid fa-spinner fa-spin"></i> Đang tải lời bài hát...</div>';
+
+        let finalLyrics = "";
+
+        // Ưu tiên 1: File Local (lyrics.js)
+        if (typeof lyricsDatabase !== "undefined" && lyricsDatabase[song.id]) {
+          finalLyrics = lyricsDatabase[song.id];
+        }
+        // Ưu tiên 2: API Online
+        else {
+          try {
+            const res = await fetch(
+              `https://lrclib.net/api/get?artist_name=${encodeURIComponent(
+                song.artist
+              )}&track_name=${encodeURIComponent(song.title)}&duration=${
+                audio.duration
+              }`
+            );
+            if (res.ok) {
+              const data = await res.json();
+              finalLyrics = data.plainLyrics || "";
+            }
+          } catch (e) {
+            console.error(e);
+          }
+        }
+
+        // Render ra màn hình
+        if (finalLyrics) {
+          // Tách từng dòng và bọc vào thẻ div để đẹp hơn
+          const lines = finalLyrics.split("\n");
+          const html = lines
+            .map((line) => {
+              if (line.trim() === "") return "<br>";
+              return `<div class="lyrics-line">${line}</div>`;
+            })
+            .join("");
+          lyricsUI.container.innerHTML = html;
+        } else {
+          lyricsUI.container.innerHTML =
+            '<div class="lyrics-placeholder">Chưa có lời bài hát này.</div>';
+        }
+      }
+
+      // Tự động cập nhật nếu đang mở trang Lyrics mà đổi bài
+      audio.addEventListener("play", () => {
+        if (lyricsPage.classList.contains("active")) {
+          const song = songs[state.currentSongIndex];
+          // Cập nhật ảnh/tên
+          lyricsUI.cover.src = song.cover;
+          lyricsUI.backdrop.style.backgroundImage = `url('${song.cover}')`;
+          lyricsUI.title.innerText = song.title;
+          lyricsUI.artist.innerText = song.artist;
+          // Tải lời mới
+          fetchAndRenderLyrics(song);
+        }
+      });
     </script>
     <button
       class="back-to-top"
