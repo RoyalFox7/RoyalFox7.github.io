@@ -1534,22 +1534,24 @@
       #lyricsBtn.active {
         color: var(--neon-primary);
       }
-      /* ==================== LYRICS FULL SCREEN (BEAUTIFUL UI) ==================== */
+      /* ==================== LYRICS FULL SCREEN (FINAL FIXED V3) ==================== */
+
+      /* 1. KHUNG CHÍNH (OVERLAY) - Cố định, không cuộn */
       .lyrics-fs-overlay {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        bottom: 96px;
-        z-index: 2100; /* Cao hơn cả Player Fullscreen */
+        bottom: 96px; /* Chừa 96px cho Player */
+        z-index: 2100;
         background: #000;
         display: flex;
-        flex-direction: column;
+        flex-direction: column; /* Xếp dọc */
         opacity: 0;
         visibility: hidden;
         transform: translateY(100%);
         transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-        overflow: hidden;
+        overflow: hidden; /* CẤM CUỘN KHUNG NÀY */
       }
       .lyrics-fs-overlay.active {
         opacity: 1;
@@ -1557,7 +1559,7 @@
         transform: translateY(0);
       }
 
-      /* Nền mờ ảo phía sau */
+      /* Nền backdrop mờ */
       .lyrics-fs-backdrop {
         position: absolute;
         inset: 0;
@@ -1569,36 +1571,59 @@
         transition: background-image 0.5s;
       }
 
-      .lyrics-fs-close {
-        position: absolute;
-        top: calc(env(safe-area-inset-top) + 20px);
-        right: 30px;
-        width: 44px;
-        height: 44px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        color: white;
-        font-size: 20px;
-        z-index: 10;
-        backdrop-filter: blur(10px);
-        transition: 0.2s;
+      /* 2. HEADER (THANH TRÊN CÙNG) - Luôn đứng yên */
+      .fs-top-header {
+        flex: 0 0 auto; /* KHÓA CỨNG CHIỀU CAO: Không co giãn */
+        position: relative;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 40px;
+        background: rgba(5, 7, 16, 0.95); /* Nền đậm che lời chạy qua */
+        backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       }
-      .lyrics-fs-close:hover {
-        background: rgba(255, 255, 255, 0.2);
-        transform: scale(1.1);
+      .header-spacer,
+      .header-actions {
+        flex: 1;
+        display: flex;
+      }
+      .header-actions {
+        justify-content: flex-end;
       }
 
+      /* Nút đóng */
+      .fs-close-btn-new {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+      .fs-close-btn-new:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--neon-primary);
+      }
+
+      /* 3. VÙNG NỘI DUNG CHÍNH - Tự lấp đầy phần còn lại */
       .lyrics-fs-content {
-        flex: 1;
+        flex: 1; /* Chiếm hết chiều cao còn lại */
         display: flex;
         width: 100%;
         height: 100%;
-        padding: 40px 60px;
-        gap: 60px;
-        padding-top: calc(env(safe-area-inset-top) + 60px);
+        overflow: hidden; /* CẤM TRÀN */
+        padding: 0;
       }
 
-      /* --- CỘT TRÁI (INFO) --- */
+      /* CỘT TRÁI (Đĩa nhạc) */
       .lyrics-fs-left {
         flex: 0.8;
         display: flex;
@@ -1606,13 +1631,14 @@
         justify-content: center;
         align-items: center;
         text-align: center;
+        padding: 40px;
       }
       .lyrics-disc-wrapper {
-        width: 350px;
-        height: 350px;
+        width: 320px;
+        height: 320px;
         border-radius: 20px;
         box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        margin-bottom: 30px;
+        margin-bottom: 24px;
         overflow: hidden;
         border: 1px solid rgba(255, 255, 255, 0.1);
       }
@@ -1620,168 +1646,280 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        /* Không xoay nữa, để tĩnh nhìn sang trọng hơn cho Lyrics view */
       }
       .lyrics-info h2 {
-        font-size: 32px;
-        margin-bottom: 10px;
+        font-size: 28px;
+        margin-bottom: 8px;
         color: white;
         line-height: 1.2;
       }
       .lyrics-info p {
-        font-size: 18px;
+        font-size: 16px;
         color: var(--neon-primary);
         font-weight: 600;
       }
 
-      /* --- CỘT PHẢI (LYRICS TEXT) --- */
+      /* CỘT PHẢI (Chứa Tab & Nội dung Tab) */
       .lyrics-fs-right {
         flex: 1.2;
         height: 100%;
-        overflow: hidden;
+        display: flex;
+        flex-direction: column; /* Xếp dọc */
+        overflow: hidden; /* CẤM TRÀN */
         position: relative;
+        padding: 20px 40px 0 0;
+      }
+
+      /* 4. THANH TAB (Nằm trong Header để đẹp hơn, nhưng CSS ở đây để định dạng) */
+      .fs-tab-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 30px;
+        padding: 4px;
+        gap: 4px;
+      }
+      .fs-tab-btn {
+        padding: 6px 20px;
+        border-radius: 24px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #ccc;
+        background: transparent;
+        transition: all 0.3s ease;
+      }
+      .fs-tab-btn:hover {
+        color: white;
+      }
+      .fs-tab-btn.active {
+        background: rgba(255, 255, 255, 0.2);
+        color: var(--neon-primary);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      /* 5. NỘI DUNG TAB (Vùng này mới được cuộn) */
+      .fs-tab-content {
+        display: none;
+      }
+
+      .fs-tab-content.active {
+        display: flex;
+        flex-direction: column;
+        flex: 1; /* Chiếm hết chiều cao */
+        min-height: 0; /* Fix lỗi flexbox */
+        overflow: hidden; /* CẤM TRÀN */
+        width: 100%;
+        animation: fadeIn 0.4s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* VÙNG SCROLL THỰC SỰ */
+      .lyrics-scroll-area,
+      .fs-playlist-container {
+        flex: 1; /* Chiếm hết chiều cao */
+        overflow-y: auto; /* CHỈ CHO PHÉP CUỘN Ở ĐÂY */
+        scroll-behavior: smooth;
+        padding-bottom: 120px; /* Khoảng trống cuối cùng */
+
+        /* Hiệu ứng làm mờ 2 đầu */
         mask-image: linear-gradient(
           to bottom,
           transparent 0%,
-          black 15%,
-          black 85%,
+          black 5%,
+          black 95%,
           transparent 100%
         );
         -webkit-mask-image: linear-gradient(
           to bottom,
           transparent 0%,
-          black 15%,
-          black 85%,
+          black 5%,
+          black 95%,
           transparent 100%
         );
       }
 
-      .lyrics-scroll-area {
-        height: 100%;
-        overflow-y: auto;
-        padding: 40px 0;
-        scrollbar-width: none; /* Ẩn thanh cuộn Firefox */
-        scroll-behavior: smooth;
-      }
-      .lyrics-scroll-area::-webkit-scrollbar {
-        display: none;
-      } /* Ẩn thanh cuộn Chrome */
-
+      /* --- STYLE CHI TIẾT --- */
       .lyrics-line {
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 700;
         color: rgba(255, 255, 255, 0.5);
         margin-bottom: 24px;
         line-height: 1.5;
-        transition: 0.3s;
-        cursor: default;
+        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        transform-origin: left center;
+        cursor: pointer;
       }
       .lyrics-line:hover {
-        color: white;
+        opacity: 0.8;
+      }
+      .lyrics-line.active {
+        color: var(--neon-primary);
+        opacity: 1;
+        font-weight: 800;
+        transform: scale(1.1);
+        text-shadow: 0 0 15px rgba(0, 229, 255, 0.6);
       }
       .lyrics-placeholder {
-        font-size: 20px;
+        font-size: 18px;
         color: rgba(255, 255, 255, 0.4);
         font-style: italic;
         margin-top: 40%;
         text-align: center;
       }
 
-      /* --- RESPONSIVE MOBILE --- */
+      /* Style Playlist trong FS */
+      .fs-song-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 16px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        background: rgba(255, 255, 255, 0.03);
+        transition: 0.2s;
+        cursor: pointer;
+      }
+      .fs-song-item:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .fs-song-item.active {
+        background: rgba(0, 229, 255, 0.15);
+        border-left: 3px solid var(--neon-primary);
+      }
+      .fs-song-img {
+        width: 40px;
+        height: 40px;
+        border-radius: 4px;
+        object-fit: cover;
+      }
+      .fs-song-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .fs-song-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: white;
+        margin-bottom: 2px;
+      }
+      .fs-song-artist {
+        font-size: 12px;
+        color: #aaa;
+      }
+      .fs-song-item.active .fs-song-title {
+        color: var(--neon-primary);
+      }
+
+      /* Style Info Tab */
+      .fs-info-box {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+      .fs-info-box h3 {
+        font-size: 16px;
+        color: var(--neon-secondary);
+        margin-bottom: 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 8px;
+      }
+
+      /* --- RESPONSIVE FIX (MOBILE/TABLET) --- */
       @media (max-width: 1024px) {
         .lyrics-fs-content {
           flex-direction: column;
-          padding: 20px;
-          gap: 20px;
-          padding-top: 80px;
+          padding: 0;
         }
 
-        /* Mobile: Thu nhỏ ảnh, đẩy lên trên */
+        /* Mobile Header */
+        .fs-top-header {
+          padding: 10px 16px;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+        .header-spacer {
+          display: none;
+        }
+        .header-actions {
+          margin-left: auto;
+          order: 2;
+          flex: 0 0 auto;
+        }
+        .fs-tab-nav {
+          width: 100%;
+          order: 3;
+          justify-content: space-between;
+          margin-top: 0;
+        }
+        .fs-tab-btn {
+          flex: 1;
+          padding: 8px 0;
+          font-size: 13px;
+        }
+
+        /* Cột trái mobile */
         .lyrics-fs-left {
           flex: 0 0 auto;
+          padding: 16px;
           flex-direction: row;
-          gap: 20px;
+          gap: 16px;
           justify-content: flex-start;
           text-align: left;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+          width: 100%;
         }
         .lyrics-disc-wrapper {
-          width: 80px;
-          height: 80px;
+          width: 64px;
+          height: 64px;
           margin: 0;
-          border-radius: 10px;
+          box-shadow: none;
+          border-radius: 8px;
         }
         .lyrics-info h2 {
-          font-size: 20px;
-          margin-bottom: 5px;
+          font-size: 18px;
+          margin: 0;
         }
         .lyrics-info p {
           font-size: 14px;
         }
 
-        /* Mobile: Lời bài hát to rõ */
+        /* Cột phải mobile */
         .lyrics-fs-right {
-          mask-image: none;
-          -webkit-mask-image: none;
-        }
-        .lyrics-line {
-          font-size: 22px;
-          text-align: left;
-          margin-bottom: 20px;
-        }
-      }
-
-      /* --- LANDSCAPE MOBILE (XOAY NGANG) --- */
-      @media (max-height: 500px) and (orientation: landscape) {
-        .lyrics-fs-content {
-          flex-direction: row;
-          padding: 10px 40px;
-        }
-        .lyrics-fs-left {
-          display: none;
-        } /* Ẩn luôn ảnh bìa để tập trung đọc lời */
-        .lyrics-fs-right {
-          mask-image: none;
+          padding: 0 20px;
         }
         .lyrics-line {
           font-size: 20px;
           text-align: center;
-        }
-      }
-      /* --- HIỆU ỨNG KARAOKE --- */
-      .lyrics-line {
-        /* Giữ các thuộc tính cũ */
-        font-size: 24px;
-        font-weight: 700;
-        color: rgba(255, 255, 255, 0.5);
-        margin-bottom: 24px;
-        line-height: 1.5;
-
-        /* Thêm hiệu ứng chuyển động */
-        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        transform-origin: left center;
-        cursor: pointer; /* Để biết là bấm tua được */
-      }
-
-      .lyrics-line:hover {
-        opacity: 0.8;
-      }
-
-      .lyrics-line.active {
-        color: var(--neon-primary); /* Màu sáng */
-        opacity: 1;
-        font-weight: 800;
-        transform: scale(1.1); /* Phóng to nhẹ */
-        text-shadow: 0 0 15px rgba(0, 229, 255, 0.6); /* Phát sáng */
-      }
-
-      /* Mobile thì căn giữa khi active */
-      @media (max-width: 1024px) {
-        .lyrics-line {
           transform-origin: center center;
-          font-size: 20px;
         }
         .lyrics-line.active {
           transform: scale(1.05);
+        }
+      }
+
+      @media (max-height: 500px) and (orientation: landscape) {
+        .lyrics-fs-content {
+          flex-direction: row;
+          padding: 0 40px;
+        }
+        .lyrics-fs-left {
+          display: none;
+        }
+        .lyrics-line {
+          font-size: 20px;
+          text-align: center;
         }
       }
     </style>
@@ -1962,7 +2100,7 @@
         <button
           class="btn-control"
           id="lyricsBtn"
-          onclick="openLyricsPage()"
+          onclick="toggleLyricsPage()"
           title="Lời bài hát"
         >
           <i class="fa-solid fa-align-left"></i>
@@ -2029,9 +2167,31 @@
     <div id="lyricsFullScreen" class="lyrics-fs-overlay">
       <div class="lyrics-fs-backdrop" id="lyricsBackdrop"></div>
 
-      <button class="lyrics-fs-close" onclick="closeLyricsPage()">
-        <i class="fa-solid fa-chevron-down"></i>
-      </button>
+      <div class="fs-top-header">
+        <div class="header-spacer"></div>
+
+        <div class="fs-tab-nav">
+          <button class="fs-tab-btn active" onclick="switchFsTab('lyrics')">
+            Lời bài hát
+          </button>
+          <button class="fs-tab-btn" onclick="switchFsTab('playlist')">
+            Danh sách phát
+          </button>
+          <button class="fs-tab-btn" onclick="switchFsTab('info')">
+            Thông tin
+          </button>
+        </div>
+
+        <div class="header-actions">
+          <button
+            class="fs-close-btn-new"
+            onclick="closeLyricsPage()"
+            title="Thu nhỏ"
+          >
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+        </div>
+      </div>
 
       <div class="lyrics-fs-content">
         <div class="lyrics-fs-left">
@@ -2045,8 +2205,27 @@
         </div>
 
         <div class="lyrics-fs-right">
-          <div class="lyrics-scroll-area" id="lyricsTextContainer">
-            <div class="lyrics-placeholder">Đang tải lời bài hát...</div>
+          <div id="tab-lyrics" class="fs-tab-content active">
+            <div class="lyrics-scroll-area" id="lyricsTextContainer">
+              <div class="lyrics-placeholder">Đang tải lời bài hát...</div>
+            </div>
+          </div>
+
+          <div id="tab-playlist" class="fs-tab-content">
+            <div class="fs-playlist-container" id="fsPlaylistList"></div>
+          </div>
+
+          <div id="tab-info" class="fs-tab-content">
+            <div class="fs-info-box">
+              <h3>Credit</h3>
+              <div class="info-row">
+                <span>Nghệ sĩ</span><strong id="infoArtist">...</strong>
+              </div>
+              <div class="info-row">
+                <span>Album</span
+                ><strong id="infoAlbum">SoundSphere Collection</strong>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -2054,7 +2233,7 @@
     <script src="data/lyrics.js"></script>
     <script>
       // DỮ LIỆU BÀI HÁT
-      const songs = [
+      let songs = [
         {
           id: 1,
           title: "Nơi này có anh",
@@ -2405,13 +2584,6 @@
           cover: "images/yeu-mot-nguoi-sao-buon-den-the.jpg",
           src: "musics/yeu-mot-nguoi-sao-buon-den-the.mp3",
         },
-        {
-          id: 51,
-          title: "Nỡ lòng đồng ý",
-          artist: "Anh Trai “Say Hi”, B Ray, Cody, Gill, KARIK & Ryn Lee",
-          cover: "images/no-long-dong-y.jpg",
-          src: "musics/no-long-dong-y.mp3",
-        },
       ];
 
       let state = {
@@ -2421,6 +2593,7 @@
         repeatMode: 0,
         likedSongs: new Set(),
         lastVolume: 0.8,
+        playbackContext: "all",
       };
       const audio = document.getElementById("audioPlayer");
       const el = {
@@ -2453,7 +2626,47 @@
         init();
       });
 
+      // === HÀM TRỘN MẢNG (Shuffle) ===
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
       function init() {
+        const RESET_TIME = 30 * 60 * 1000; // 30 phút
+
+        const now = Date.now();
+        const lastVisit = localStorage.getItem("ss_last_visit");
+        const savedOrder = localStorage.getItem("ss_saved_playlist");
+        const savedShuffleState = localStorage.getItem("ss_is_shuffled"); // Lấy trạng thái nút bấm
+
+        // 1. Logic khôi phục Playlist
+        if (savedOrder && lastVisit && now - lastVisit < RESET_TIME) {
+          console.log("Khôi phục danh sách cũ...");
+          songs = JSON.parse(savedOrder);
+
+          // SỬA LỖI: Chỉ bật nếu người dùng thực sự đã bật trước đó
+          state.isShuffled = savedShuffleState === "true";
+        } else {
+          console.log("Tạo danh sách random mới...");
+          shuffleArray(songs);
+          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
+
+          // Mặc định là TẮT (vì list đã random rồi, nghe tuần tự là sướng nhất)
+          state.isShuffled = false;
+          localStorage.setItem("ss_is_shuffled", "false");
+        }
+
+        localStorage.setItem("ss_last_visit", now);
+
+        // 2. Cập nhật giao diện nút Shuffle ngay lập tức
+        if (el.shuffleBtn) {
+          el.shuffleBtn.classList.toggle("active", state.isShuffled);
+        }
+
+        // 3. Các hàm khởi chạy cũ
         renderList();
         loadSong(state.currentSongIndex, false);
         audio.volume = state.lastVolume;
@@ -2481,7 +2694,7 @@
             return `
                   <div class="song-item ${
                     isActive ? "active" : ""
-                  }" onclick="playSong(${i})">
+                  }" onclick="playSong(${i}, 'all')">
                      <div class="song-index-wrapper">${indexContent}</div>
                      <div class="song-info">
                          <div class="song-title" style="color: ${
@@ -2567,18 +2780,73 @@
         }
       }
 
-      function playSong(i) {
-        if (i === state.currentSongIndex && state.isPlaying) togglePlay();
-        else loadSong(i, true);
+      function playSong(i, context = "all") {
+        // Cập nhật ngữ cảnh phát nhạc mới
+        state.playbackContext = context;
+
+        // Nếu đang nghe bài này rồi thì chỉ toggle play/pause
+        if (i === state.currentSongIndex && state.isPlaying) {
+          togglePlay();
+          return;
+        }
+
+        loadSong(i, true);
+      }
+
+      // === HÀM HỖ TRỢ: LẤY DANH SÁCH BÀI HÁT THEO NGỮ CẢNH ===
+      function getPlaybackList() {
+        if (state.playbackContext === "favorites") {
+          // Lấy danh sách index của các bài đã thích
+          return songs
+            .map((s, i) => i)
+            .filter((i) => state.likedSongs.has(songs[i].id));
+        }
+        // Mặc định trả về toàn bộ index [0, 1, 2, ...]
+        return songs.map((s, i) => i);
       }
 
       function nextSong() {
-        let next = state.isShuffled
-          ? Math.floor(Math.random() * songs.length)
-          : state.currentSongIndex + 1;
-        if (next >= songs.length)
-          next = state.repeatMode === 1 ? 0 : songs.length - 1;
-        loadSong(next, true);
+        const playbackList = getPlaybackList();
+
+        // Nếu danh sách rỗng (ví dụ bỏ thích hết rồi)
+        if (playbackList.length === 0) return;
+
+        let nextIndex;
+
+        // LOGIC 1: TRỘN BÀI (SHUFFLE)
+        if (state.isShuffled) {
+          // Chọn ngẫu nhiên 1 bài trong danh sách hiện tại (trừ bài đang hát)
+          const available = playbackList.filter(
+            (i) => i !== state.currentSongIndex
+          );
+          if (available.length > 0) {
+            nextIndex = available[Math.floor(Math.random() * available.length)];
+          } else {
+            nextIndex = playbackList[0]; // Nếu chỉ có 1 bài thì hát lại bài đó
+          }
+        }
+        // LOGIC 2: TUẦN TỰ (SEQUENTIAL)
+        else {
+          // Tìm vị trí của bài hiện tại trong danh sách phát
+          const currentPos = playbackList.indexOf(state.currentSongIndex);
+
+          // Bài tiếp theo
+          let nextPos = currentPos + 1;
+
+          // Xử lý vòng lặp
+          if (nextPos >= playbackList.length) {
+            nextPos = state.repeatMode === 1 ? 0 : playbackList.length - 1; // Repeat All thì quay về 0
+          }
+          nextIndex = playbackList[nextPos];
+        }
+
+        // Nếu không tìm thấy bài nào hợp lệ (trường hợp lỗi), quay về playlist chính
+        if (nextIndex === undefined) {
+          state.playbackContext = "all";
+          nextIndex = (state.currentSongIndex + 1) % songs.length;
+        }
+
+        loadSong(nextIndex, true);
       }
 
       function prevSong() {
@@ -2586,11 +2854,36 @@
           audio.currentTime = 0;
           return;
         }
-        let prev = state.isShuffled
-          ? Math.floor(Math.random() * songs.length)
-          : state.currentSongIndex - 1;
-        if (prev < 0) prev = songs.length - 1;
-        loadSong(prev, true);
+
+        const playbackList = getPlaybackList();
+        if (playbackList.length === 0) return;
+
+        let prevIndex;
+
+        if (state.isShuffled) {
+          const available = playbackList.filter(
+            (i) => i !== state.currentSongIndex
+          );
+          if (available.length > 0) {
+            prevIndex = available[Math.floor(Math.random() * available.length)];
+          } else {
+            prevIndex = playbackList[0];
+          }
+        } else {
+          const currentPos = playbackList.indexOf(state.currentSongIndex);
+          let prevPos = currentPos - 1;
+
+          if (prevPos < 0) prevPos = playbackList.length - 1;
+          prevIndex = playbackList[prevPos];
+        }
+
+        if (prevIndex === undefined) {
+          state.playbackContext = "all";
+          prevIndex =
+            (state.currentSongIndex - 1 + songs.length) % songs.length;
+        }
+
+        loadSong(prevIndex, true);
       }
 
       audio.addEventListener("timeupdate", () => {
@@ -2635,6 +2928,11 @@
       function toggleShuffle() {
         state.isShuffled = !state.isShuffled;
         el.shuffleBtn.classList.toggle("active", state.isShuffled);
+
+        // --- THÊM DÒNG NÀY ĐỂ LƯU TRẠNG THÁI ---
+        localStorage.setItem("ss_is_shuffled", state.isShuffled);
+        // ---------------------------------------
+
         showToast(
           state.isShuffled ? "Đã BẬT trộn bài" : "Đã TẮT trộn bài",
           state.isShuffled ? "success" : "off",
@@ -2856,7 +3154,7 @@
             return `
                   <div class="song-item ${
                     isActive ? "active" : ""
-                  }" onclick="playSong(${originalIndex})">
+                  }" onclick="playSong(${originalIndex}, 'favorites')">
                      <div class="song-index-wrapper">${indexContent}</div>
                      <div class="song-info">
                          <div class="song-title" style="color: ${
@@ -3126,20 +3424,35 @@
 
       // Hàm mở trang Lyrics (Gán vào nút Lyrics ở Footer)
       // Tìm nút có id="lyricsBtn" và sửa onclick="openLyricsPage()"
-      async function openLyricsPage() {
-        const song = songs[state.currentSongIndex];
+      // === LOGIC MỚI: BẬT/TẮT LYRICS ===
+      async function toggleLyricsPage() {
+        const lyricsPage = document.getElementById("lyricsFullScreen");
+        const btn = document.getElementById("lyricsBtn");
 
-        // 1. Cập nhật UI cơ bản
-        lyricsUI.cover.src = song.cover;
-        lyricsUI.backdrop.style.backgroundImage = `url('${song.cover}')`;
-        lyricsUI.title.innerText = song.title;
-        lyricsUI.artist.innerText = song.artist;
+        // Kiểm tra xem đang mở hay đóng
+        const isActive = lyricsPage.classList.contains("active");
 
-        // 2. Mở giao diện
-        lyricsPage.classList.add("active");
+        if (isActive) {
+          // NẾU ĐANG MỞ -> THÌ ĐÓNG LẠI
+          lyricsPage.classList.remove("active");
+          btn.classList.remove("active");
+        } else {
+          // NẾU ĐANG ĐÓNG -> THÌ MỞ RA
+          const song = songs[state.currentSongIndex];
 
-        // 3. Tải lời bài hát
-        await fetchAndRenderLyrics(song);
+          // Cập nhật UI
+          lyricsUI.cover.src = song.cover;
+          lyricsUI.backdrop.style.backgroundImage = `url('${song.cover}')`;
+          lyricsUI.title.innerText = song.title;
+          lyricsUI.artist.innerText = song.artist;
+
+          // Hiệu ứng mở
+          lyricsPage.classList.add("active");
+          btn.classList.add("active"); // Sáng đèn nút bấm
+
+          // Tải lời bài hát
+          await fetchAndRenderLyrics(song);
+        }
       }
 
       function closeLyricsPage() {
@@ -3298,6 +3611,7 @@
       }
 
       // 4. HÀM ĐỒNG BỘ (SYNC) KHI NHẠC CHẠY
+      // 4. HÀM ĐỒNG BỘ (SYNC) - ĐÃ SỬA LỖI GIẬT HEADER
       function syncLyrics() {
         if (!lyricsData.length || !lyricsPage.classList.contains("active"))
           return;
@@ -3321,8 +3635,24 @@
             const newLine = document.getElementById(`line-${activeLineIndex}`);
             if (newLine) {
               newLine.classList.add("active");
-              // Cuộn trơn tới dòng đó
-              newLine.scrollIntoView({ behavior: "smooth", block: "center" });
+
+              // --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
+              // Thay vì dùng scrollIntoView (gây giật), ta tính toán vị trí và cuộn nhẹ nhàng
+              const container = lyricsUI.container;
+
+              // Tính toán để dòng chữ nằm giữa màn hình
+              // Vị trí dòng chữ - (Chiều cao khung / 2) + (Chiều cao dòng chữ / 2)
+              const scrollPosition =
+                newLine.offsetTop -
+                container.clientHeight / 2 +
+                newLine.clientHeight / 2;
+
+              // Cuộn nhẹ nhàng
+              container.scrollTo({
+                top: scrollPosition,
+                behavior: "smooth",
+              });
+              // ----------------------------------
             }
           }
         }
@@ -3369,6 +3699,152 @@
           fetchAndRenderLyrics(song);
         }
       });
+      // ======================================================
+      // === MEDIA SESSION API (FIX LỖI CHẠY NỀN) ===
+      // ======================================================
+
+      // Gọi hàm này mỗi khi đổi bài hát (Thêm vào cuối hàm loadSong)
+      function updateMediaSession() {
+        if ("mediaSession" in navigator) {
+          const song = songs[state.currentSongIndex];
+
+          navigator.mediaSession.metadata = new MediaMetadata({
+            title: song.title,
+            artist: song.artist,
+            album: "SoundSphere Collection",
+            artwork: [
+              { src: song.cover, sizes: "96x96", type: "image/jpeg" },
+              { src: song.cover, sizes: "128x128", type: "image/jpeg" },
+              { src: song.cover, sizes: "192x192", type: "image/jpeg" },
+              { src: song.cover, sizes: "256x256", type: "image/jpeg" },
+              { src: song.cover, sizes: "384x384", type: "image/jpeg" },
+              { src: song.cover, sizes: "512x512", type: "image/jpeg" },
+            ],
+          });
+
+          // Gắn sự kiện điều khiển từ màn hình khóa / tai nghe
+          navigator.mediaSession.setActionHandler("play", () => {
+            togglePlay();
+            updatePlayStateMediaSession();
+          });
+          navigator.mediaSession.setActionHandler("pause", () => {
+            togglePlay();
+            updatePlayStateMediaSession();
+          });
+          navigator.mediaSession.setActionHandler("previoustrack", () =>
+            prevSong()
+          );
+          navigator.mediaSession.setActionHandler("nexttrack", () =>
+            nextSong()
+          );
+
+          // (Tùy chọn) Tua nhạc trên màn hình khóa
+          navigator.mediaSession.setActionHandler("seekto", (details) => {
+            if (details.seekTime && details.fastSeek && "fastSeek" in audio) {
+              audio.fastSeek(details.seekTime);
+              return;
+            }
+            audio.currentTime = details.seekTime || 0;
+            updatePositionState();
+          });
+        }
+      }
+
+      // Cập nhật trạng thái Play/Pause cho hệ thống
+      function updatePlayStateMediaSession() {
+        if ("mediaSession" in navigator) {
+          navigator.mediaSession.playbackState = state.isPlaying
+            ? "playing"
+            : "paused";
+        }
+      }
+
+      // Cập nhật thanh thời gian trên màn hình khóa (quan trọng để không bị ngắt)
+      function updatePositionState() {
+        if (
+          "mediaSession" in navigator &&
+          "setPositionState" in navigator.mediaSession
+        ) {
+          if (audio.duration && !isNaN(audio.duration)) {
+            navigator.mediaSession.setPositionState({
+              duration: audio.duration,
+              playbackRate: audio.playbackRate,
+              position: audio.currentTime,
+            });
+          }
+        }
+      }
+      // ==================== FS TAB LOGIC ====================
+
+      // 1. Hàm chuyển Tab
+      function switchFsTab(tabName) {
+        // Xóa active ở tất cả nút & nội dung
+        document
+          .querySelectorAll(".fs-tab-btn")
+          .forEach((btn) => btn.classList.remove("active"));
+        document
+          .querySelectorAll(".fs-tab-content")
+          .forEach((content) => content.classList.remove("active"));
+
+        // Thêm active vào tab được chọn
+        // Tìm nút dựa vào text hoặc thứ tự (ở đây dùng logic đơn giản)
+        const buttons = document.querySelectorAll(".fs-tab-btn");
+        if (tabName === "lyrics") buttons[0].classList.add("active");
+        if (tabName === "playlist") {
+          buttons[1].classList.add("active");
+          renderFsPlaylist(); // Render playlist khi bấm vào tab này
+          scrollToActiveSong(); // Cuộn tới bài đang hát
+        }
+        if (tabName === "info") {
+          buttons[2].classList.add("active");
+          updateInfoTab(); // Cập nhật thông tin khi bấm
+        }
+
+        // Hiển thị nội dung tương ứng
+        document.getElementById(`tab-${tabName}`).classList.add("active");
+      }
+
+      // 2. Hàm Render Playlist trong Full Screen
+      function renderFsPlaylist() {
+        const container = document.getElementById("fsPlaylistList");
+        container.innerHTML = songs
+          .map((s, i) => {
+            const isActive = i === state.currentSongIndex;
+            return `
+               <div class="fs-song-item ${
+                 isActive ? "active" : ""
+               }" onclick="playSong(${i})">
+                  <img src="${s.cover}" class="fs-song-img">
+                  <div class="fs-song-info">
+                     <div class="fs-song-title">${s.title}</div>
+                     <div class="fs-song-artist">${s.artist}</div>
+                  </div>
+                  ${
+                    isActive
+                      ? '<i class="fa-solid fa-chart-simple" style="color:var(--neon-primary)"></i>'
+                      : ""
+                  }
+               </div>
+             `;
+          })
+          .join("");
+      }
+
+      // 3. Hàm cuộn tới bài đang hát trong Playlist FS
+      function scrollToActiveSong() {
+        setTimeout(() => {
+          const activeEl = document.querySelector(".fs-song-item.active");
+          if (activeEl)
+            activeEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 100);
+      }
+
+      // 4. Hàm cập nhật Tab Thông tin
+      function updateInfoTab() {
+        const song = songs[state.currentSongIndex];
+        document.getElementById("infoArtist").innerText = song.artist;
+        // Có thể thêm logic random Album nếu muốn
+      }
     </script>
     <button
       class="back-to-top"
@@ -3378,5 +3854,3 @@
     </button>
   </body>
 </html>
-
-
