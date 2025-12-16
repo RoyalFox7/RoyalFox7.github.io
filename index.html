@@ -1758,6 +1758,8 @@
         transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         transform-origin: left center;
         cursor: pointer;
+        max-width: 90%; /* Chỉ cho phép chữ chiếm 90% chiều rộng, chừa 10% để phóng to */
+        overflow-wrap: break-word; /* Tự động xuống dòng nếu chữ quá dài */
       }
       .lyrics-line:hover {
         opacity: 0.8;
