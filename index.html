@@ -2644,55 +2644,48 @@
       }
 
       function init() {
-        const RESET_TIME =  10 * 1000; 
-
+        // CẤU HÌNH THỜI GIAN (Ví dụ: 10 giây để test, sau này sửa thành 30 * 60 * 1000)
+        const RESET_TIME = 10 * 1000; 
+        
         const now = Date.now();
-        const lastVisit = localStorage.getItem("ss_last_visit");
-        const savedOrder = localStorage.getItem("ss_saved_playlist");
-        const savedShuffleState = localStorage.getItem("ss_is_shuffled"); // Lấy trạng thái nút bấm
+        const lastVisit = localStorage.getItem('ss_last_visit');
+        const savedOrder = localStorage.getItem('ss_saved_playlist');
+        const savedShuffleState = localStorage.getItem('ss_is_shuffled');
 
         let oldList = [];
-        try {
-          oldList = JSON.parse(savedOrder) || [];
-        } catch (e) {}
+        try { oldList = JSON.parse(savedOrder) || []; } catch(e) {}
 
-        // 1. Logic khôi phục Playlist
-        // LOGIC MỚI: Chỉ khôi phục khi (Chưa hết hạn) VÀ (Số lượng bài hát không đổi)
-        // Nếu bạn thêm bài mới -> songs.length sẽ khác oldList.length -> Nó sẽ chạy vào else để nạp mới
-        if (
-          savedOrder &&
-          lastVisit &&
-          now - lastVisit < RESET_TIME &&
-          oldList.length === songs.length
-        ) {
-          console.log("Khôi phục danh sách cũ...");
-          songs = oldList;
-          state.isShuffled = savedShuffleState === "true";
-        } else {
-          console.log("Tạo danh sách mới (Do hết hạn hoặc có bài hát mới)...");
-          // Nếu muốn giữ trạng thái shuffle khi có bài mới thì uncomment dòng dưới:
-          // state.isShuffled = (savedShuffleState === 'true');
+        // KIỂM TRA ĐIỀU KIỆN ĐỂ KHÔI PHỤC LIST CŨ
+        const isExpired = !lastVisit || (now - lastVisit > RESET_TIME);
+        const isSongCountChanged = oldList.length !== songs.length;
 
-          if (state.isShuffled) {
-            shuffleArray(songs);
-          } else {
-            // Nếu không shuffle thì giữ nguyên thứ tự gốc trong code
-            // (Không cần làm gì vì songs đã là gốc rồi)
-          }
+        if (savedOrder && !isExpired && !isSongCountChanged) {
+            console.log("♻️ Khôi phục phiên làm việc cũ...");
+            songs = oldList;
+            // Khôi phục trạng thái nút shuffle của phiên trước
+            state.isShuffled = (savedShuffleState === 'true');
+        } 
+        else {
+            console.log("✨ Tạo danh sách phát MỚI (Random)...");
+            
+            // --- SỬA LỖI TẠI ĐÂY: Luôn trộn bài khi tạo phiên mới ---
+            shuffleArray(songs); 
+            state.isShuffled = true; // Bật trạng thái đã trộn
+            // -------------------------------------------------------
 
-          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
-          // Reset trạng thái shuffle về mặc định hoặc giữ nguyên tùy bạn
-          // localStorage.setItem('ss_is_shuffled', state.isShuffled);
+            // Lưu danh sách mới và trạng thái vào bộ nhớ
+            localStorage.setItem('ss_saved_playlist', JSON.stringify(songs));
+            localStorage.setItem('ss_is_shuffled', 'true');
         }
 
-        localStorage.setItem("ss_last_visit", now);
+        // Cập nhật thời gian truy cập
+        localStorage.setItem('ss_last_visit', now);
 
-        // 2. Cập nhật giao diện nút Shuffle ngay lập tức
+        // Cập nhật giao diện nút Shuffle
         if (el.shuffleBtn) {
-          el.shuffleBtn.classList.toggle("active", state.isShuffled);
+            el.shuffleBtn.classList.toggle("active", state.isShuffled);
         }
 
-        // 3. Các hàm khởi chạy cũ
         renderList();
         loadSong(state.currentSongIndex, false);
         audio.volume = state.lastVolume;
@@ -3880,5 +3873,6 @@
     </button>
   </body>
 </html>
+
 
 
