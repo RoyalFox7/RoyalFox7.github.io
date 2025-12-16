@@ -2651,21 +2651,38 @@
         const savedOrder = localStorage.getItem("ss_saved_playlist");
         const savedShuffleState = localStorage.getItem("ss_is_shuffled"); // Lấy trạng thái nút bấm
 
-        // 1. Logic khôi phục Playlist
-        if (savedOrder && lastVisit && now - lastVisit < RESET_TIME) {
-          console.log("Khôi phục danh sách cũ...");
-          songs = JSON.parse(savedOrder);
+        let oldList = [];
+        try {
+          oldList = JSON.parse(savedOrder) || [];
+        } catch (e) {}
 
-          // SỬA LỖI: Chỉ bật nếu người dùng thực sự đã bật trước đó
+        // 1. Logic khôi phục Playlist
+        // LOGIC MỚI: Chỉ khôi phục khi (Chưa hết hạn) VÀ (Số lượng bài hát không đổi)
+        // Nếu bạn thêm bài mới -> songs.length sẽ khác oldList.length -> Nó sẽ chạy vào else để nạp mới
+        if (
+          savedOrder &&
+          lastVisit &&
+          now - lastVisit < RESET_TIME &&
+          oldList.length === songs.length
+        ) {
+          console.log("Khôi phục danh sách cũ...");
+          songs = oldList;
           state.isShuffled = savedShuffleState === "true";
         } else {
-          console.log("Tạo danh sách random mới...");
-          shuffleArray(songs);
-          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
+          console.log("Tạo danh sách mới (Do hết hạn hoặc có bài hát mới)...");
+          // Nếu muốn giữ trạng thái shuffle khi có bài mới thì uncomment dòng dưới:
+          // state.isShuffled = (savedShuffleState === 'true');
 
-          // Mặc định là TẮT (vì list đã random rồi, nghe tuần tự là sướng nhất)
-          state.isShuffled = false;
-          localStorage.setItem("ss_is_shuffled", "false");
+          if (state.isShuffled) {
+            shuffleArray(songs);
+          } else {
+            // Nếu không shuffle thì giữ nguyên thứ tự gốc trong code
+            // (Không cần làm gì vì songs đã là gốc rồi)
+          }
+
+          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
+          // Reset trạng thái shuffle về mặc định hoặc giữ nguyên tùy bạn
+          // localStorage.setItem('ss_is_shuffled', state.isShuffled);
         }
 
         localStorage.setItem("ss_last_visit", now);
@@ -3863,4 +3880,3 @@
     </button>
   </body>
 </html>
-
