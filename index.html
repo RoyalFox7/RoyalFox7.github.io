@@ -1924,6 +1924,252 @@
           text-align: center;
         }
       }
+      /* --- TỐI ƯU HÓA HIỆU NĂNG (PERFORMANCE BOOST) --- */
+
+      /* 1. Chỉ vẽ những gì đang nhìn thấy */
+      .universe-panel,
+      .lyrics-scroll-area,
+      .fs-playlist-container {
+        content-visibility: auto;
+        contain-intrinsic-size: 1px 5000px; /* Ước lượng chiều cao nội dung */
+      }
+
+      /* 2. Giảm gánh nặng cho GPU ở các phần tử tĩnh */
+      .song-item,
+      .lyrics-line {
+        /* Giúp trình duyệt không vẽ lại layout khi hover */
+        contain: layout paint style;
+      }
+      /* ==================== AUTH MODAL STYLES ==================== */
+      .auth-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 3000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s;
+      }
+      .auth-overlay.active {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .auth-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+      }
+
+      .auth-box {
+        position: relative;
+        z-index: 3001;
+        width: 420px;
+        max-width: 90%;
+        background: rgba(15, 20, 35, 0.95);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        padding: 40px 32px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+        transform: scale(0.9);
+        transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .auth-overlay.active .auth-box {
+        transform: scale(1);
+      }
+
+      .auth-close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        color: #ccc;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .auth-close-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .auth-form {
+        display: none;
+        animation: fadeIn 0.3s ease;
+      }
+      .auth-form.active {
+        display: block;
+      }
+
+      .auth-form h2 {
+        font-size: 24px;
+        margin-bottom: 8px;
+        text-align: center;
+        color: white;
+      }
+      .auth-subtitle {
+        font-size: 13px;
+        color: var(--text-dim);
+        text-align: center;
+        margin-bottom: 24px;
+      }
+
+      .input-group {
+        margin-bottom: 16px;
+      }
+      .input-group label {
+        display: block;
+        font-size: 13px;
+        color: #ccc;
+        margin-bottom: 6px;
+        font-weight: 600;
+      }
+      .input-group input {
+        width: 100%;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        outline: none;
+        transition: 0.2s;
+      }
+      .input-group input:focus {
+        border-color: var(--neon-primary);
+        background: rgba(0, 229, 255, 0.05);
+      }
+
+      .auth-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        margin-bottom: 24px;
+      }
+      .checkbox-container {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        color: #ccc;
+      }
+      .forgot-pass {
+        color: var(--neon-primary);
+        text-decoration: none;
+      }
+
+      .btn-auth-submit {
+        width: 100%;
+        padding: 14px;
+        border-radius: 30px;
+        border: none;
+        background: linear-gradient(
+          90deg,
+          var(--neon-primary),
+          var(--neon-secondary)
+        );
+        color: white;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-bottom: 20px;
+      }
+      .btn-auth-submit:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+      }
+
+      .auth-switch {
+        text-align: center;
+        font-size: 14px;
+        color: #aaa;
+      }
+      .auth-switch span {
+        color: var(--neon-primary);
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .auth-switch span:hover {
+        text-decoration: underline;
+      }
+
+      .auth-divider {
+        margin: 24px 0;
+        text-align: center;
+        position: relative;
+      }
+      .auth-divider::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        width: 100%;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+      }
+      .auth-divider span {
+        position: relative;
+        background: #0f1423;
+        padding: 0 10px;
+        font-size: 12px;
+        color: #888;
+      }
+
+      .social-login {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .btn-social {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: transparent;
+        color: white;
+        font-size: 18px;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .btn-social:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: white;
+      }
+
+      .auth-footer-text {
+        font-size: 11px;
+        text-align: center;
+        color: #666;
+        line-height: 1.5;
+      }
+      .auth-footer-text a {
+        color: #888;
+        text-decoration: none;
+      }
+
+      .captcha-box {
+        background: #f9f9f9;
+        padding: 10px 16px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        color: #333;
+        border: 1px solid #d3d3d3;
+      }
+      .captcha-logo {
+        height: 24px;
+        opacity: 0.7;
+      }
     </style>
   </head>
   <body>
@@ -1961,6 +2207,10 @@
           <i class="fa-solid fa-heart"></i> <span>Yêu thích</span>
         </div>
         <div style="flex-grow: 1"></div>
+
+        <div class="nav-item" onclick="openAuthModal()">
+          <i class="fa-solid fa-user"></i> <span>Tài khoản</span>
+        </div>
         <div class="nav-item">
           <i class="fa-solid fa-gear"></i> <span>Cài đặt</span>
         </div>
@@ -2015,7 +2265,13 @@
       <div class="glass-panel right-panel">
         <div class="right-panel-header">Đang phát</div>
         <div class="disc-wrapper" id="discWrapper">
-          <img src="images/sontung.jpg" class="disc-img" id="currentCover" />
+          <img
+            src="images/sontung.jpg"
+            class="disc-img"
+            id="currentCover"
+            fetchpriority="high"
+            alt="Album Cover"
+          />
         </div>
         <h2 id="currentTitle" class="current-title">...</h2>
         <p id="currentArtist" class="current-artist">...</p>
@@ -2228,6 +2484,97 @@
                 ><strong id="infoAlbum">SoundSphere Collection</strong>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="authOverlay" class="auth-overlay">
+      <div class="auth-backdrop" onclick="closeAuthModal()"></div>
+
+      <div class="auth-box">
+        <button class="auth-close-btn" onclick="closeAuthModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div id="loginForm" class="auth-form active">
+          <h2>Đăng nhập</h2>
+          <p class="auth-subtitle">Chào mừng bạn quay trở lại SoundSphere</p>
+
+          <div class="input-group">
+            <label>Tên đăng nhập</label>
+            <input type="text" placeholder="Username" />
+          </div>
+          <div class="input-group">
+            <label>Mật khẩu</label>
+            <input type="password" placeholder="Password" />
+          </div>
+
+          <div class="auth-options">
+            <label class="checkbox-container">
+              <input type="checkbox" /> Ghi nhớ đăng nhập
+            </label>
+            <a href="#" class="forgot-pass">Quên mật khẩu?</a>
+          </div>
+
+          <button class="btn-auth-submit">Đăng nhập</button>
+
+          <div class="auth-switch">
+            Chưa có tài khoản?
+            <span onclick="switchAuthMode('register')">Đăng kí nhé!</span>
+          </div>
+
+          <div class="auth-divider"><span>Hoặc tiếp tục với</span></div>
+
+          <div class="social-login">
+            <button class="btn-social">
+              <i class="fa-brands fa-google"></i>
+            </button>
+            <button class="btn-social">
+              <i class="fa-brands fa-facebook-f"></i>
+            </button>
+          </div>
+
+          <div class="auth-footer-text">
+            Việc đăng nhập đồng nghĩa với việc bạn đồng ý với <br />
+            <a href="#">Điều khoản</a> và <a href="#">Chính sách</a> của
+            SoundSphere.
+          </div>
+        </div>
+
+        <div id="registerForm" class="auth-form">
+          <h2>Đăng kí tài khoản mới</h2>
+
+          <div class="input-group">
+            <label>Tên đăng nhập</label>
+            <input type="text" placeholder="Username" />
+          </div>
+          <div class="input-group">
+            <label>Email</label>
+            <input type="email" placeholder="Email@example.com" />
+          </div>
+          <div class="input-group">
+            <label>Mật khẩu</label>
+            <input type="password" placeholder="Password" />
+          </div>
+          <div class="input-group">
+            <label>Nhập lại mật khẩu</label>
+            <input type="password" placeholder="Confirm Password" />
+          </div>
+
+          <div class="captcha-box">
+            <input type="checkbox" id="captchaCheck" />
+            <label for="captchaCheck">Tôi không phải người máy</label>
+            <img
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Recaptcha_Logo.svg/1200px-Recaptcha_Logo.svg.png"
+              class="captcha-logo"
+            />
+          </div>
+
+          <button class="btn-auth-submit">Đăng kí</button>
+
+          <div class="auth-switch">
+            Đã có tài khoản?
+            <span onclick="switchAuthMode('login')">Đăng nhập nhé!</span>
           </div>
         </div>
       </div>
@@ -2645,45 +2992,46 @@
 
       function init() {
         // CẤU HÌNH THỜI GIAN (Ví dụ: 10 giây để test, sau này sửa thành 30 * 60 * 1000)
-        const RESET_TIME = 10 * 1000; 
-        
+        const RESET_TIME = 10 * 1000;
+
         const now = Date.now();
-        const lastVisit = localStorage.getItem('ss_last_visit');
-        const savedOrder = localStorage.getItem('ss_saved_playlist');
-        const savedShuffleState = localStorage.getItem('ss_is_shuffled');
+        const lastVisit = localStorage.getItem("ss_last_visit");
+        const savedOrder = localStorage.getItem("ss_saved_playlist");
+        const savedShuffleState = localStorage.getItem("ss_is_shuffled");
 
         let oldList = [];
-        try { oldList = JSON.parse(savedOrder) || []; } catch(e) {}
+        try {
+          oldList = JSON.parse(savedOrder) || [];
+        } catch (e) {}
 
         // KIỂM TRA ĐIỀU KIỆN ĐỂ KHÔI PHỤC LIST CŨ
-        const isExpired = !lastVisit || (now - lastVisit > RESET_TIME);
+        const isExpired = !lastVisit || now - lastVisit > RESET_TIME;
         const isSongCountChanged = oldList.length !== songs.length;
 
         if (savedOrder && !isExpired && !isSongCountChanged) {
-            console.log("♻️ Khôi phục phiên làm việc cũ...");
-            songs = oldList;
-            // Khôi phục trạng thái nút shuffle của phiên trước
-            state.isShuffled = (savedShuffleState === 'true');
-        } 
-        else {
-            console.log("✨ Tạo danh sách phát MỚI (Random)...");
-            
-            // --- SỬA LỖI TẠI ĐÂY: Luôn trộn bài khi tạo phiên mới ---
-            shuffleArray(songs); 
-            state.isShuffled = true; // Bật trạng thái đã trộn
-            // -------------------------------------------------------
+          console.log("♻️ Khôi phục phiên làm việc cũ...");
+          songs = oldList;
+          // Khôi phục trạng thái nút shuffle của phiên trước
+          state.isShuffled = savedShuffleState === "true";
+        } else {
+          console.log("✨ Tạo danh sách phát MỚI (Random)...");
 
-            // Lưu danh sách mới và trạng thái vào bộ nhớ
-            localStorage.setItem('ss_saved_playlist', JSON.stringify(songs));
-            localStorage.setItem('ss_is_shuffled', 'true');
+          // --- SỬA LỖI TẠI ĐÂY: Luôn trộn bài khi tạo phiên mới ---
+          shuffleArray(songs);
+          state.isShuffled = false; // Tắt trạng thái đã trộn
+          // -------------------------------------------------------
+
+          // Lưu danh sách mới và trạng thái vào bộ nhớ
+          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
+          localStorage.setItem("ss_is_shuffled", "true");
         }
 
         // Cập nhật thời gian truy cập
-        localStorage.setItem('ss_last_visit', now);
+        localStorage.setItem("ss_last_visit", now);
 
         // Cập nhật giao diện nút Shuffle
         if (el.shuffleBtn) {
-            el.shuffleBtn.classList.toggle("active", state.isShuffled);
+          el.shuffleBtn.classList.toggle("active", state.isShuffled);
         }
 
         renderList();
@@ -2711,10 +3059,10 @@
               indexContent = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
             }
             return `
-                  <div class="song-item ${
-                    isActive ? "active" : ""
-                  }" onclick="playSong(${i}, 'all')">
-                     <div class="song-index-wrapper">${indexContent}</div>
+                 <div class="song-item ${isActive ? "active" : ""}" 
+        id="song-${i}"  
+        onclick="playSong(${i}, 'all')">
+             <div class="song-index-wrapper">${indexContent}</div>
                      <div class="song-info">
                          <div class="song-title" style="color: ${
                            isActive ? "var(--neon-primary)" : "white"
@@ -2757,7 +3105,7 @@
         updateLikeStatusUI(song.id, isLiked);
         el.timeCurrentMain.innerText = "0:00";
         el.timeDurationMain.innerText = song.duration || "0:00";
-        renderList();
+        updateActiveSongUI(i);
 
         if (play) {
           audio
@@ -3833,7 +4181,10 @@
                <div class="fs-song-item ${
                  isActive ? "active" : ""
                }" onclick="playSong(${i})">
-                  <img src="${s.cover}" class="fs-song-img">
+                  <img src="${
+                    s.cover
+                  }" class="fs-song-img" loading="lazy" decoding="async">
+                  
                   <div class="fs-song-info">
                      <div class="fs-song-title">${s.title}</div>
                      <div class="fs-song-artist">${s.artist}</div>
@@ -3853,8 +4204,16 @@
       function scrollToActiveSong() {
         setTimeout(() => {
           const activeEl = document.querySelector(".fs-song-item.active");
-          if (activeEl)
-            activeEl.scrollIntoView({ behavior: "smooth", block: "center" });
+          if (activeEl) {
+            const scrollPosition =
+              activeEl.offsetTop -
+              container.clientHeight / 2 +
+              activeEl.clientHeight / 2;
+            container.scrollTo({
+              top: scrollPosition,
+              behavior: "smooth",
+            });
+          }
         }, 100);
       }
 
@@ -3863,6 +4222,61 @@
         const song = songs[state.currentSongIndex];
         document.getElementById("infoArtist").innerText = song.artist;
         // Có thể thêm logic random Album nếu muốn
+      }
+      function updateActiveSongUI(index) {
+        // 1. Tìm bài đang active cũ và tắt nó đi
+        const oldActive = document.querySelector(".song-item.active");
+        if (oldActive) {
+          oldActive.classList.remove("active");
+          // Trả lại số thứ tự cũ
+          const oldIdx = oldActive.id.replace("song-", "");
+          oldActive.querySelector(
+            ".song-index-wrapper"
+          ).innerHTML = `<span class="song-index">${
+            parseInt(oldIdx) + 1
+          }</span>`;
+          oldActive.querySelector(".song-title").style.color = "white";
+        }
+
+        // 2. Bật active cho bài mới
+        const newActive = document.getElementById(`song-${index}`);
+        if (newActive) {
+          newActive.classList.add("active");
+          // Hiện icon playing/wave
+          const waveHtml = `<div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
+          const playHtml = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
+
+          newActive.querySelector(".song-index-wrapper").innerHTML =
+            state.isPlaying ? waveHtml : playHtml;
+          newActive.querySelector(".song-title").style.color =
+            "var(--neon-primary)";
+
+          // Cuộn đến bài hát nếu nó bị khuất (nhẹ nhàng hơn render lại)
+          newActive.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      }
+      // ==================== AUTHENTICATION LOGIC ====================
+      function openAuthModal() {
+        document.getElementById("authOverlay").classList.add("active");
+        // Mặc định mở tab Login trước
+        switchAuthMode("login");
+      }
+
+      function closeAuthModal() {
+        document.getElementById("authOverlay").classList.remove("active");
+      }
+
+      function switchAuthMode(mode) {
+        const loginForm = document.getElementById("loginForm");
+        const registerForm = document.getElementById("registerForm");
+
+        if (mode === "login") {
+          loginForm.classList.add("active");
+          registerForm.classList.remove("active");
+        } else {
+          loginForm.classList.remove("active");
+          registerForm.classList.add("active");
+        }
       }
     </script>
     <button
@@ -3873,6 +4287,3 @@
     </button>
   </body>
 </html>
-
-
-
