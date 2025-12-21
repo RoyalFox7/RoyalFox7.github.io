@@ -319,6 +319,18 @@
         background: var(--neon-primary);
         border-radius: 0 4px 4px 0;
       }
+      /* --- XỬ LÝ TÊN USERNAME DÀI --- */
+      #navAccount {
+        overflow: hidden; /* Ẩn phần thừa */
+      }
+
+      #navAccount span {
+        white-space: nowrap; /* Không cho xuống dòng */
+        overflow: hidden; /* Cắt phần chữ thừa */
+        text-overflow: ellipsis; /* Thêm dấu "..." vào cuối */
+        max-width: 160px; /* Chiều dài tối đa cho phép */
+        display: block; /* Bắt buộc để thuộc tính trên hoạt động */
+      }
 
       /* MAIN CONTENT */
       .universe-panel {
@@ -2086,18 +2098,36 @@
         box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
       }
 
+      /* --- SỬA LẠI CSS AUTH SWITCH --- */
       .auth-switch {
         text-align: center;
         font-size: 14px;
         color: #aaa;
+        margin-top: 10px; /* Thêm chút khoảng cách cho thoáng */
       }
+
+      /* 1. Reset thẻ span thường (Câu hỏi): Không hover, không màu mè */
       .auth-switch span {
-        color: var(--neon-primary);
-        cursor: pointer;
-        font-weight: 600;
+        color: #aaa;
+        cursor: default; /* Con trỏ chuột bình thường */
+        font-weight: 400;
+        text-decoration: none !important;
       }
       .auth-switch span:hover {
-        text-decoration: underline;
+        text-decoration: none !important; /* Đảm bảo không gạch chân khi hover */
+      }
+
+      /* 2. Chỉ thẻ nào có class "auth-link" mới bấm được */
+      .auth-switch .auth-link {
+        color: var(--neon-primary);
+        cursor: pointer; /* Hiện bàn tay */
+        font-weight: 600;
+        margin-left: 4px; /* Cách chữ câu hỏi ra một chút */
+        transition: 0.2s;
+      }
+      .auth-switch .auth-link:hover {
+        text-decoration: underline !important;
+        text-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
       }
 
       .auth-divider {
@@ -2170,6 +2200,171 @@
         height: 24px;
         opacity: 0.7;
       }
+      /* --- FORM VALIDATION & EYE ICON CSS --- */
+      .password-wrapper {
+        position: relative;
+        width: 100%;
+      }
+      .password-wrapper input {
+        padding-right: 40px; /* Chừa chỗ cho icon mắt */
+      }
+      .toggle-pass {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #aaa;
+        cursor: pointer;
+        font-size: 16px;
+        transition: 0.2s;
+        z-index: 2;
+      }
+      .toggle-pass:hover {
+        color: white;
+      }
+
+      /* Thông báo lỗi */
+      .error-msg {
+        display: block;
+        font-size: 11px;
+        color: #ff4757; /* Màu đỏ báo lỗi */
+        margin-top: 4px;
+        height: 14px; /* Giữ chỗ để không bị nhảy layout */
+        opacity: 0;
+        transition: 0.2s;
+        font-weight: 500;
+      }
+      .error-msg.show {
+        opacity: 1;
+      }
+
+      /* Trạng thái input khi lỗi/thành công */
+      input.input-error {
+        border-color: #ff4757 !important;
+        background: rgba(255, 71, 87, 0.05) !important;
+      }
+      input.input-weak {
+        border-color: #ff4757 !important;
+      } /* Yếu - Đỏ */
+      input.input-medium {
+        border-color: #ffa502 !important;
+      } /* Vừa - Vàng */
+      input.input-strong {
+        border-color: #2ed573 !important;
+      } /* Mạnh - Xanh */
+      /* --- SETTINGS PANEL STYLES --- */
+      .settings-panel {
+        padding: 20px 30px;
+        height: 100%;
+        overflow-y: auto;
+        animation: fadeIn 0.3s ease;
+      }
+      .settings-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 40px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--glass-border);
+      }
+      .settings-header h2 {
+        font-size: 28px;
+        font-weight: 800;
+        background: linear-gradient(90deg, #fff, #ccc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .btn-back-settings {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid var(--glass-border);
+        color: white;
+        font-size: 18px;
+      }
+      .btn-back-settings:hover {
+        background: var(--neon-primary);
+        color: #000;
+        border-color: var(--neon-primary);
+      }
+
+      .settings-section {
+        margin-bottom: 40px;
+      }
+      .settings-section h3 {
+        font-size: 14px;
+        color: var(--neon-secondary);
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 16px;
+        padding-left: 10px;
+        border-left: 3px solid var(--neon-secondary);
+      }
+
+      .settings-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 16px;
+        margin-bottom: 12px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+      .settings-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.1);
+        transform: translateX(5px);
+      }
+      .settings-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .st-title {
+        font-weight: 600;
+        font-size: 15px;
+        color: white;
+      }
+      .st-desc {
+        font-size: 12px;
+        color: var(--text-dim);
+      }
+      .settings-item i {
+        color: var(--text-dim);
+        font-size: 18px;
+      }
+      .settings-item:hover i {
+        color: var(--neon-primary);
+      }
+
+      /* Nút ngôn ngữ */
+      .btn-lang-toggle {
+        padding: 8px 16px;
+        border-radius: 20px;
+        background: rgba(0, 229, 255, 0.1);
+        border: 1px solid var(--neon-primary);
+        color: var(--neon-primary);
+        font-weight: 700;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      /* Badge chất lượng */
+      .badge-quality {
+        background: var(--neon-secondary);
+        color: #000;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-weight: 800;
+        font-size: 12px;
+        box-shadow: 0 0 10px rgba(196, 92, 255, 0.4);
+      }
     </style>
   </head>
   <body>
@@ -2197,22 +2392,30 @@
         <div class="logo">
           <i class="fa-solid fa-rocket"></i> <span>SoundSphere</span>
         </div>
+
         <div class="nav-item active" onclick="showMainPlaylist()">
-          <i class="fa-solid fa-compass"></i> <span>Khám phá</span>
+          <i class="fa-solid fa-compass"></i>
+          <span data-lang="sb_explore">Khám phá</span>
         </div>
         <div class="nav-item">
-          <i class="fa-solid fa-music"></i> <span>Thư viện</span>
+          <i class="fa-solid fa-music"></i>
+          <span data-lang="sb_library">Thư viện</span>
         </div>
         <div class="nav-item" id="navFavorite" onclick="showFavoritePlaylist()">
-          <i class="fa-solid fa-heart"></i> <span>Yêu thích</span>
+          <i class="fa-solid fa-heart"></i>
+          <span data-lang="sb_favorite">Yêu thích</span>
         </div>
+
         <div style="flex-grow: 1"></div>
 
-        <div class="nav-item" onclick="openAuthModal()">
-          <i class="fa-solid fa-user"></i> <span>Tài khoản</span>
+        <div class="nav-item" id="navAccount" onclick="openAuthModal()">
+          <i class="fa-solid fa-user"></i>
+          <span data-lang="sb_account">Tài khoản</span>
         </div>
-        <div class="nav-item">
-          <i class="fa-solid fa-gear"></i> <span>Cài đặt</span>
+
+        <div class="nav-item" onclick="showSettingsPage()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-lang="sb_settings">Cài đặt</span>
         </div>
       </div>
 
@@ -2260,6 +2463,102 @@
         </div>
         <div class="song-list-header" id="playlistTitle">Dải Ngân Hà</div>
         <div id="songList"></div>
+      </div>
+
+      <div class="settings-panel" id="settingsPanel" style="display: none">
+        <div class="settings-header">
+          <button class="btn-back-settings" onclick="showMainPlaylist()">
+            <i class="fa-solid fa-arrow-left"></i>
+          </button>
+          <h2 data-lang="st_header">Cài Đặt</h2>
+        </div>
+
+        <div class="settings-container">
+          <div class="settings-section">
+            <h3 data-lang="st_acc_title">Tài khoản</h3>
+            <div class="settings-item" onclick="openAuthModal()">
+              <div class="settings-info">
+                <span class="st-title" data-lang="st_acc_edit"
+                  >Chỉnh sửa phương thức đăng nhập</span
+                >
+                <span class="st-desc" data-lang="st_acc_desc"
+                  >Thay đổi mật khẩu hoặc liên kết mạng xã hội</span
+                >
+              </div>
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 data-lang="st_lang_title">Ngôn ngữ</h3>
+            <div class="settings-item">
+              <div class="settings-info">
+                <span class="st-title" data-lang="st_lang_opt"
+                  >Ngôn ngữ hiển thị</span
+                >
+                <span class="st-desc" data-lang="st_lang_desc"
+                  >Giao diện sẽ chuyển đổi ngay lập tức</span
+                >
+              </div>
+              <button
+                class="btn-lang-toggle"
+                onclick="toggleLanguage()"
+                id="btnLangToggle"
+              >
+                TIẾNG VIỆT <i class="fa-solid fa-globe"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 data-lang="st_audio_title">Chất lượng âm thanh</h3>
+            <div class="settings-item">
+              <div class="settings-info">
+                <span class="st-title" data-lang="st_audio_stream"
+                  >Chất lượng stream</span
+                >
+                <span class="st-desc" data-lang="st_audio_desc"
+                  >Điều chỉnh độ bit-rate của nhạc</span
+                >
+              </div>
+              <span class="badge-quality">High (320kbps)</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <h3 data-lang="st_other_title">Thông tin khác</h3>
+            <div class="settings-item link-item">
+              <span class="st-title" data-lang="st_about"
+                >Giới thiệu về SoundSphere</span
+              >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </div>
+            <div class="settings-item link-item">
+              <span class="st-title" data-lang="st_terms"
+                >Điều khoản sử dụng</span
+              >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </div>
+            <div class="settings-item link-item">
+              <span class="st-title" data-lang="st_privacy"
+                >Chính sách bảo mật</span
+              >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </div>
+            <div class="settings-item link-item">
+              <span class="st-title" data-lang="st_report"
+                >Báo cáo vi phạm bản quyền</span
+              >
+              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+            </div>
+            <div class="settings-item link-item">
+              <span class="st-title" data-lang="st_contact"
+                >Liên hệ hỗ trợ</span
+              >
+              <i class="fa-solid fa-envelope"></i>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="glass-panel right-panel">
@@ -2497,33 +2796,75 @@
         </button>
 
         <div id="loginForm" class="auth-form active">
-          <h2>Đăng nhập</h2>
-          <p class="auth-subtitle">Chào mừng bạn quay trở lại SoundSphere</p>
+          <h2 data-lang="auth_login_header">Đăng nhập</h2>
+          <p class="auth-subtitle" data-lang="auth_welcome">
+            Chào mừng bạn quay trở lại SoundSphere
+          </p>
 
-          <div class="input-group">
-            <label>Tên đăng nhập</label>
-            <input type="text" placeholder="Username" />
-          </div>
-          <div class="input-group">
-            <label>Mật khẩu</label>
-            <input type="password" placeholder="Password" />
-          </div>
+          <form onsubmit="handleLogin(event)">
+            <div class="input-group">
+              <label data-lang="auth_user">Tên đăng nhập</label>
+              <input
+                type="text"
+                id="loginUser"
+                data-lang-placeholder="auth_user_ph"
+                placeholder="Username"
+              />
+              <span class="error-msg"></span>
+            </div>
+            <div class="input-group">
+              <label data-lang="auth_pass">Mật khẩu</label>
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="loginPass"
+                  data-lang-placeholder="auth_pass_ph"
+                  placeholder="Password"
+                />
+                <i
+                  class="fa-regular fa-eye toggle-pass"
+                  onclick="togglePass('loginPass', this)"
+                ></i>
+              </div>
+              <span class="error-msg"></span>
+            </div>
 
-          <div class="auth-options">
-            <label class="checkbox-container">
-              <input type="checkbox" /> Ghi nhớ đăng nhập
-            </label>
-            <a href="#" class="forgot-pass">Quên mật khẩu?</a>
-          </div>
+            <div class="auth-options">
+              <label class="checkbox-container">
+                <input type="checkbox" />
+                <span data-lang="auth_remember">Ghi nhớ đăng nhập</span>
+              </label>
+              <a
+                href="#"
+                class="forgot-pass"
+                onclick="switchAuthMode('forgot')"
+                data-lang="auth_forgot"
+                >Quên mật khẩu?</a
+              >
+            </div>
 
-          <button class="btn-auth-submit">Đăng nhập</button>
+            <button
+              type="submit"
+              class="btn-auth-submit"
+              data-lang="auth_btn_login"
+            >
+              Đăng nhập
+            </button>
+          </form>
 
           <div class="auth-switch">
-            Chưa có tài khoản?
-            <span onclick="switchAuthMode('register')">Đăng kí nhé!</span>
+            <span data-lang="auth_no_acc">Chưa có tài khoản?</span>
+            <span
+              class="auth-link"
+              onclick="switchAuthMode('register')"
+              data-lang="auth_reg_here"
+              >Đăng kí nhé!</span
+            >
           </div>
 
-          <div class="auth-divider"><span>Hoặc tiếp tục với</span></div>
+          <div class="auth-divider">
+            <span data-lang="auth_or">Hoặc tiếp tục với</span>
+          </div>
 
           <div class="social-login">
             <button class="btn-social">
@@ -2534,7 +2875,7 @@
             </button>
           </div>
 
-          <div class="auth-footer-text">
+          <div class="auth-footer-text" data-lang="auth_policy">
             Việc đăng nhập đồng nghĩa với việc bạn đồng ý với <br />
             <a href="#">Điều khoản</a> và <a href="#">Chính sách</a> của
             SoundSphere.
@@ -2542,39 +2883,152 @@
         </div>
 
         <div id="registerForm" class="auth-form">
-          <h2>Đăng kí tài khoản mới</h2>
+          <h2 data-lang="auth_reg_header">Đăng kí tài khoản mới</h2>
 
-          <div class="input-group">
-            <label>Tên đăng nhập</label>
-            <input type="text" placeholder="Username" />
-          </div>
-          <div class="input-group">
-            <label>Email</label>
-            <input type="email" placeholder="Email@example.com" />
-          </div>
-          <div class="input-group">
-            <label>Mật khẩu</label>
-            <input type="password" placeholder="Password" />
-          </div>
-          <div class="input-group">
-            <label>Nhập lại mật khẩu</label>
-            <input type="password" placeholder="Confirm Password" />
-          </div>
+          <form onsubmit="handleRegister(event)">
+            <div class="input-group">
+              <label data-lang="auth_user">Tên đăng nhập</label>
+              <input
+                type="text"
+                id="regUser"
+                data-lang-placeholder="auth_user_ph"
+                placeholder="Username"
+              />
+              <span class="error-msg"></span>
+            </div>
+            <div class="input-group">
+              <label>Email</label>
+              <input
+                type="email"
+                id="regEmail"
+                placeholder="Email@example.com"
+              />
+              <span class="error-msg"></span>
+            </div>
+            <div class="input-group">
+              <label data-lang="auth_pass">Mật khẩu</label>
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="regPass"
+                  data-lang-placeholder="auth_pass_ph"
+                  placeholder="Password"
+                  oninput="checkStrength(this)"
+                />
+                <i
+                  class="fa-regular fa-eye toggle-pass"
+                  onclick="togglePass('regPass', this)"
+                ></i>
+              </div>
+              <span class="error-msg" id="passStrengthMsg"></span>
+            </div>
+            <div class="input-group">
+              <label data-lang="auth_re_pass">Nhập lại mật khẩu</label>
+              <div class="password-wrapper">
+                <input
+                  type="password"
+                  id="regConfirmPass"
+                  data-lang-placeholder="auth_re_pass_ph"
+                  placeholder="Confirm Password"
+                />
+                <i
+                  class="fa-regular fa-eye toggle-pass"
+                  onclick="togglePass('regConfirmPass', this)"
+                ></i>
+              </div>
+              <span class="error-msg"></span>
+            </div>
 
-          <div class="captcha-box">
-            <input type="checkbox" id="captchaCheck" />
-            <label for="captchaCheck">Tôi không phải người máy</label>
-            <img
-              src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Recaptcha_Logo.svg/1200px-Recaptcha_Logo.svg.png"
-              class="captcha-logo"
-            />
-          </div>
+            <div class="captcha-box">
+              <div style="display: flex; align-items: center; gap: 12px">
+                <input
+                  type="checkbox"
+                  id="captchaCheck"
+                  style="width: 24px; height: 24px; accent-color: #4a90e2"
+                />
+                <label
+                  for="captchaCheck"
+                  style="
+                    margin: 0;
+                    font-weight: 500;
+                    font-size: 14px;
+                    color: #000;
+                  "
+                  data-lang="auth_robot"
+                  >I'm not a robot</label
+                >
+              </div>
+              <div
+                style="
+                  display: flex;
+                  flex-direction: column;
+                  align-items: center;
+                "
+              >
+                <img
+                  src="https://www.gstatic.com/recaptcha/api2/logo_48.png"
+                  style="width: 32px; opacity: 0.7"
+                />
+                <span style="font-size: 9px; color: #555">reCAPTCHA</span>
+              </div>
+            </div>
+            <span
+              class="error-msg"
+              id="captchaError"
+              style="margin-top: -15px; margin-bottom: 15px; display: block"
+            ></span>
 
-          <button class="btn-auth-submit">Đăng kí</button>
+            <button
+              type="submit"
+              class="btn-auth-submit"
+              data-lang="auth_btn_reg"
+            >
+              Đăng kí
+            </button>
+          </form>
 
           <div class="auth-switch">
-            Đã có tài khoản?
-            <span onclick="switchAuthMode('login')">Đăng nhập nhé!</span>
+            <span data-lang="auth_have_acc">Đã có tài khoản?</span>
+            <span
+              class="auth-link"
+              onclick="switchAuthMode('login')"
+              data-lang="auth_login_here"
+              >Đăng nhập nhé!</span
+            >
+          </div>
+        </div>
+
+        <div id="forgotForm" class="auth-form">
+          <h2 data-lang="auth_forgot_header">Khôi phục mật khẩu</h2>
+          <p class="auth-subtitle" data-lang="auth_forgot_sub">
+            Nhập email để nhận hướng dẫn đặt lại mật khẩu
+          </p>
+
+          <form onsubmit="handleForgotPass(event)">
+            <div class="input-group">
+              <label data-lang="auth_email_reg">Email đăng ký</label>
+              <input
+                type="email"
+                id="forgotEmail"
+                placeholder="Email@example.com"
+              />
+              <span class="error-msg"></span>
+            </div>
+
+            <button
+              type="submit"
+              class="btn-auth-submit"
+              data-lang="auth_btn_send"
+            >
+              Gửi yêu cầu
+            </button>
+          </form>
+
+          <div class="auth-switch">
+            <span class="auth-link" onclick="switchAuthMode('login')">
+              <i class="fa-solid fa-arrow-left"></i>
+              <span data-lang="auth_back_login">Quay lại đăng nhập</span>
+            </span>
           </div>
         </div>
       </div>
@@ -2980,6 +3434,7 @@
 
       document.addEventListener("DOMContentLoaded", () => {
         init();
+        initLanguage();
       });
 
       // === HÀM TRỘN MẢNG (Shuffle) ===
@@ -3544,12 +3999,34 @@
           .join("");
       }
 
+      // === LOGIC CHUYỂN TRANG (Main / Settings) ===
+
+      function showSettingsPage() {
+        // 1. Ẩn trang nhạc, hiện trang cài đặt
+        document.querySelector(".universe-panel").style.display = "none";
+        document.getElementById("settingsPanel").style.display = "block";
+
+        // 2. Cập nhật Sidebar Active
+        document
+          .querySelectorAll(".nav-item")
+          .forEach((item) => item.classList.remove("active"));
+        // Tìm nút Cài đặt (là nút cuối cùng trong sidebar)
+        const navItems = document.querySelectorAll(".nav-item");
+        navItems[navItems.length - 1].classList.add("active");
+      }
+
       function showMainPlaylist() {
+        // 1. Hiện trang nhạc, ẩn trang cài đặt
+        document.querySelector(".universe-panel").style.display = "block";
+        document.getElementById("settingsPanel").style.display = "none";
+
+        // 2. Cập nhật Sidebar Active
         document.getElementById("playlistTitle").innerText = "Dải Ngân Hà";
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
         document.querySelectorAll(".nav-item")[0].classList.add("active");
+
         renderList();
       }
       document.querySelectorAll(".nav-item")[0].onclick = showMainPlaylist;
@@ -4266,16 +4743,410 @@
         document.getElementById("authOverlay").classList.remove("active");
       }
 
+      // Hàm chuyển đổi tab (Hỗ trợ 3 tab: Login, Register, Forgot)
       function switchAuthMode(mode) {
-        const loginForm = document.getElementById("loginForm");
-        const registerForm = document.getElementById("registerForm");
+        // Ẩn tất cả các form trước
+        document
+          .querySelectorAll(".auth-form")
+          .forEach((f) => f.classList.remove("active"));
 
-        if (mode === "login") {
-          loginForm.classList.add("active");
-          registerForm.classList.remove("active");
+        // Hiện form được chọn
+        if (mode === "login")
+          document.getElementById("loginForm").classList.add("active");
+        else if (mode === "register")
+          document.getElementById("registerForm").classList.add("active");
+        else if (mode === "forgot")
+          document.getElementById("forgotForm").classList.add("active");
+      }
+      // === LOGIC AUTH MỚI (VALIDATION + SHOW/HIDE) ===
+
+      // 1. Ẩn/Hiện mật khẩu
+      function togglePass(inputId, icon) {
+        const input = document.getElementById(inputId);
+        if (input.type === "password") {
+          input.type = "text";
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+          icon.style.color = "var(--neon-primary)";
         } else {
-          loginForm.classList.remove("active");
-          registerForm.classList.add("active");
+          input.type = "password";
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+          icon.style.color = "#aaa";
+        }
+      }
+
+      // 2. Gợi ý độ mạnh mật khẩu
+      function checkStrength(input) {
+        const val = input.value;
+        const msg = document.getElementById("passStrengthMsg");
+
+        input.className = ""; // Reset class
+
+        if (!val) {
+          msg.innerText = "";
+          msg.classList.remove("show");
+          return;
+        }
+
+        msg.classList.add("show");
+
+        if (val.length < 6) {
+          msg.innerText = "• Mật khẩu quá ngắn (cần > 6 ký tự)";
+          msg.style.color = "#ff4757";
+          input.classList.add("input-weak");
+        } else if (val.match(/[0-9]/) && val.match(/[!@#$%^&*]/)) {
+          msg.innerText = "• Tuyệt vời! Mật khẩu rất mạnh";
+          msg.style.color = "#2ed573";
+          input.classList.add("input-strong");
+        } else {
+          msg.innerText = "• Khá ổn (Thêm số & ký tự để mạnh hơn)";
+          msg.style.color = "#ffa502";
+          input.classList.add("input-medium");
+        }
+      }
+
+      // 3. Hàm hiển thị lỗi
+      function showError(input, message) {
+        const parent =
+          input.closest(".input-group") || input.parentElement.parentElement;
+        const errorSpan = parent.querySelector(".error-msg");
+        if (errorSpan) {
+          errorSpan.innerText = message;
+          errorSpan.classList.add("show");
+        }
+        input.classList.add("input-error");
+
+        // Tự động xóa lỗi khi người dùng nhập lại
+        input.addEventListener(
+          "input",
+          function () {
+            input.classList.remove("input-error");
+            if (errorSpan) errorSpan.classList.remove("show");
+          },
+          { once: true }
+        );
+      }
+
+      // 4. Xử lý Đăng nhập
+      // Tìm hàm handleLogin và thay thế nội dung bên trong khối if (isValid)
+
+      function handleLogin(e) {
+        e.preventDefault();
+        const user = document.getElementById("loginUser");
+        const pass = document.getElementById("loginPass");
+        let isValid = true;
+
+        if (!user.value.trim()) {
+          showError(user, "Vui lòng nhập tên đăng nhập");
+          isValid = false;
+        }
+        if (!pass.value.trim()) {
+          showError(pass, "Vui lòng nhập mật khẩu");
+          isValid = false;
+        }
+
+        if (isValid) {
+          // 1. Đóng Modal
+          closeAuthModal();
+
+          // 2. Hiện thông báo chào mừng
+          showToast(
+            `Xin chào, ${user.value}!`,
+            "success",
+            '<i class="fa-solid fa-hand-sparkles"></i>'
+          );
+
+          // 3. CẬP NHẬT GIAO DIỆN SIDEBAR
+          const navAccount = document.getElementById("navAccount");
+
+          // --- LOGIC MỚI: XỬ LÝ TÊN 3 CHỮ ---
+          // B1: Đếm xem tên có bao nhiêu từ
+          const words = user.value.trim().split(/\s+/);
+          const wordCount = words.length;
+
+          // B2: LOGIC MỚI CHUẨN XÁC HƠN:
+          // - Nếu tên đúng 2 chữ (VD: Sơn Tùng) -> Lấy 2 ký tự (ST)
+          // - Các trường hợp còn lại (Tên 1 chữ hoặc tên dài 3,4,5 chữ) -> Chỉ lấy 1 ký tự đầu
+          const charLength = wordCount === 2 ? 2 : 1;
+
+          // B3: Gọi API... (Giữ nguyên)
+          const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            user.value
+          )}&background=random&color=fff&size=128&length=${charLength}&bold=true`;
+
+          // Thêm title="${user.value}" để hover vào thấy tên full
+          navAccount.innerHTML = `
+                <img src="${avatarUrl}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover; border: 1px solid var(--neon-primary); flex-shrink: 0;">
+                <span style="color: var(--neon-primary); font-weight: 700;" title="${user.value}">${user.value}</span>
+            `;
+
+          navAccount.onclick = function () {
+            openLogoutModal();
+          };
+        }
+      }
+
+      // 5. Xử lý Đăng ký
+      function handleRegister(e) {
+        e.preventDefault();
+        const user = document.getElementById("regUser");
+        const email = document.getElementById("regEmail");
+        const pass = document.getElementById("regPass");
+        const confirm = document.getElementById("regConfirmPass");
+        const captcha = document.getElementById("captchaCheck");
+        let isValid = true;
+
+        if (!user.value.trim()) {
+          showError(user, "Tên đăng nhập không được trống");
+          isValid = false;
+        }
+        if (!email.value.trim()) {
+          showError(email, "Email không được trống");
+          isValid = false;
+        } else if (!email.value.includes("@")) {
+          showError(email, "Email không hợp lệ");
+          isValid = false;
+        }
+
+        if (!pass.value) {
+          showError(pass, "Mật khẩu không được trống");
+          isValid = false;
+        } else if (pass.value.length < 6) {
+          showError(pass, "Mật khẩu phải trên 6 ký tự");
+          isValid = false;
+        }
+
+        if (confirm.value !== pass.value) {
+          showError(confirm, "Mật khẩu nhập lại không khớp");
+          isValid = false;
+        }
+
+        if (!captcha.checked) {
+          const captchaMsg = document.getElementById("captchaError");
+          captchaMsg.innerText = "Vui lòng xác nhận bạn không phải robot";
+          captchaMsg.classList.add("show");
+          isValid = false;
+        } else {
+          document.getElementById("captchaError").classList.remove("show");
+        }
+
+        if (isValid) {
+          closeAuthModal();
+          showToast(
+            "Đăng ký thành công!",
+            "success",
+            '<i class="fa-solid fa-check"></i>'
+          );
+        }
+      }
+      // === LOGIC QUÊN MẬT KHẨU & ĐĂNG XUẤT ===
+
+      // 1. Xử lý gửi yêu cầu quên mật khẩu
+      function handleForgotPass(e) {
+        e.preventDefault();
+        const email = document.getElementById("forgotEmail");
+
+        if (!email.value.trim() || !email.value.includes("@")) {
+          showError(email, "Vui lòng nhập email hợp lệ");
+          return;
+        }
+
+        // Giả lập gửi thành công
+        closeAuthModal();
+        showToast(
+          `Đã gửi mail khôi phục tới: ${email.value}`,
+          "success",
+          '<i class="fa-solid fa-envelope-circle-check"></i>'
+        );
+
+        // Reset form và quay về trang đăng nhập cho lần sau
+        email.value = "";
+        setTimeout(() => switchAuthMode("login"), 500);
+      }
+
+      // 2. Logic Popup Đăng xuất
+      function openLogoutModal() {
+        document.getElementById("logoutOverlay").classList.add("active");
+      }
+      function closeLogoutModal() {
+        document.getElementById("logoutOverlay").classList.remove("active");
+      }
+      function confirmLogout() {
+        window.location.reload(); // Tải lại trang để đăng xuất
+      }
+      // ==================== LANGUAGE SYSTEM (UPGRADED) ====================
+
+      const translations = {
+        vi: {
+          // SIDEBAR
+          sb_explore: "Khám phá",
+          sb_library: "Thư viện",
+          sb_favorite: "Yêu thích",
+          sb_account: "Tài khoản",
+          sb_settings: "Cài đặt",
+
+          // SETTINGS
+          st_header: "Cài Đặt",
+          st_acc_title: "Tài khoản",
+          st_acc_edit: "Chỉnh sửa phương thức đăng nhập",
+          st_acc_desc: "Thay đổi mật khẩu hoặc liên kết mạng xã hội",
+          st_lang_title: "Ngôn ngữ",
+          st_lang_opt: "Ngôn ngữ hiển thị",
+          st_lang_desc: "Giao diện sẽ chuyển đổi ngay lập tức",
+          st_audio_title: "Chất lượng âm thanh",
+          st_audio_stream: "Chất lượng stream",
+          st_audio_desc: "Điều chỉnh độ bit-rate của nhạc",
+          st_other_title: "Thông tin khác",
+          st_about: "Giới thiệu về SoundSphere",
+          st_terms: "Điều khoản sử dụng",
+          st_privacy: "Chính sách bảo mật",
+          st_report: "Báo cáo vi phạm bản quyền",
+          st_contact: "Liên hệ hỗ trợ",
+
+          // AUTH & POPUP (MỚI)
+          auth_login_header: "Đăng nhập",
+          auth_welcome: "Chào mừng bạn quay trở lại SoundSphere",
+          auth_user: "Tên đăng nhập",
+          auth_user_ph: "Tên đăng nhập",
+          auth_pass: "Mật khẩu",
+          auth_pass_ph: "Mật khẩu",
+          auth_remember: "Ghi nhớ đăng nhập",
+          auth_forgot: "Quên mật khẩu?",
+          auth_btn_login: "Đăng nhập",
+          auth_no_acc: "Chưa có tài khoản?",
+          auth_reg_here: "Đăng kí nhé!",
+          auth_or: "Hoặc tiếp tục với",
+          auth_policy:
+            'Việc đăng nhập đồng nghĩa với việc bạn đồng ý với <br> <a href="#">Điều khoản</a> và <a href="#">Chính sách</a> của SoundSphere.',
+
+          auth_reg_header: "Đăng kí tài khoản mới",
+          auth_re_pass: "Nhập lại mật khẩu",
+          auth_re_pass_ph: "Xác nhận mật khẩu",
+          auth_robot: "Tôi không phải người máy",
+          auth_btn_reg: "Đăng kí",
+          auth_have_acc: "Đã có tài khoản?",
+          auth_login_here: "Đăng nhập nhé!",
+
+          auth_forgot_header: "Khôi phục mật khẩu",
+          auth_forgot_sub: "Nhập email để nhận hướng dẫn đặt lại mật khẩu",
+          auth_email_reg: "Email đăng ký",
+          auth_btn_send: "Gửi yêu cầu",
+          auth_back_login: "Quay lại đăng nhập",
+
+          auth_logout_header: "Đăng xuất?",
+          auth_logout_sub:
+            "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?",
+          auth_btn_cancel: "Hủy",
+          auth_btn_logout: "Đăng xuất",
+        },
+        en: {
+          // SIDEBAR
+          sb_explore: "Explore",
+          sb_library: "Library",
+          sb_favorite: "Favorites",
+          sb_account: "Account",
+          sb_settings: "Settings",
+
+          // SETTINGS
+          st_header: "Settings",
+          st_acc_title: "Account",
+          st_acc_edit: "Login Methods",
+          st_acc_desc: "Change password or link social accounts",
+          st_lang_title: "Language",
+          st_lang_opt: "Display Language",
+          st_lang_desc: "Interface will update immediately",
+          st_audio_title: "Audio Quality",
+          st_audio_stream: "Streaming Quality",
+          st_audio_desc: "Adjust music bit-rate",
+          st_other_title: "Others",
+          st_about: "About SoundSphere",
+          st_terms: "Terms of Service",
+          st_privacy: "Privacy Policy",
+          st_report: "Report Copyright Issue",
+          st_contact: "Contact Support",
+
+          // AUTH & POPUP (NEW)
+          auth_login_header: "Login",
+          auth_welcome: "Welcome back to SoundSphere",
+          auth_user: "Username",
+          auth_user_ph: "Username",
+          auth_pass: "Password",
+          auth_pass_ph: "Password",
+          auth_remember: "Remember me",
+          auth_forgot: "Forgot password?",
+          auth_btn_login: "Login",
+          auth_no_acc: "Don't have an account?",
+          auth_reg_here: "Register now!",
+          auth_or: "Or continue with",
+          auth_policy:
+            'By logging in, you agree to SoundSphere\'s <br> <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.',
+
+          auth_reg_header: "Create new account",
+          auth_re_pass: "Confirm Password",
+          auth_re_pass_ph: "Confirm Password",
+          auth_robot: "I'm not a robot",
+          auth_btn_reg: "Register",
+          auth_have_acc: "Already have an account?",
+          auth_login_here: "Login now!",
+
+          auth_forgot_header: "Recovery Password",
+          auth_forgot_sub: "Enter email to receive instructions",
+          auth_email_reg: "Registered Email",
+          auth_btn_send: "Send Request",
+          auth_back_login: "Back to Login",
+
+          auth_logout_header: "Logout?",
+          auth_logout_sub: "Are you sure you want to logout?",
+          auth_btn_cancel: "Cancel",
+          auth_btn_logout: "Logout",
+        },
+      };
+
+      let currentLang = localStorage.getItem("ss_language") || "vi";
+
+      function initLanguage() {
+        applyLanguage(currentLang);
+      }
+
+      function toggleLanguage() {
+        currentLang = currentLang === "vi" ? "en" : "vi";
+        localStorage.setItem("ss_language", currentLang);
+        applyLanguage(currentLang);
+        showToast(
+          currentLang === "vi"
+            ? "Đã chuyển sang Tiếng Việt"
+            : "Switched to English",
+          "success",
+          '<i class="fa-solid fa-language"></i>'
+        );
+      }
+
+      function applyLanguage(lang) {
+        // 1. Dịch nội dung chữ (innerHTML để hỗ trợ thẻ <a> trong footer)
+        document.querySelectorAll("[data-lang]").forEach((el) => {
+          const key = el.getAttribute("data-lang");
+          if (translations[lang][key]) {
+            el.innerHTML = translations[lang][key];
+          }
+        });
+
+        // 2. Dịch Placeholder (Chữ mờ trong ô input)
+        document.querySelectorAll("[data-lang-placeholder]").forEach((el) => {
+          const key = el.getAttribute("data-lang-placeholder");
+          if (translations[lang][key]) {
+            el.placeholder = translations[lang][key];
+          }
+        });
+
+        // 3. Cập nhật nút đổi ngôn ngữ
+        const btn = document.getElementById("btnLangToggle");
+        if (btn) {
+          if (lang === "vi") {
+            btn.innerHTML = 'TIẾNG VIỆT <i class="fa-solid fa-globe"></i>';
+          } else {
+            btn.innerHTML = 'ENGLISH <i class="fa-solid fa-globe"></i>';
+          }
         }
       }
     </script>
@@ -4285,5 +5156,62 @@
     >
       <i class="fa-solid fa-chevron-up"></i>
     </button>
+    <div id="logoutOverlay" class="auth-overlay">
+      <div class="auth-backdrop" onclick="closeLogoutModal()"></div>
+      <div class="auth-box" style="text-align: center; max-width: 350px">
+        <div
+          style="
+            font-size: 48px;
+            color: var(--neon-secondary);
+            margin-bottom: 16px;
+          "
+        >
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </div>
+        <h2 style="margin-bottom: 12px" data-lang="auth_logout_header">
+          Đăng xuất?
+        </h2>
+        <p
+          style="color: #aaa; margin-bottom: 24px; font-size: 14px"
+          data-lang="auth_logout_sub"
+        >
+          Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?
+        </p>
+        <div style="display: flex; gap: 12px">
+          <button
+            onclick="closeLogoutModal()"
+            style="
+              flex: 1;
+              padding: 12px;
+              border-radius: 12px;
+              border: 1px solid rgba(255, 255, 255, 0.1);
+              background: rgba(255, 255, 255, 0.05);
+              color: white;
+              cursor: pointer;
+            "
+            data-lang="auth_btn_cancel"
+          >
+            Hủy
+          </button>
+          <button
+            onclick="confirmLogout()"
+            style="
+              flex: 1;
+              padding: 12px;
+              border-radius: 12px;
+              border: none;
+              background: #ff4757;
+              color: white;
+              font-weight: 700;
+              cursor: pointer;
+              box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+            "
+            data-lang="auth_btn_logout"
+          >
+            Đăng xuất
+          </button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
