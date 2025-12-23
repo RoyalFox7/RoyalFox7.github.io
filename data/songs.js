@@ -550,8 +550,8 @@ const defaultSongList = [
     id: 79,
     title: "Cô Gái Bàn Bên",
     artist: "Đen ft. Lynk Lee",
-    cover: "images/cu-gai-ban-ben.jpg",
-    src: "musics/cu-gai-ban-ben.mp3",
+    cover: "images/co-gai-ban-ben.jpg",
+    src: "musics/co-gai-ban-ben.mp3",
   },
   {
     id: 80,
