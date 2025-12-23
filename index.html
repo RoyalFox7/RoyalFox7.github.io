@@ -404,7 +404,7 @@
       .song-item {
         display: grid;
         grid-template-columns: 48px 1fr 40px 60px;
-        alignitems: center;
+        align-items: center;
         padding: 14px 16px;
         border-radius: 12px;
         border: 1px solid transparent;
@@ -412,6 +412,28 @@
         transition: 0.2s;
         cursor: pointer;
         position: relative;
+        transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        will-change: transform, background;
+      }
+      @keyframes flash-active {
+        0% {
+          background: rgba(0, 229, 255, 0.4);
+          transform: scale(1.02);
+          border-color: rgba(0, 229, 255, 0.8);
+        }
+        100% {
+          background: linear-gradient(
+            90deg,
+            rgba(0, 229, 255, 0.1),
+            transparent
+          );
+          transform: scale(1);
+          border-color: rgba(0, 229, 255, 0.2);
+        }
+      }
+
+      .song-item.just-active {
+        animation: flash-active 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
       }
       .song-item:hover {
         background: rgba(255, 255, 255, 0.05);
@@ -847,7 +869,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        z-index: 1100;
+        z-index: 10000 !important;
         pointer-events: none;
       }
       .toast {
@@ -1849,6 +1871,96 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding-bottom: 8px;
       }
+      /* ==================== FEEDBACK UI (NEW) ==================== */
+
+      /* 1. SKELETON LOADING (Hiệu ứng tải danh sách) */
+      .skeleton-item {
+        height: 72px;
+        margin-bottom: 6px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.05);
+        position: relative;
+        overflow: hidden;
+      }
+      .skeleton-item::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.1),
+          transparent
+        );
+        transform: translateX(-100%);
+        animation: shimmer 1.5s infinite;
+      }
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* 2. BUFFERING LOADER (Vòng xoay khi mạng lag) */
+      .loader-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition: 0.3s;
+        z-index: 20;
+      }
+      .disc-wrapper.buffering .loader-overlay,
+      .footer-cover-wrapper.buffering .loader-overlay {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: var(--neon-primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* 3. ACTIVE FLASH (Hiệu ứng nháy khi bắt đầu bài mới) */
+      /* --- HIỆU ỨNG CHUYỂN BÀI MƯỢT (SOFT GLOW) --- */
+      @keyframes flash-active {
+        0% {
+          background: rgba(
+            0,
+            229,
+            255,
+            0.4
+          ); /* Giảm độ chói (0.4) để dịu mắt */
+          transform: scale(1.02); /* Phóng to nhẹ 1 xíu để tạo điểm nhấn */
+          border-color: rgba(0, 229, 255, 0.8);
+        }
+        100% {
+          background: linear-gradient(
+            90deg,
+            rgba(0, 229, 255, 0.1),
+            transparent
+          );
+          transform: scale(1);
+          border-color: rgba(0, 229, 255, 0.2);
+        }
+      }
 
       /* --- RESPONSIVE FIX (MOBILE/TABLET) --- */
       @media (max-width: 1024px) {
@@ -2392,11 +2504,455 @@
           height: 160px !important;
         }
       }
+      /* ==================== UX ENHANCEMENTS (NEW) ==================== */
+
+      /* 1. ANIMATION MODAL (Mở/Đóng mượt mà) */
+      .auth-overlay {
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      .auth-box {
+        transform: scale(0.95) translateY(10px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .auth-overlay.active .auth-box {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+
+      /* Hiệu ứng chuyển đổi giữa các Form (Login <-> Register) */
+      .auth-form {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        opacity: 0;
+        transform: translateX(20px);
+        display: none; /* Mặc định ẩn */
+      }
+      .auth-form.active {
+        display: block;
+        opacity: 1;
+        transform: translateX(0);
+        animation: slideInForm 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      @keyframes slideInForm {
+        from {
+          opacity: 0;
+          transform: translateX(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+
+      /* 2. HIGHLIGHT FOCUS (Input & Button sáng lên khi chọn) */
+      .input-group input:focus {
+        border-color: var(--neon-primary);
+        background: rgba(0, 229, 255, 0.08);
+        box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        transform: translateY(-2px);
+      }
+      button:focus-visible,
+      .btn-auth-submit:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(196, 92, 255, 0.5);
+        border-color: var(--neon-secondary);
+      }
+
+      /* 3. NÚT BACK (Luôn hiển thị ở góc trái) */
+      .auth-header-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        position: relative;
+      }
+      .auth-back-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: #ccc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-right: 12px;
+      }
+      .auth-back-btn:hover {
+        background: var(--neon-primary);
+        color: #000;
+        border-color: var(--neon-primary);
+      }
+
+      /* Animation cho Settings Panel & Universe Panel */
+      .universe-panel,
+      .settings-panel {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      .fade-out-left {
+        opacity: 0 !important;
+        transform: translateX(-20px) !important;
+        pointer-events: none;
+      }
+      .fade-out-right {
+        opacity: 0 !important;
+        transform: translateX(20px) !important;
+        pointer-events: none;
+      }
+      /* ==================== BEAUTIFY INFO MODAL CONTENT ==================== */
+
+      /* 1. Khu vực chứa nội dung chính */
+      #infoContent {
+        padding: 20px; /* Thêm khoảng cách lề bên trong */
+        background: rgba(
+          0,
+          0,
+          0,
+          0.2
+        ); /* Nền tối mờ nhẹ để tách biệt với khung ngoài */
+        border-radius: 12px; /* Bo góc mềm mại */
+        border: 1px solid rgba(255, 255, 255, 0.05); /* Viền siêu mỏng */
+
+        /* Typography (Cải thiện trải nghiệm đọc) */
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; /* Font chữ hiện đại, dễ đọc */
+        line-height: 1.7; /* Khoảng cách dòng thoáng hơn */
+        color: #e0e0e0; /* Màu chữ trắng ngà, đỡ mỏi mắt hơn trắng tinh */
+        font-size: 15px;
+      }
+
+      /* 2. Trang trí các tiêu đề con (H3) - Điểm nhấn chính */
+      #infoContent h3 {
+        color: var(--neon-primary); /* Dùng màu Neon chủ đạo (Xanh dương) */
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 25px; /* Cách xa đoạn trên */
+        margin-bottom: 12px; /* Gần đoạn dưới */
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(0, 229, 255, 0.2); /* Gạch chân neon mờ */
+        display: flex;
+        align-items: center;
+      }
+
+      /* Thêm một đốm sáng neon nhỏ trước mỗi tiêu đề */
+      #infoContent h3::before {
+        content: "";
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: var(--neon-primary);
+        border-radius: 50%;
+        margin-right: 12px;
+        box-shadow: 0 0 8px var(--neon-primary); /* Phát sáng nhẹ */
+      }
+
+      /* 3. Trang trí đoạn văn và chữ in đậm */
+      #infoContent p {
+        margin-bottom: 15px;
+        text-align: justify; /* Căn đều 2 bên cho đẹp mắt */
+      }
+
+      #infoContent strong {
+        color: white; /* Chữ in đậm màu trắng sáng hơn chữ thường */
+        font-weight: 700;
+      }
+
+      /* 4. Trang trí danh sách (ul/li) - Dùng cho phần Điều khoản */
+      #infoContent ul {
+        padding-left: 25px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+      }
+
+      #infoContent li {
+        margin-bottom: 8px;
+        position: relative;
+      }
+
+      /* Thay dấu chấm tròn mặc định bằng dấu mũi tên neon */
+      #infoContent ul li::marker {
+        color: var(--neon-secondary); /* Màu neon phụ (Tím) */
+        content: "▹ "; /* Dùng ký tự mũi tên nhỏ */
+        font-size: 12px;
+      }
+
+      /* 5. Tùy biến thanh cuộn (Scrollbar) cho đồng bộ dark mode */
+      #infoContent::-webkit-scrollbar {
+        width: 8px;
+      }
+      #infoContent::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05); /* Nền thanh cuộn tối */
+        border-radius: 4px;
+      }
+      #infoContent::-webkit-scrollbar-thumb {
+        background: rgba(0, 229, 255, 0.3); /* Thanh kéo màu neon mờ */
+        border-radius: 4px;
+        border: 2px solid transparent; /* Tạo khoảng hở */
+        background-clip: padding-box;
+      }
+      #infoContent::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 229, 255, 0.6); /* Sáng hơn khi di chuột vào */
+      }
+      /* ==================== SCROLL FIX PATCH (MOBILE & LANDSCAPE) ==================== */
+
+      /* 1. SỬA LỖI MODAL (Đăng nhập/Thông tin) BỊ CẮT KHI XOAY NGANG */
+      .auth-box {
+        max-height: 90vh; /* Giới hạn chiều cao tối đa là 90% màn hình */
+        overflow-y: auto; /* Cho phép cuộn dọc nếu nội dung dài hơn màn hình */
+        display: flex;
+        flex-direction: column;
+
+        /* Giúp cuộn mượt trên iOS */
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Đảm bảo nội dung bên trong modal co giãn đúng */
+      .auth-form,
+      #infoContent {
+        flex-shrink: 0; /* Không cho nội dung bị co ép quá mức */
+      }
+
+      /* 2. SỬA LỖI TRANG CÀI ĐẶT (SETTINGS) KHÔNG CUỘN ĐƯỢC TRÊN MOBILE */
+      @media (max-width: 768px) {
+        .settings-panel {
+          /* Đặt chiều cao cứng để kích hoạt thanh cuộn */
+          height: calc(100vh - 140px) !important;
+          overflow-y: auto !important;
+          padding-bottom: 100px !important; /* Chừa chỗ cho Player ở dưới */
+
+          /* Quan trọng: Fix lỗi cuộn bị khựng trên iPhone */
+          -webkit-overflow-scrolling: touch;
+        }
+      }
+
+      /* 3. SỬA LỖI DANH SÁCH BÀI HÁT KHI XOAY NGANG (LANDSCAPE) */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .universe-panel {
+          /* Đảm bảo chiếm hết chiều cao còn lại */
+          height: calc(100vh - 50px) !important;
+          overflow-y: auto !important;
+          padding-bottom: 60px !important;
+        }
+
+        /* Fix lỗi Modal khi xoay ngang: Canh lên sát trên cùng để dễ cuộn */
+        .auth-overlay {
+          align-items: flex-start !important; /* Thay vì center (giữa) */
+          padding-top: 20px;
+          overflow-y: auto; /* Cho phép cuộn cả màn hình nền nếu cần */
+        }
+
+        .auth-box {
+          margin-bottom: 20px; /* Thêm khoảng trống dưới cùng */
+        }
+      }
+
+      /* 4. TÙY BIẾN THANH CUỘN (SCROLLBAR) CHO MOBILE ĐẸP HƠN */
+      /* Ẩn thanh cuộn mặc định thô kệch, thay bằng thanh mảnh mai */
+      @media (max-width: 768px) {
+        ::-webkit-scrollbar {
+          width: 4px; /* Mỏng hơn trên PC */
+        }
+        .universe-panel::-webkit-scrollbar,
+        .settings-panel::-webkit-scrollbar,
+        .auth-box::-webkit-scrollbar {
+          width: 4px;
+        }
+      }
+      /* ==================== FIX TOUCH PROGRESS BAR (MOBILE) ==================== */
+
+      @media (max-width: 768px) {
+        /* 1. Hiện lại thẻ Input nhưng làm trong suốt */
+        .slider-container input {
+          display: block !important; /* Hiện lại */
+          opacity: 0; /* Ẩn hình ảnh nhưng vẫn nhận cảm ứng */
+          position: absolute;
+          top: 50%;
+          left: 0;
+          transform: translateY(-50%);
+          width: 100%;
+          height: 30px; /* Tăng vùng bấm lên 30px cho dễ chạm */
+          z-index: 20; /* Đè lên trên mọi thứ */
+          cursor: pointer;
+          margin: 0;
+        }
+
+        /* 2. Đảm bảo vùng chứa (wrapper) không bị chặn sự kiện */
+        .progress-bar-wrapper {
+          pointer-events: auto; /* Cho phép tương tác */
+          height: 10px; /* Tăng chiều cao vùng chứa một chút */
+          top: -5px; /* Căn chỉnh lại vị trí cho khớp ngón tay */
+        }
+
+        /* 3. (Tùy chọn) Sửa lại thanh màu cho đẹp hơn trên mobile */
+        .slider-container {
+          height: 100%;
+          display: flex;
+          align-items: center;
+        }
+        .progress-fill {
+          height: 3px; /* Giữ thanh hiển thị mỏng đẹp */
+          border-radius: 2px;
+        }
+        .slider-track-bg {
+          height: 3px;
+        }
+      }
+
+      /* FIX RIÊNG CHO LANDSCAPE (XOAY NGANG) */
+      /* Hiện tại xoay ngang đang bị ẩn hoàn toàn thanh tiến trình, ta cần hiện lại */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .progress-bar-wrapper {
+          display: block !important; /* Hiện lại */
+          position: absolute;
+          bottom: 0; /* Dính sát đáy màn hình */
+          left: 0;
+          top: auto; /* Bỏ top cũ */
+          width: 100%;
+          height: 4px;
+          z-index: 50;
+        }
+
+        .slider-container input {
+          display: block !important;
+          opacity: 0;
+          height: 20px;
+          width: 100%;
+          position: absolute;
+          bottom: 0;
+          z-index: 51;
+        }
+
+        /* Ẩn bớt thời gian text để đỡ rối */
+        .progress-bar-wrapper .time-text {
+          display: none !important;
+        }
+
+        /* Thanh màu chạy sát mép dưới */
+        .progress-fill,
+        .slider-track-bg {
+          border-radius: 0;
+          height: 4px;
+        }
+      }
+      /* ==================== FS INTERACTIVE SLIDER ==================== */
+
+      .fs-slider-container {
+        flex: 1;
+        position: relative; /* Quan trọng để định vị input con */
+        height: 30px; /* Tăng chiều cao vùng chạm cho dễ kéo */
+        display: flex;
+        align-items: center;
+        margin: 0 15px;
+      }
+
+      /* Thanh nền (Track) */
+      .fs-progress-bar {
+        position: absolute; /* Nằm dưới */
+        left: 0;
+        width: 100%;
+        height: 6px; /* Độ dày thanh */
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 3px;
+        overflow: hidden;
+        pointer-events: none; /* Để click xuyên qua xuống input */
+      }
+
+      /* Thanh Input (Kéo thả) - Làm trong suốt nhưng vẫn nhận thao tác */
+      .fs-seek-slider {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 100%;
+        position: absolute; /* Nằm đè lên trên */
+        top: 0;
+        left: 0;
+        background: transparent;
+        z-index: 10;
+        cursor: pointer;
+        margin: 0;
+      }
+
+      /* Ẩn cái núm tròn mặc định của trình duyệt đi cho đẹp (hoặc để lại tùy bạn) */
+      .fs-seek-slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 1px;
+        height: 1px;
+        opacity: 0;
+      }
+      /* ==================== MOBILE FULLSCREEN: ẨN NÚT SHUFFLE & REPEAT ==================== */
+      @media (max-width: 768px) {
+        /* 1. ẨN HOÀN TOÀN 2 nút thừa */
+        #fsShuffleBtn,
+        #fsRepeatBtn {
+          display: none !important;
+        }
+
+        /* 2. Căn giữa 3 nút chính (Prev - Play - Next) */
+        .fs-controls {
+          width: 100%;
+          justify-content: center !important; /* Căn giữa màn hình */
+          gap: 40px !important; /* Khoảng cách rộng rãi giữa các nút */
+        }
+
+        /* 3. Chỉnh nút Prev/Next to rõ */
+        .fs-controls .fs-btn-control:not(#fsShuffleBtn):not(#fsRepeatBtn) {
+          font-size: 32px !important; /* To hơn xíu cho dễ bấm */
+          color: white;
+          opacity: 1 !important;
+          width: auto !important;
+        }
+
+        /* 4. Nút Play nổi bật nhất */
+        .fs-btn-play {
+          width: 80px !important;
+          height: 80px !important;
+          font-size: 32px !important;
+          border-radius: 50%;
+          background: var(--neon-primary);
+          box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); /* Phát sáng mạnh hơn */
+        }
+      }
+      /* ==================== FIX NÚT SHUFFLE/REPEAT MOBILE SÁNG MÀU ==================== */
+      @media (max-width: 768px) {
+        /* Khi nút Shuffle (con thứ 1) hoặc Repeat (con thứ 5) có class active -> Đổi màu Xanh Neon */
+        .player-controls .btn-control:nth-child(1).active,
+        .player-controls .btn-control:nth-child(5).active {
+          color: var(--neon-primary) !important; /* Màu xanh neon */
+          text-shadow: 0 0 8px rgba(0, 229, 255, 0.6); /* Hiệu ứng phát sáng */
+          opacity: 1 !important;
+        }
+      }
+      /* ==================== SAFE AREA FIX (IPHONE HOME BAR) ==================== */
+
+      /* 1. Đẩy giao diện Fullscreen lên khỏi thanh Home */
+      .fs-content {
+        /* Thêm vùng đệm an toàn ở dưới đáy */
+        padding-bottom: calc(20px + env(safe-area-inset-bottom)) !important;
+      }
+
+      /* 2. Đẩy thanh Player (Footer) khi xoay ngang lên cao hơn */
+      @media (max-height: 500px) and (orientation: landscape) {
+        .control-deck {
+          /* Dùng hàm max để đảm bảo luôn cách đáy ít nhất 10px hoặc cao hơn nếu có thanh Home */
+          bottom: max(10px, env(safe-area-inset-bottom)) !important;
+        }
+
+        /* Đẩy thanh tiến trình (Progress Bar) lên khỏi mép màn hình */
+        .progress-bar-wrapper {
+          bottom: env(safe-area-inset-bottom) !important;
+        }
+        .slider-container input {
+          bottom: env(safe-area-inset-bottom) !important;
+        }
+      }
     </style>
   </head>
   <body>
     <div class="mobile-header">
-      <div class="logo-mobile">
+      <div
+        class="logo-mobile"
+        onclick="showMainPlaylist()"
+        style="cursor: pointer"
+      >
         <i class="fa-solid fa-rocket"></i> SoundSphere
       </div>
       <button class="btn-menu-mobile" onclick="toggleMobileSidebar()">
@@ -2416,7 +2972,7 @@
 
     <div class="main-container">
       <div class="glass-panel sidebar">
-        <div class="logo">
+        <div class="logo" onclick="showMainPlaylist()" style="cursor: pointer">
           <i class="fa-solid fa-rocket"></i> <span>SoundSphere</span>
         </div>
 
@@ -2561,23 +3117,32 @@
 
           <div class="settings-section">
             <h3 data-lang="st_other_title">Thông tin khác</h3>
-            <div class="settings-item link-item">
+            <div
+              class="settings-item link-item"
+              onclick="openInfoModal('about')"
+            >
               <span class="st-title" data-lang="st_about"
                 >Giới thiệu về SoundSphere</span
               >
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-circle-info"></i>
             </div>
-            <div class="settings-item link-item">
+            <div
+              class="settings-item link-item"
+              onclick="openInfoModal('terms')"
+            >
               <span class="st-title" data-lang="st_terms"
                 >Điều khoản sử dụng</span
               >
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-file-contract"></i>
             </div>
-            <div class="settings-item link-item">
+            <div
+              class="settings-item link-item"
+              onclick="openInfoModal('privacy')"
+            >
               <span class="st-title" data-lang="st_privacy"
                 >Chính sách bảo mật</span
               >
-              <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              <i class="fa-solid fa-file-shield"></i>
             </div>
             <div class="settings-item link-item">
               <span class="st-title" data-lang="st_report"
@@ -2598,8 +3163,10 @@
       <div class="glass-panel right-panel">
         <div class="right-panel-header">Đang phát</div>
         <div class="disc-wrapper" id="discWrapper">
+          <div class="loader-overlay"><div class="spinner"></div></div>
+
           <img
-            src="images/sontung.jpg"
+            src="images/noi-nay-co-anh.jpg"
             class="disc-img"
             id="currentCover"
             fetchpriority="high"
@@ -2627,6 +3194,13 @@
     <div class="control-deck" id="controlDeck">
       <div class="footer-left">
         <div class="footer-cover-wrapper">
+          <div class="loader-overlay" style="border-radius: 8px">
+            <div
+              class="spinner"
+              style="width: 20px; height: 20px; border-width: 2px"
+            ></div>
+          </div>
+
           <img src="images/sontung.jpg" id="footerCover" />
         </div>
         <div class="footer-info">
@@ -2736,12 +3310,32 @@
           </div>
           <div class="fs-progress-container">
             <span id="fsCurrentTime">0:00</span>
-            <div class="fs-progress-bar">
-              <div class="fs-progress-fill" id="fsProgressFill"></div>
+
+            <div class="fs-slider-container">
+              <div class="fs-progress-bar">
+                <div class="fs-progress-fill" id="fsProgressFill"></div>
+              </div>
+              <input
+                type="range"
+                id="fsProgressBar"
+                min="0"
+                value="0"
+                step="0.1"
+                class="fs-seek-slider"
+              />
             </div>
+
             <span id="fsDuration">0:00</span>
           </div>
           <div class="fs-controls">
+            <button
+              class="fs-btn-control secondary"
+              id="fsShuffleBtn"
+              onclick="toggleShuffle()"
+            >
+              <i class="fa-solid fa-shuffle"></i>
+            </button>
+
             <button class="fs-btn-control" onclick="prevSong()">
               <i class="fa-solid fa-backward-step"></i>
             </button>
@@ -2750,6 +3344,14 @@
             </button>
             <button class="fs-btn-control" onclick="nextSong()">
               <i class="fa-solid fa-forward-step"></i>
+            </button>
+
+            <button
+              class="fs-btn-control secondary"
+              id="fsRepeatBtn"
+              onclick="toggleRepeat()"
+            >
+              <i class="fa-solid fa-repeat"></i>
             </button>
           </div>
         </div>
@@ -2929,8 +3531,18 @@
         </div>
 
         <div id="registerForm" class="auth-form">
-          <h2 data-lang="auth_reg_header">Đăng kí tài khoản mới</h2>
-
+          <div class="auth-header-row">
+            <button
+              class="auth-back-btn"
+              onclick="switchAuthMode('login')"
+              type="button"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2 data-lang="auth_reg_header" style="margin: 0; font-size: 20px">
+              Đăng kí tài khoản mới
+            </h2>
+          </div>
           <form onsubmit="handleRegister(event)">
             <div class="input-group">
               <label data-lang="auth_user">Tên đăng nhập</label>
@@ -3045,7 +3657,21 @@
         </div>
 
         <div id="forgotForm" class="auth-form">
-          <h2 data-lang="auth_forgot_header">Khôi phục mật khẩu</h2>
+          <div class="auth-header-row">
+            <button
+              class="auth-back-btn"
+              onclick="switchAuthMode('login')"
+              type="button"
+            >
+              <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h2
+              data-lang="auth_forgot_header"
+              style="margin: 0; font-size: 20px"
+            >
+              Khôi phục mật khẩu
+            </h2>
+          </div>
           <p class="auth-subtitle" data-lang="auth_forgot_sub">
             Nhập email để nhận hướng dẫn đặt lại mật khẩu
           </p>
@@ -3081,6 +3707,7 @@
     </div>
     <script src="data/lyrics.js"></script>
     <script src="data/songs.js"></script>
+    <script src="data/policies.js"></script>
     <script>
       let songs = [...defaultSongList];
 
@@ -3115,6 +3742,8 @@
         likeBtn: document.getElementById("footerLikeBtn"),
         shuffleBtn: document.getElementById("shuffleBtn"),
         repeatBtn: document.getElementById("repeatBtn"),
+        fsShuffleBtn: document.getElementById("fsShuffleBtn"),
+        fsRepeatBtn: document.getElementById("fsRepeatBtn"),
         volSlider: document.getElementById("volumeSlider"),
         volFill: document.getElementById("volumeFill"),
         volIcon: document.getElementById("volumeIcon"),
@@ -3136,55 +3765,62 @@
       }
 
       function init() {
-        // CẤU HÌNH THỜI GIAN (Ví dụ: 10 giây để test, sau này sửa thành 30 * 60 * 1000)
-        const RESET_TIME = 10 * 1000;
+        renderSkeleton();
+        // 2. Giả lập delay nhỏ (hoặc xử lý logic nặng) để người dùng thấy hiệu ứng
+        setTimeout(() => {
+          // CẤU HÌNH THỜI GIAN (Ví dụ: 10 giây để test, sau này sửa thành 30 * 60 * 1000)
+          const RESET_TIME = 10 * 1000;
 
-        const now = Date.now();
-        const lastVisit = localStorage.getItem("ss_last_visit");
-        const savedOrder = localStorage.getItem("ss_saved_playlist");
-        const savedShuffleState = localStorage.getItem("ss_is_shuffled");
+          const now = Date.now();
+          const lastVisit = localStorage.getItem("ss_last_visit");
+          const savedOrder = localStorage.getItem("ss_saved_playlist");
+          const savedShuffleState = localStorage.getItem("ss_is_shuffled");
 
-        let oldList = [];
-        try {
-          oldList = JSON.parse(savedOrder) || [];
-        } catch (e) {}
+          let oldList = [];
+          try {
+            oldList = JSON.parse(savedOrder) || [];
+          } catch (e) {}
 
-        // KIỂM TRA ĐIỀU KIỆN ĐỂ KHÔI PHỤC LIST CŨ
-        const isExpired = !lastVisit || now - lastVisit > RESET_TIME;
-        const isSongCountChanged = oldList.length !== songs.length;
+          // KIỂM TRA ĐIỀU KIỆN ĐỂ KHÔI PHỤC LIST CŨ
+          const isExpired = !lastVisit || now - lastVisit > RESET_TIME;
+          const isSongCountChanged = oldList.length !== songs.length;
 
-        if (savedOrder && !isExpired && !isSongCountChanged) {
-          console.log("♻️ Khôi phục phiên làm việc cũ...");
-          songs = oldList;
-          // Khôi phục trạng thái nút shuffle của phiên trước
-          state.isShuffled = savedShuffleState === "true";
-        } else {
-          console.log("✨ Tạo danh sách phát MỚI (Random)...");
+          if (savedOrder && !isExpired && !isSongCountChanged) {
+            console.log("♻️ Khôi phục phiên làm việc cũ...");
+            songs = oldList;
+            // Khôi phục trạng thái nút shuffle của phiên trước
+            state.isShuffled = savedShuffleState === "true";
+          } else {
+            console.log("✨ Tạo danh sách phát MỚI (Random)...");
 
-          // --- SỬA LỖI TẠI ĐÂY: Luôn trộn bài khi tạo phiên mới ---
-          shuffleArray(songs);
-          state.isShuffled = false; // Tắt trạng thái đã trộn
-          // -------------------------------------------------------
+            // --- SỬA LỖI TẠI ĐÂY: Luôn trộn bài khi tạo phiên mới ---
+            shuffleArray(songs);
+            state.isShuffled = false; // Tắt trạng thái đã trộn
+            // -------------------------------------------------------
 
-          // Lưu danh sách mới và trạng thái vào bộ nhớ
-          localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
-          localStorage.setItem("ss_is_shuffled", "false");
-        }
+            // Lưu danh sách mới và trạng thái vào bộ nhớ
+            localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
+            localStorage.setItem("ss_is_shuffled", "false");
+          }
 
-        // Cập nhật thời gian truy cập
-        localStorage.setItem("ss_last_visit", now);
+          // Cập nhật thời gian truy cập
+          localStorage.setItem("ss_last_visit", now);
 
-        // Cập nhật giao diện nút Shuffle
-        if (el.shuffleBtn) {
-          el.shuffleBtn.classList.toggle("active", state.isShuffled);
-        }
+          // Cập nhật giao diện nút Shuffle
+          if (el.shuffleBtn) {
+            el.shuffleBtn.classList.toggle("active", state.isShuffled);
+          }
+          // THÊM: Đồng bộ nút Fullscreen
+          if (el.fsShuffleBtn)
+            el.fsShuffleBtn.classList.toggle("active", state.isShuffled);
 
-        renderList();
-        loadSong(state.currentSongIndex, false);
-        audio.volume = state.lastVolume;
-        setVolumeUI(state.lastVolume);
-        setupEvents();
-        loadAllDurations();
+          renderList();
+          loadSong(state.currentSongIndex, false);
+          audio.volume = state.lastVolume;
+          setVolumeUI(state.lastVolume);
+          setupEvents();
+          loadAllDurations();
+        }, 300); // Delay 300ms cho mượt
       }
 
       function renderList() {
@@ -3204,8 +3840,8 @@
               indexContent = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
             }
             return `
-                 <div class="song-item ${isActive ? "active" : ""}" 
-        id="song-${i}"  
+                 <div class="song-item ${isActive ? "active" : ""}"
+        id="song-${i}"
         onclick="playSong(${i}, 'all')">
              <div class="song-index-wrapper">${indexContent}</div>
                      <div class="song-info">
@@ -3244,6 +3880,28 @@
         el.disc.classList.remove("playing");
         void discImg.offsetWidth;
         discImg.style.animation = "rotate 24s linear infinite paused";
+
+        const fsCover = document.getElementById("fsCover");
+        const fsDiscWrapper = document.getElementById("fsDiscWrapper");
+
+        if (fsCover && fsDiscWrapper) {
+          // A. Đổi ảnh và chữ
+          fsCover.src = song.cover;
+          document.getElementById(
+            "fsBackdrop"
+          ).style.backgroundImage = `url('${song.cover}')`;
+          document.getElementById("fsTitle").innerText = song.title;
+          document.getElementById("fsArtist").innerText = song.artist;
+
+          // B. Reset hoạt ảnh đĩa quay Fullscreen (cho đồng bộ)
+          fsCover.style.animation = "none";
+          fsCover.style.transform = "rotate(0deg)";
+          fsDiscWrapper.classList.remove("playing");
+
+          void fsCover.offsetWidth; // Trigger reflow
+
+          fsCover.style.animation = "rotate 20s linear infinite paused";
+        }
 
         audio.src = song.src;
         const isLiked = state.likedSongs.has(song.id);
@@ -3347,7 +4005,7 @@
 
           // Xử lý vòng lặp
           if (nextPos >= playbackList.length) {
-            nextPos = state.repeatMode === 1 ? 0 : playbackList.length - 1; // Repeat All thì quay về 0
+            nextPos = 0; // <--- SỬA THÀNH DÒNG NÀY (Luôn quay về bài đầu tiên)
           }
           nextIndex = playbackList[nextPos];
         }
@@ -3440,7 +4098,8 @@
       function toggleShuffle() {
         state.isShuffled = !state.isShuffled;
         el.shuffleBtn.classList.toggle("active", state.isShuffled);
-
+        if (el.fsShuffleBtn)
+          el.fsShuffleBtn.classList.toggle("active", state.isShuffled);
         // --- THÊM DÒNG NÀY ĐỂ LƯU TRẠNG THÁI ---
         localStorage.setItem("ss_is_shuffled", state.isShuffled);
         // ---------------------------------------
@@ -3453,25 +4112,27 @@
       }
 
       function toggleRepeat() {
+        // 1. Thay đổi trạng thái: 0 (Tắt) -> 1 (All) -> 2 (One) -> 0
         state.repeatMode = (state.repeatMode + 1) % 3;
-        const btn = el.repeatBtn;
-        btn.classList.remove("active", "repeat-one");
-        btn.querySelector("i").className = "fa-solid fa-repeat";
-        if (state.repeatMode === 0)
+
+        // 2. Cập nhật giao diện (Gọi hàm phụ trợ cho cả 2 nút)
+        updateRepeatUI(el.repeatBtn); // Cập nhật nút Footer
+        if (el.fsRepeatBtn) updateRepeatUI(el.fsRepeatBtn); // Cập nhật nút Fullscreen (nếu có)
+
+        // 3. Hiển thị thông báo (Toast)
+        if (state.repeatMode === 0) {
           showToast(
             "Đã TẮT lặp lại",
             "off",
             '<i class="fa-solid fa-repeat" style="color:#ff4757;"></i>'
           );
-        else if (state.repeatMode === 1) {
-          btn.classList.add("active");
+        } else if (state.repeatMode === 1) {
           showToast(
             "Lặp toàn bộ danh sách",
             "success",
             '<i class="fa-solid fa-repeat"></i>'
           );
         } else {
-          btn.classList.add("active", "repeat-one");
           showToast(
             "Lặp 1 bài",
             "success",
@@ -3480,6 +4141,24 @@
         }
       }
 
+      // Hàm này chuyên dùng để vẽ lại nút Repeat (Footer hoặc Fullscreen) dựa theo state
+      function updateRepeatUI(btn) {
+        if (!btn) return;
+
+        // 1. Reset về trạng thái mặc định (Tắt)
+        btn.classList.remove("active", "repeat-one");
+        const icon = btn.querySelector("i");
+        if (icon) icon.className = "fa-solid fa-repeat"; // Trả về icon gốc
+
+        // 2. Thêm class dựa theo chế độ hiện tại
+        if (state.repeatMode === 1) {
+          // Chế độ: Lặp danh sách (Sáng đèn)
+          btn.classList.add("active");
+        } else if (state.repeatMode === 2) {
+          // Chế độ: Lặp 1 bài (Sáng đèn + Có số 1)
+          btn.classList.add("active", "repeat-one");
+        }
+      }
       function setVolume() {
         const v = el.volSlider.value;
         audio.volume = v;
@@ -3601,37 +4280,100 @@
       }
       function setupEvents() {
         document.addEventListener("keydown", (e) => {
+          // 1. Không làm gì nếu đang gõ chữ trong ô Input
           if (e.target.tagName === "INPUT") return;
+
+          // 2. LOGIC CHẶN ĐÈ PHÍM (QUAN TRỌNG)
+          // Các phím chức năng này chỉ nhận 1 lần bấm, không nhận giữ chuột
+          const nonRepeatKeys = [
+            "Space",
+            "KeyL",
+            "KeyK",
+            "KeyS",
+            "KeyR",
+            "KeyM",
+          ];
+
+          // Nếu phím đang bị đè (repeat = true) VÀ thuộc danh sách trên -> Bỏ qua
+          if (e.repeat && nonRepeatKeys.includes(e.code)) return;
+
           switch (e.code) {
             case "Space":
-              e.preventDefault();
+              e.preventDefault(); // Chặn cuộn trang khi bấm Space
               togglePlay();
               break;
-            case "KeyL":
+            case "KeyL": // Next
               nextSong();
               break;
-            case "KeyK":
+            case "KeyK": // Prev
               prevSong();
               break;
-            case "ArrowUp":
+            case "ArrowUp": // Volume tăng (Cho phép đè phím để tăng mượt)
               e.preventDefault();
               audio.volume = Math.min(1, audio.volume + 0.05);
               setVolumeUI(audio.volume);
               break;
-            case "ArrowDown":
+            case "ArrowDown": // Volume giảm (Cho phép đè phím)
               e.preventDefault();
               audio.volume = Math.max(0, audio.volume - 0.05);
               setVolumeUI(audio.volume);
               break;
-            case "KeyS":
+            case "KeyS": // Shuffle
               toggleShuffle();
               break;
-            case "KeyR":
+            case "KeyR": // Repeat
               toggleRepeat();
               break;
-            case "KeyM":
+            case "KeyM": // Mute
               toggleMute();
               break;
+          }
+        });
+
+        // THÊM VÀO setupEvents() hoặc init()
+
+        // Khi nhạc đang tải (mạng yếu) -> Hiện vòng xoay
+        audio.addEventListener("waiting", () => {
+          el.disc.classList.add("buffering");
+          document
+            .querySelector(".footer-cover-wrapper")
+            .classList.add("buffering");
+        });
+
+        // Khi nhạc đã tải xong và bắt đầu hát -> Ẩn vòng xoay
+        audio.addEventListener("playing", () => {
+          el.disc.classList.remove("buffering");
+          document
+            .querySelector(".footer-cover-wrapper")
+            .classList.remove("buffering");
+        });
+
+        // Khi load bài mới -> Cũng hiện vòng xoay ngay lập tức
+        audio.addEventListener("loadstart", () => {
+          el.disc.classList.add("buffering");
+          document
+            .querySelector(".footer-cover-wrapper")
+            .classList.add("buffering");
+        });
+        // 1. Khi nhạc đã tải xong dữ liệu (sẵn sàng phát hoặc pause) -> TẮT XOAY NGAY
+        audio.addEventListener("loadeddata", () => {
+          el.disc.classList.remove("buffering");
+          document
+            .querySelector(".footer-cover-wrapper")
+            .classList.remove("buffering");
+        });
+
+        // 2. Nếu link nhạc bị lỗi (404, file hỏng) -> TẮT XOAY và báo lỗi
+        audio.addEventListener("error", () => {
+          el.disc.classList.remove("buffering");
+          document
+            .querySelector(".footer-cover-wrapper")
+            .classList.remove("buffering");
+          // Chỉ báo lỗi nếu người dùng đang cố bấm Play
+          if (state.isPlaying) {
+            showToast("Không thể tải bài hát này!", "error");
+            state.isPlaying = false;
+            el.playIcon.className = "fa-solid fa-play";
           }
         });
       }
@@ -3701,32 +4443,56 @@
       // === LOGIC CHUYỂN TRANG (Main / Settings) ===
 
       function showSettingsPage() {
-        // 1. Ẩn trang nhạc, hiện trang cài đặt
-        document.querySelector(".universe-panel").style.display = "none";
-        document.getElementById("settingsPanel").style.display = "block";
+        const uni = document.querySelector(".universe-panel");
+        const set = document.getElementById("settingsPanel");
 
-        // 2. Cập nhật Sidebar Active
+        // Hiệu ứng: Universe trượt sang trái, Settings hiện ra
+        uni.style.opacity = "0";
+        uni.style.transform = "translateX(-20px)";
+
+        setTimeout(() => {
+          uni.style.display = "none";
+          set.style.display = "block";
+
+          // Trigger reflow để animation chạy
+          requestAnimationFrame(() => {
+            set.style.opacity = "1";
+            set.style.transform = "translateX(0)";
+          });
+        }, 300);
+
+        // Update Sidebar
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
-        // Tìm nút Cài đặt (là nút cuối cùng trong sidebar)
         const navItems = document.querySelectorAll(".nav-item");
         navItems[navItems.length - 1].classList.add("active");
       }
 
       function showMainPlaylist() {
-        // 1. Hiện trang nhạc, ẩn trang cài đặt
-        document.querySelector(".universe-panel").style.display = "block";
-        document.getElementById("settingsPanel").style.display = "none";
+        const uni = document.querySelector(".universe-panel");
+        const set = document.getElementById("settingsPanel");
 
-        // 2. Cập nhật Sidebar Active
-        document.getElementById("playlistTitle").innerText = "Dải Ngân Hà";
+        // Hiệu ứng: Settings trượt sang phải, Universe hiện lại
+        set.style.opacity = "0";
+        set.style.transform = "translateX(20px)";
+
+        setTimeout(() => {
+          set.style.display = "none";
+          uni.style.display = "block";
+          document.getElementById("playlistTitle").innerText = "Dải Ngân Hà";
+
+          requestAnimationFrame(() => {
+            uni.style.opacity = "1";
+            uni.style.transform = "translateX(0)";
+          });
+        }, 300);
+
+        // Update Sidebar
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
         document.querySelectorAll(".nav-item")[0].classList.add("active");
-
-        renderList();
       }
       document.querySelectorAll(".nav-item")[0].onclick = showMainPlaylist;
 
@@ -3745,27 +4511,53 @@
         .getElementById("mobileOverlay")
         .addEventListener("click", toggleMobileSidebar);
 
-      // SWIPE LOGIC
+      // ==================== SMART SWIPE LOGIC (SAFE AREA + SLIDER FIX) ====================
       let touchStartX = 0;
+      let touchStartY = 0;
       let touchEndX = 0;
       const minSwipeDistance = 50;
+
       const swipeTargets = [
         document.getElementById("controlDeck"),
         document.getElementById("discWrapper"),
         document.querySelector(".mobile-header"),
+        document.getElementById("fsDiscWrapper"),
+        document.querySelector(".fs-content"),
       ];
+
       swipeTargets.forEach((target) => {
         if (!target) return;
+
         target.addEventListener(
           "touchstart",
           (e) => {
-            touchStartX = e.changedTouches[0].screenX;
+            // 1. KIỂM TRA: CÓ ĐANG CHẠM VÀO THANH TRƯỢT KHÔNG? (FIX MỚI)
+            // Nếu người dùng đang chạm vào thẻ input (thanh tua nhạc, volume...), ta hủy lệnh vuốt ngay
+            if (e.target.tagName === "INPUT" && e.target.type === "range") {
+              touchStartX = null;
+              return;
+            }
+
+            // 2. LẤY TỌA ĐỘ CHẠM
+            const touch = e.changedTouches[0];
+            touchStartX = touch.screenX;
+            touchStartY = touch.clientY;
+
+            // 3. LOGIC "VÙNG CHẾT" (SAFE AREA FIX)
+            // Nếu chạm quá thấp (dính thanh Home iPhone) -> Bỏ qua
+            if (touchStartY > window.innerHeight - 40) {
+              touchStartX = null;
+            }
           },
           { passive: true }
         );
+
         target.addEventListener(
           "touchend",
           (e) => {
+            // Nếu touchStartX bị null (do chạm vào thanh kéo hoặc vùng cấm) thì thôi
+            if (touchStartX === null) return;
+
             touchEndX = e.changedTouches[0].screenX;
             handleSwipeGesture();
           },
@@ -3774,23 +4566,77 @@
       });
 
       function handleSwipeGesture() {
+        if (touchStartX === null) return;
+
         const distance = touchStartX - touchEndX;
+
+        // Vuốt sang trái (Next)
         if (distance > minSwipeDistance) {
           nextSong();
-          const btn = document.querySelector(".fa-forward-step").parentElement;
-          btn.classList.add("active");
-          setTimeout(() => btn.classList.remove("active"), 200);
+          const btn = document.querySelector(".fa-forward-step")?.parentElement;
+          if (btn) {
+            btn.classList.add("active");
+            setTimeout(() => btn.classList.remove("active"), 200);
+          }
           showToast(
             "Đã vuốt: Bài tiếp theo",
             "success",
             '<i class="fa-solid fa-forward"></i>'
           );
         }
+
+        // Vuốt sang phải (Prev)
         if (distance < -minSwipeDistance) {
           prevSong();
-          const btn = document.querySelector(".fa-backward-step").parentElement;
-          btn.classList.add("active");
-          setTimeout(() => btn.classList.remove("active"), 200);
+          const btn =
+            document.querySelector(".fa-backward-step")?.parentElement;
+          if (btn) {
+            btn.classList.add("active");
+            setTimeout(() => btn.classList.remove("active"), 200);
+          }
+          showToast(
+            "Đã vuốt: Bài trước đó",
+            "success",
+            '<i class="fa-solid fa-backward"></i>'
+          );
+        }
+      }
+
+      function handleSwipeGesture() {
+        if (touchStartX === null) return; // Kiểm tra lại lần nữa
+
+        const distance = touchStartX - touchEndX;
+
+        // Vuốt sang trái (Next)
+        if (distance > minSwipeDistance) {
+          nextSong();
+
+          // Hiệu ứng nháy nút Next (nếu tìm thấy nút)
+          const btn = document.querySelector(".fa-forward-step")?.parentElement;
+          if (btn) {
+            btn.classList.add("active");
+            setTimeout(() => btn.classList.remove("active"), 200);
+          }
+
+          showToast(
+            "Đã vuốt: Bài tiếp theo",
+            "success",
+            '<i class="fa-solid fa-forward"></i>'
+          );
+        }
+
+        // Vuốt sang phải (Prev)
+        if (distance < -minSwipeDistance) {
+          prevSong();
+
+          // Hiệu ứng nháy nút Prev
+          const btn =
+            document.querySelector(".fa-backward-step")?.parentElement;
+          if (btn) {
+            btn.classList.add("active");
+            setTimeout(() => btn.classList.remove("active"), 200);
+          }
+
           showToast(
             "Đã vuốt: Bài trước đó",
             "success",
@@ -4360,7 +5206,7 @@
                   <img src="${
                     s.cover
                   }" class="fs-song-img" loading="lazy" decoding="async">
-                  
+
                   <div class="fs-song-info">
                      <div class="fs-song-title">${s.title}</div>
                      <div class="fs-song-artist">${s.artist}</div>
@@ -4400,7 +5246,7 @@
         // Có thể thêm logic random Album nếu muốn
       }
       function updateActiveSongUI(index) {
-        // 1. Tìm bài đang active cũ và tắt nó đi
+        // 1. Tìm bài đang active cũ và tắt nó đi (GIỮ NGUYÊN)
         const oldActive = document.querySelector(".song-item.active");
         if (oldActive) {
           oldActive.classList.remove("active");
@@ -4414,21 +5260,29 @@
           oldActive.querySelector(".song-title").style.color = "white";
         }
 
-        // 2. Bật active cho bài mới
+        // 2. Bật active cho bài mới (CÓ SỬA ĐỔI)
         const newActive = document.getElementById(`song-${index}`);
         if (newActive) {
-          newActive.classList.add("active");
-          // Hiện icon playing/wave
+          // --- ĐOẠN MỚI THÊM VÀO ---
+          newActive.classList.add("active", "just-active"); // Thêm class active và hiệu ứng flash
+
+          // Xóa class hiệu ứng sau 1000ms để lần sau còn chạy lại được
+          setTimeout(() => newActive.classList.remove("just-active"), 1000);
+          // --------------------------
+
+          // Hiện icon playing/wave (GIỮ NGUYÊN LOGIC CŨ)
           const waveHtml = `<div class="playing-gif"><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
           const playHtml = `<i class="fa-solid fa-play" style="color:var(--neon-primary); font-size:12px;"></i>`;
-
           newActive.querySelector(".song-index-wrapper").innerHTML =
             state.isPlaying ? waveHtml : playHtml;
           newActive.querySelector(".song-title").style.color =
             "var(--neon-primary)";
 
-          // Cuộn đến bài hát nếu nó bị khuất (nhẹ nhàng hơn render lại)
-          newActive.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          // Cuộn đến bài hát nếu nó bị khuất
+          newActive.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
         }
       }
       // ==================== AUTHENTICATION LOGIC ====================
@@ -4444,18 +5298,20 @@
 
       // Hàm chuyển đổi tab (Hỗ trợ 3 tab: Login, Register, Forgot)
       function switchAuthMode(mode) {
-        // Ẩn tất cả các form trước
-        document
-          .querySelectorAll(".auth-form")
-          .forEach((f) => f.classList.remove("active"));
+        // 1. Ẩn tất cả các form trước
+        document.querySelectorAll(".auth-form").forEach((f) => {
+          f.classList.remove("active");
+        });
 
-        // Hiện form được chọn
-        if (mode === "login")
-          document.getElementById("loginForm").classList.add("active");
-        else if (mode === "register")
-          document.getElementById("registerForm").classList.add("active");
-        else if (mode === "forgot")
-          document.getElementById("forgotForm").classList.add("active");
+        // 2. Hiện form đích (CSS sẽ tự lo phần animation trượt vào)
+        const targetForm = document.getElementById(mode + "Form");
+        if (targetForm) {
+          targetForm.classList.add("active");
+
+          // Tự động focus vào ô nhập liệu đầu tiên cho tiện
+          const firstInput = targetForm.querySelector("input");
+          if (firstInput) setTimeout(() => firstInput.focus(), 100);
+        }
       }
       // === LOGIC AUTH MỚI (VALIDATION + SHOW/HIDE) ===
 
@@ -4902,17 +5758,19 @@
       function updateQualityUI() {
         const btn = document.getElementById("btnStreamQuality");
         if (!btn) return;
-
+        if (!translations || !translations[currentLang]) return;
         // Lấy ngôn ngữ hiện tại để hiển thị đúng text
         const lang = currentLang;
 
         if (currentQuality === "high") {
-          btn.innerHTML = translations[lang]["st_qual_high"];
+          btn.innerHTML =
+            translations[currentLang]["st_qual_high"] || "High (320kbps)";
           btn.style.background = "var(--neon-secondary)";
           btn.style.color = "#000";
           btn.style.border = "none";
         } else {
-          btn.innerHTML = translations[lang]["st_qual_std"];
+          btn.innerHTML =
+            translations[currentLang]["st_qual_std"] || "Standard (128kbps)";
           btn.style.background = "transparent";
           btn.style.color = "#ccc";
           btn.style.border = "1px solid #555";
@@ -4981,6 +5839,131 @@
           };
         });
       }
+      function renderSkeleton() {
+        const skeletonHTML = Array(8)
+          .fill('<div class="skeleton-item"></div>')
+          .join("");
+        el.list.innerHTML = skeletonHTML;
+      }
+      // === LOGIC MODAL THÔNG TIN (CHÍNH SÁCH, ĐIỀU KHOẢN...) ===
+
+      const infoData = {
+        privacy: {
+          title: "Chính sách bảo mật",
+          content: `
+                  <p><strong>1. Thu thập dữ liệu:</strong><br>SoundSphere là một dự án cá nhân phục vụ mục đích học tập. Chúng tôi không thu thập bất kỳ dữ liệu cá nhân nào của người dùng trên máy chủ.</p>
+                  <br>
+                  <p><strong>2. Lưu trữ cục bộ (Local Storage):</strong><br>Chúng tôi chỉ lưu trữ các cài đặt của bạn (như ngôn ngữ, bài hát yêu thích, chế độ lặp lại) ngay trên trình duyệt của bạn để mang lại trải nghiệm tốt hơn.</p>
+                  <br>
+                  <p><strong>3. Bản quyền âm nhạc:</strong><br>Các bài hát trên nền tảng này được sử dụng cho mục đích demo. Nếu có vấn đề về bản quyền, vui lòng liên hệ qua mục "Báo cáo vi phạm".</p>
+                  <br>
+                  <p><strong>4. Liên hệ:</strong><br>Mọi thắc mắc xin vui lòng gửi về email hỗ trợ trong phần Cài đặt.</p>
+              `,
+        },
+        terms: {
+          title: "Điều khoản sử dụng",
+          content: `
+                  <p>Chào mừng bạn đến với SoundSphere. Khi sử dụng website này, bạn đồng ý rằng:</p>
+                  <ul style="margin-left: 20px; margin-top: 10px;">
+                      <li>Không sử dụng website vào mục đích thương mại trái phép.</li>
+                      <li>Tôn trọng cộng đồng và không spam.</li>
+                      <li>SoundSphere có quyền thay đổi tính năng mà không báo trước.</li>
+                  </ul>
+              `,
+        },
+        about: {
+          title: "Về SoundSphere",
+          content: `
+                  <p><strong>SoundSphere v1.0</strong></p>
+                  <p>Được phát triển với niềm đam mê âm nhạc và công nghệ.</p>
+                  <p>Giao diện được thiết kế theo phong cách Neon/Glassmorphism hiện đại.</p>
+                  <br>
+                  <p>© 2024 SoundSphere Project. All rights reserved.</p>
+              `,
+        },
+      };
+
+      function openInfoModal(type) {
+        const modal = document.getElementById("infoModal");
+        const title = document.getElementById("infoTitle");
+        const content = document.getElementById("infoContent");
+
+        // Sử dụng biến policyData được lấy từ file data/policies.js
+        if (typeof policyData !== "undefined" && policyData[type]) {
+          title.innerText = policyData[type].title;
+          content.innerHTML = policyData[type].content;
+          modal.classList.add("active");
+        } else {
+          console.error("Không tìm thấy dữ liệu policyData!");
+        }
+      }
+
+      function closeInfoModal() {
+        document.getElementById("infoModal").classList.remove("active");
+      }
+      // === LOGIC KÉO THẢ FULL SCREEN PLAYER ===
+
+      const fsProgressBar = document.getElementById("fsProgressBar");
+      let isFsDragging = false;
+
+      // 1. Sự kiện khi bắt đầu kéo -> Ngừng cập nhật tự động
+      fsProgressBar.addEventListener("mousedown", () => (isFsDragging = true));
+      fsProgressBar.addEventListener("touchstart", () => (isFsDragging = true));
+
+      // 2. Sự kiện khi đang kéo -> Cập nhật giao diện (số giây + thanh màu)
+      fsProgressBar.addEventListener("input", () => {
+        const val = fsProgressBar.value;
+        const max = audio.duration || 1;
+        const pct = (val / max) * 100;
+
+        // Cập nhật thanh màu
+        document.getElementById("fsProgressFill").style.width = `${pct}%`;
+        // Cập nhật số giây
+        document.getElementById("fsCurrentTime").innerText = formatTime(val);
+      });
+
+      // 3. Sự kiện khi thả tay ra -> Tua nhạc
+      fsProgressBar.addEventListener("change", () => {
+        isFsDragging = false;
+        audio.currentTime = fsProgressBar.value;
+        if (!state.isPlaying) togglePlay(); // Nếu đang pause thì phát luôn
+      });
+
+      // 4. CẬP NHẬT LẠI LOGIC TIMEUPDATE CŨ
+      // (Tìm đoạn audio.addEventListener("timeupdate"...) cũ của FS và sửa lại như sau)
+
+      audio.addEventListener("timeupdate", () => {
+        // Cập nhật cho Footer Player (Code cũ)
+        if (!isDragging && el.progressBar) {
+          // ... logic cũ của footer ...
+        }
+
+        // Cập nhật cho Full Screen Player (MỚI)
+        if (
+          document
+            .getElementById("fullScreenPlayer")
+            .classList.contains("active")
+        ) {
+          const curr = audio.currentTime;
+          const dur = audio.duration || 1;
+
+          // Chỉ cập nhật nếu người dùng KHÔNG đang kéo
+          if (!isFsDragging) {
+            fsProgressBar.max = dur; // Cập nhật max liên tục đề phòng lỗi load
+            fsProgressBar.value = curr;
+
+            const pct = (curr / dur) * 100;
+            document.getElementById("fsProgressFill").style.width = `${pct}%`;
+            document.getElementById("fsCurrentTime").innerText =
+              formatTime(curr);
+          }
+        }
+      });
+
+      // Cập nhật Max khi bài hát tải xong
+      audio.addEventListener("loadedmetadata", () => {
+        if (fsProgressBar) fsProgressBar.max = audio.duration;
+      });
     </script>
     <button
       class="back-to-top"
@@ -5041,6 +6024,53 @@
             data-lang="auth_btn_logout"
           >
             Đăng xuất
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="infoModal" class="auth-overlay">
+      <div class="auth-backdrop" onclick="closeInfoModal()"></div>
+
+      <div
+        class="auth-box"
+        style="
+          max-width: 600px;
+          max-height: 80vh;
+          display: flex;
+          flex-direction: column;
+        "
+      >
+        <button class="auth-close-btn" onclick="closeInfoModal()">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <h2
+          id="infoTitle"
+          style="margin-bottom: 20px; font-size: 24px; color: white"
+        >
+          Tiêu đề
+        </h2>
+
+        <div
+          id="infoContent"
+          style="
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            color: #ccc;
+            line-height: 1.6;
+            font-size: 15px;
+            text-align: justify;
+          "
+        ></div>
+
+        <div style="margin-top: 20px; text-align: right">
+          <button
+            onclick="closeInfoModal()"
+            class="btn-auth-submit"
+            style="width: auto; padding: 10px 30px; margin: 0"
+          >
+            Đóng
           </button>
         </div>
       </div>
