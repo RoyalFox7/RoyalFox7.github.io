@@ -68,7 +68,7 @@
         font-family: "Outfit", sans-serif;
         font-weight: 700;
         letter-spacing: -0.4px;
-        font-size: 15.5px;
+        font-size: 16.5px;
       }
 
       body {
@@ -169,7 +169,7 @@
         position: absolute;
         border-radius: 50%;
         /* Giảm blur chút xíu để nhẹ máy hơn, nhưng vẫn ảo */
-        filter: blur(50px);
+        filter: blur(20px);
         z-index: -1;
         opacity: 0.6;
         /* Ép GPU */
@@ -211,7 +211,7 @@
         top: 40%;
         right: 15%;
         opacity: 0.4;
-        filter: blur(30px);
+        filter: blur(20px);
         animation-duration: 18s;
         animation-delay: -10s;
       }
@@ -405,7 +405,7 @@
         display: grid;
         grid-template-columns: 48px 1fr 40px 60px;
         alignitems: center;
-        padding: 10px 16px;
+        padding: 14px 16px;
         border-radius: 12px;
         border: 1px solid transparent;
         margin-bottom: 6px;
@@ -695,8 +695,8 @@
         opacity: 0.8;
       }
       .btn-play-hero {
-        width: 48px;
-        height: 48px;
+        width: 56px;
+        height: 56px;
         background: white;
         color: var(--space-bg-dark);
         border-radius: 50%;
@@ -2365,6 +2365,33 @@
         font-size: 12px;
         box-shadow: 0 0 10px rgba(196, 92, 255, 0.4);
       }
+      /* Tối ưu hiệu ứng trên mobile */
+      @media (max-width: 768px) {
+        .bg-planet {
+          filter: blur(15px) !important; /* Giảm thêm nữa trên mobile */
+          opacity: 0.4;
+        }
+        .planet-large-purple,
+        .planet-medium-cyan,
+        .planet-small-deep {
+          opacity: 0.3;
+        }
+      }
+      /* Full-screen player tối ưu mobile */
+      @media (max-width: 768px) {
+        .fs-disc-wrapper {
+          width: 80vw !important;
+          height: 80vw !important;
+          max-width: 320px;
+          max-height: 320px;
+        }
+      }
+      @media (max-height: 500px) and (orientation: landscape) {
+        .fs-disc-wrapper {
+          width: 160px !important;
+          height: 160px !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -2521,7 +2548,14 @@
                   >Điều chỉnh độ bit-rate của nhạc</span
                 >
               </div>
-              <span class="badge-quality">High (320kbps)</span>
+
+              <button
+                class="badge-quality"
+                id="btnStreamQuality"
+                onclick="toggleStreamQuality()"
+              >
+                High (320kbps)
+              </button>
             </div>
           </div>
 
@@ -2728,17 +2762,28 @@
         <div class="header-spacer"></div>
 
         <div class="fs-tab-nav">
-          <button class="fs-tab-btn active" onclick="switchFsTab('lyrics')">
+          <button
+            class="fs-tab-btn active"
+            onclick="switchFsTab('lyrics')"
+            data-lang="tab_lyrics"
+          >
             Lời bài hát
           </button>
-          <button class="fs-tab-btn" onclick="switchFsTab('playlist')">
+          <button
+            class="fs-tab-btn"
+            onclick="switchFsTab('playlist')"
+            data-lang="tab_playlist"
+          >
             Danh sách phát
           </button>
-          <button class="fs-tab-btn" onclick="switchFsTab('info')">
+          <button
+            class="fs-tab-btn"
+            onclick="switchFsTab('info')"
+            data-lang="tab_info"
+          >
             Thông tin
           </button>
         </div>
-
         <div class="header-actions">
           <button
             class="fs-close-btn-new"
@@ -2774,13 +2819,14 @@
 
           <div id="tab-info" class="fs-tab-content">
             <div class="fs-info-box">
-              <h3>Credit</h3>
+              <h3 data-lang="info_credit">Credit</h3>
               <div class="info-row">
-                <span>Nghệ sĩ</span><strong id="infoArtist">...</strong>
+                <span data-lang="info_artist ">Nghệ sĩ</span
+                ><strong id="infoArtist ">...</strong>
               </div>
               <div class="info-row">
-                <span>Album</span
-                ><strong id="infoAlbum">SoundSphere Collection</strong>
+                <span data-lang="info_album ">Album</span
+                ><strong id="infoAlbum ">SoundSphere Collection</strong>
               </div>
             </div>
           </div>
@@ -3034,374 +3080,9 @@
       </div>
     </div>
     <script src="data/lyrics.js"></script>
+    <script src="data/songs.js"></script>
     <script>
-      // DỮ LIỆU BÀI HÁT
-      let songs = [
-        {
-          id: 1,
-          title: "Nơi này có anh",
-          artist: "Sơn Tùng M-TP",
-          cover: "images/noi-nay-co-anh.jpg",
-          src: "musics/noi-nay-co-anh.mp3",
-        },
-        {
-          id: 2,
-          title: "Making My Way",
-          artist: "Sơn Tùng M-TP",
-          cover: "images/making-my-way.jpg",
-          src: "musics/making-my-way.mp3",
-        },
-        {
-          id: 3,
-          title: "Chúng Ta Của Hiện Tại",
-          artist: "Sơn Tùng M-TP",
-          cover: "images/chung-ta-cua-hien-tai.jpg",
-          src: "musics/chung-ta-cua-hien-tai.mp3",
-        },
-        {
-          id: 4,
-          title: "Muộn Rồi Mà Sao Còn",
-          artist: "Sơn Tùng M-TP",
-          cover: "images/muon-roi-ma-sao-con.jpg",
-          src: "musics/muon-roi-ma-sao-con.mp3",
-        },
-        {
-          id: 5,
-          title: "Chạm khẽ tim anh một chút thôi",
-          artist: "Noo Phước Thịnh",
-          cover: "images/cham-khe-tim-anh-mot-chut-thoi.jpg",
-          src: "musics/cham-khe-tim-anh-mot-chut-thoi.mp3",
-        },
-        {
-          id: 6,
-          title: "Don't Côi",
-          artist: "Orijinn x Ronboogz",
-          cover: "images/dont-coi.jpg",
-          src: "musics/dont-coi.mp3",
-        },
-        {
-          id: 7,
-          title: "Nụ hôn Bisou",
-          artist: "Lãng",
-          cover: "images/nu-hon-bisou.jpg",
-          src: "musics/nu-hon-bisou.mp3",
-        },
-        {
-          id: 8,
-          title: "Panorama",
-          artist: "Richie D. ICY x Obito",
-          cover: "images/panorama.jpg",
-          src: "musics/panorama.mp3",
-        },
-        {
-          id: 9,
-          title: "Ai Mới Là Kẻ Xấu Xa",
-          artist: "RPT MCK",
-          cover: "images/ai-moi-la-ke-xau-xa.jpg",
-          src: "musics/ai-moi-la-ke-xau-xa.mp3",
-        },
-        {
-          id: 10,
-          title: "Thuyền không bến đợi",
-          artist: "Trung I.U",
-          cover: "images/thuyen-khong-ben-doi.jpg",
-          src: "musics/thuyen-khong-ben-doi.mp3",
-        },
-        {
-          id: 11,
-          title: "Cà phê",
-          artist: "MIN",
-          cover: "images/ca-phe.jpg",
-          src: "musics/ca-phe.mp3",
-        },
-        {
-          id: 12,
-          title: "Chuyện đôi ta (Lofi Version)",
-          artist: "Emcee L(Da LAB) ft. Muội",
-          cover: "images/chuyen-doi-ta(lofi).jpg",
-          src: "musics/chuyen-doi-ta(lofi).mp3",
-        },
-        {
-          id: 13,
-          title: "Có chắc yêu là đây",
-          artist: "Sơn Tùng M-TP",
-          cover: "images/co-chac-yeu-la-day.jpg",
-          src: "musics/co-chac-yeu-la-day.mp3",
-        },
-        {
-          id: 14,
-          title: "Do For Love",
-          artist: "AMEE",
-          cover: "images/do-for-love.jpg",
-          src: "musics/do-for-love.mp3",
-        },
-        {
-          id: 15,
-          title: "Duyên âm (Remix)",
-          artist: "Hoàng Thùy Linh",
-          cover: "images/duyen-am(remix).jpg",
-          src: "musics/duyen-am(remix).mp3",
-        },
-        {
-          id: 16,
-          title: "ghệ iu dấu của em ơi",
-          artist: "Tlinh",
-          cover: "images/ghe-iu-dau-cua-em-oi.jpg",
-          src: "musics/ghe-iu-dau-cua-em-oi.mp3",
-        },
-        {
-          id: 17,
-          title: "Lệ lưu ly (Remix)",
-          artist: "Vũ Phụng Tiên x DT Tập Rap",
-          cover: "images/le-luu-ly(remix).jpg",
-          src: "musics/le-luu-ly(remix).mp3",
-        },
-        {
-          id: 18,
-          title: "Nắm đôi bàn tay (Remix)",
-          artist: "Kay Trần",
-          cover: "images/nam-doi-ban-tay(remix).jpg",
-          src: "musics/nam-doi-ban-tay(remix).mp3",
-        },
-        {
-          id: 19,
-          title: "Nắng dưới chân mây (Remix)",
-          artist: "Nguyễn Hữu Kha",
-          cover: "images/nang-duoi-chan-may(remix).jpg",
-          src: "musics/nang-duoi-chan-may(remix).mp3",
-        },
-        {
-          id: 20,
-          title: "Ngáo ngơ",
-          artist: "HIEUTHUHAI, Atus",
-          cover: "images/ngao-ngo.jpg",
-          src: "musics/ngao-ngo.mp3",
-        },
-        {
-          id: 21,
-          title: "Sài gòn đâu có lạnh",
-          artist: "Changg x LeWiuy",
-          cover: "images/sai-gon-dau-co-lanh.jpg",
-          src: "musics/sai-gon-dau-co-lanh.mp3",
-        },
-        {
-          id: 22,
-          title: "Tâm trí lang thang (Remix)",
-          artist: "Ánh Sáng AZA",
-          cover: "images/tam-tri-lang-thang(remix).jpg",
-          src: "musics/tam-tri-lang-thang(remix).mp3",
-        },
-        {
-          id: 23,
-          title: "Thuốc lá & cà phê",
-          artist: "Bray",
-          cover: "images/thuoc-la-va-ca-phe.jpg",
-          src: "musics/thuoc-la-va-ca-phe.mp3",
-        },
-        {
-          id: 24,
-          title: "uocgianhaynoiyeutoi",
-          artist: "Lil Liem",
-          cover: "images/uocgianhaynoiyeutoi.jpg",
-          src: "musics/uocgianhaynoiyeutoi.mp3",
-        },
-        {
-          id: 25,
-          title: "uocgicoaynoiyeutoi",
-          artist: "Lil Liem",
-          cover: "images/uocgicoaynoiyeutoi.jpg",
-          src: "musics/uocgicoaynoiyeutoi.mp3",
-        },
-        {
-          id: 26,
-          title: "Vì yêu cứ đâm đầu",
-          artist: "MIN x Đen Vâu",
-          cover: "images/vi-yeu-cu-dam-dau.jpg",
-          src: "musics/vi-yeu-cu-dam-dau.mp3",
-        },
-        {
-          id: 27,
-          title: "Vô Tình",
-          artist: "HOAPROX x Xesi",
-          cover: "images/vo-tinh.jpg",
-          src: "musics/vo-tinh.mp3",
-        },
-        {
-          id: 28,
-          title: "IKIGAI",
-          artist: "Tăng Duy Tân",
-          cover: "images/ikigai.jpg",
-          src: "musics/ikigai.mp3",
-        },
-        {
-          id: 29,
-          title: "05 (Không Phai)",
-          artist: "Tăng Duy Tân",
-          cover: "images/05(khong-phai).jpg",
-          src: "musics/05(khong-phai).mp3",
-        },
-        {
-          id: 30,
-          title: "Vườn Mây Vừa Hay",
-          artist: "Ân Ngờ",
-          cover: "images/vuon-may-vua-hay.jpg",
-          src: "musics/vuon-may-vua-hay.mp3",
-        },
-        {
-          id: 31,
-          title: "24H",
-          artist: "LyLy ft. Magazine",
-          cover: "images/24h.jpg",
-          src: "musics/24h.mp3",
-        },
-        {
-          id: 32,
-          title: "An thần",
-          artist: "Low G ft. Thắng",
-          cover: "images/an-than.jpg",
-          src: "musics/an-than.mp3",
-        },
-        {
-          id: 33,
-          title: "Chìm sâu",
-          artist: "RPT MCK ft. Trung Trần",
-          cover: "images/chim-sau.jpg",
-          src: "musics/chim-sau.mp3",
-        },
-        {
-          id: 34,
-          title: "Chờ Ngày Mưa Tan",
-          artist: "Noo Phước Thịnh",
-          cover: "images/cho-ngay-mua-tan.jpg",
-          src: "musics/cho-ngay-mua-tan.mp3",
-        },
-        {
-          id: 35,
-          title: "Đa Nghi",
-          artist: "OgeNus",
-          cover: "images/da-nghi.jpg",
-          src: "musics/da-nghi.mp3",
-        },
-        {
-          id: 36,
-          title: "em bỏ hút thuốc chưa?",
-          artist: "Bích Phương",
-          cover: "images/em-bo-hut-thuoc-chua.jpg",
-          src: "musics/em-bo-hut-thuoc-chua.mp3",
-        },
-        {
-          id: 37,
-          title: "Mắt Nâu",
-          artist: "Tăng Duy Tân",
-          cover: "images/mat-nau.jpg",
-          src: "musics/mat-nau.mp3",
-        },
-        {
-          id: 38,
-          title: "Miên Man",
-          artist: "Minh Huy",
-          cover: "images/mien-man.jpg",
-          src: "musics/mien-man.mp3",
-        },
-        {
-          id: 39,
-          title: "Phải lòng",
-          artist: "Tăng Duy Tân ft. Phong Max",
-          cover: "images/phai-long.jpg",
-          src: "musics/phai-long.mp3",
-        },
-        {
-          id: 40,
-          title: "Thôi em đừng đi",
-          artist: "RPT MCK ft. Trung Trần",
-          cover: "images/thoi-em-dung-di.jpg",
-          src: "musics/thoi-em-dung-di.mp3",
-        },
-        {
-          id: 41,
-          title: "Tại Vì Sao",
-          artist: "RPT MCK",
-          cover: "images/tai-vi-sao.jpg",
-          src: "musics/tai-vi-sao.mp3",
-        },
-        {
-          id: 42,
-          title: "Nhà Giam Tâm Hồn",
-          artist: "Tăng Duy Tân ft. 2pillz",
-          cover: "images/nha-giam-tam-hon.jpg",
-          src: "musics/nha-giam-tam-hon.mp3",
-        },
-        {
-          id: 43,
-          title: "Gặp Lại Năm Ta 60",
-          artist: "Orange",
-          cover: "images/gap-lai-nam-ta-60.jpg",
-          src: "musics/gap-lai-nam-ta-60.mp3",
-        },
-        {
-          id: 44,
-          title: "Em Hát Ai Nghe",
-          artist: "Orange",
-          cover: "images/em-hat-ai-nghe.jpg",
-          src: "musics/em-hat-ai-nghe.mp3",
-        },
-        {
-          id: 45,
-          title: "Tình Đầu",
-          artist: "Tăng Duy Tân",
-          cover: "images/tinh-dau.jpg",
-          src: "musics/tinh-dau.mp3",
-        },
-        {
-          id: 46,
-          title: "Trái đất ôm Mặt trời",
-          artist: "KAI ĐINH x GREY D x HOÀNG THUỲ LINH",
-          cover: "images/trai-dat-om-mat-troi.jpg",
-          src: "musics/trai-dat-om-mat-troi.mp3",
-        },
-        {
-          id: 47,
-          title: "Trước Khi Em Tồn Tại (Piano Version)",
-          artist: "Thắng | Việt Anh Cover",
-          cover: "images/truoc-khi-em-ton-tai(piano-version).jpg",
-          src: "musics/truoc-khi-em-ton-tai(piano-version).mp3",
-        },
-        {
-          id: 48,
-          title: "Từng là",
-          artist: "Vũ Cát Tường",
-          cover: "images/tung-la.jpg",
-          src: "musics/tung-la.mp3",
-        },
-        {
-          id: 49,
-          title: "Từng Quen",
-          artist: "Wren Evans",
-          cover: "images/tung-quen.jpg",
-          src: "musics/tung-quen.mp3",
-        },
-        {
-          id: 50,
-          title: "Yêu một người sao buồn đến thế",
-          artist: "Noo Phước Thịnh",
-          cover: "images/yeu-mot-nguoi-sao-buon-den-the.jpg",
-          src: "musics/yeu-mot-nguoi-sao-buon-den-the.mp3",
-        },
-        {
-          id: 51,
-          title: "Nỡ lòng đồng ý",
-          artist: "Anh Trai “Say Hi”, B Ray, Cody, Gill, KARIK & Ryn Lee",
-          cover: "images/no-long-dong-y.jpg",
-          src: "musics/no-long-dong-y.mp3",
-        },
-        {
-          id: 52,
-          title: "Simple Love",
-          artist: "Obito x Seachains x Davis x Lena",
-          cover: "images/simple-love.jpg",
-          src: "musics/simple-love.mp3",
-        },
-      ];
+      let songs = [...defaultSongList];
 
       let state = {
         isPlaying: false,
@@ -3442,6 +3123,8 @@
       document.addEventListener("DOMContentLoaded", () => {
         init();
         initLanguage();
+        initStreamQuality();
+        loadDurationsSmart();
       });
 
       // === HÀM TRỘN MẢNG (Shuffle) ===
@@ -3485,7 +3168,7 @@
 
           // Lưu danh sách mới và trạng thái vào bộ nhớ
           localStorage.setItem("ss_saved_playlist", JSON.stringify(songs));
-          localStorage.setItem("ss_is_shuffled", "true");
+          localStorage.setItem("ss_is_shuffled", "false");
         }
 
         // Cập nhật thời gian truy cập
@@ -3956,10 +3639,19 @@
       function showFavoritePlaylist() {
         document.getElementById("playlistTitle").innerText =
           "Bài hát yêu thích";
+        // --- 1. QUAN TRỌNG: Phải chuyển đổi màn hình về trang nhạc ---
+        document.querySelector(".universe-panel").style.display = "block";
+        document.getElementById("settingsPanel").style.display = "none";
+        // 2. Logic cũ của bạn
+        document.getElementById("playlistTitle").innerText =
+          "Bài hát yêu thích";
+
+        // Cập nhật trạng thái active cho Sidebar
         document
           .querySelectorAll(".nav-item")
           .forEach((item) => item.classList.remove("active"));
         document.getElementById("navFavorite").classList.add("active");
+
         updateFavoriteList();
       }
 
@@ -4982,7 +4674,7 @@
       function confirmLogout() {
         window.location.reload(); // Tải lại trang để đăng xuất
       }
-      // ==================== LANGUAGE SYSTEM (UPGRADED) ====================
+      // ==================== LANGUAGE SYSTEM (FINAL FULL) ====================
 
       const translations = {
         vi: {
@@ -5004,6 +4696,8 @@
           st_audio_title: "Chất lượng âm thanh",
           st_audio_stream: "Chất lượng stream",
           st_audio_desc: "Điều chỉnh độ bit-rate của nhạc",
+          st_qual_high: "Cao (320kbps)",
+          st_qual_std: "Chuẩn (128kbps)",
           st_other_title: "Thông tin khác",
           st_about: "Giới thiệu về SoundSphere",
           st_terms: "Điều khoản sử dụng",
@@ -5011,7 +4705,7 @@
           st_report: "Báo cáo vi phạm bản quyền",
           st_contact: "Liên hệ hỗ trợ",
 
-          // AUTH & POPUP (MỚI)
+          // AUTH & POPUP
           auth_login_header: "Đăng nhập",
           auth_welcome: "Chào mừng bạn quay trở lại SoundSphere",
           auth_user: "Tên đăng nhập",
@@ -5046,6 +4740,14 @@
             "Bạn có chắc chắn muốn đăng xuất khỏi tài khoản không?",
           auth_btn_cancel: "Hủy",
           auth_btn_logout: "Đăng xuất",
+
+          // --- TỪ VỰNG MỚI CHO TAB LYRICS ---
+          tab_lyrics: "Lời bài hát",
+          tab_playlist: "Danh sách phát",
+          tab_info: "Thông tin",
+          info_credit: "Credit",
+          info_artist: "Nghệ sĩ",
+          info_album: "Album",
         },
         en: {
           // SIDEBAR
@@ -5066,6 +4768,8 @@
           st_audio_title: "Audio Quality",
           st_audio_stream: "Streaming Quality",
           st_audio_desc: "Adjust music bit-rate",
+          st_qual_high: "High (320kbps)",
+          st_qual_std: "Standard (128kbps)",
           st_other_title: "Others",
           st_about: "About SoundSphere",
           st_terms: "Terms of Service",
@@ -5073,7 +4777,7 @@
           st_report: "Report Copyright Issue",
           st_contact: "Contact Support",
 
-          // AUTH & POPUP (NEW)
+          // AUTH & POPUP
           auth_login_header: "Login",
           auth_welcome: "Welcome back to SoundSphere",
           auth_user: "Username",
@@ -5107,9 +4811,16 @@
           auth_logout_sub: "Are you sure you want to logout?",
           auth_btn_cancel: "Cancel",
           auth_btn_logout: "Logout",
+
+          // --- NEW LYRICS TAB VOCABULARY ---
+          tab_lyrics: "Lyrics",
+          tab_playlist: "Playlist",
+          tab_info: "Info",
+          info_credit: "Credits",
+          info_artist: "Artist",
+          info_album: "Album",
         },
       };
-
       let currentLang = localStorage.getItem("ss_language") || "vi";
 
       function initLanguage() {
@@ -5155,6 +4866,120 @@
             btn.innerHTML = 'ENGLISH <i class="fa-solid fa-globe"></i>';
           }
         }
+        updateQualityUI();
+      }
+      // === LOGIC CHẤT LƯỢNG ÂM THANH ===
+
+      // 1. Lấy cài đặt cũ (Mặc định là 'high')
+      let currentQuality = localStorage.getItem("ss_stream_quality") || "high";
+
+      // 2. Hàm khởi chạy (Gọi khi load web)
+      function initStreamQuality() {
+        updateQualityUI();
+      }
+
+      // 3. Hàm chuyển đổi (Gắn vào nút bấm)
+      function toggleStreamQuality() {
+        // Đổi trạng thái: high -> standard -> high
+        currentQuality = currentQuality === "high" ? "standard" : "high";
+
+        // Lưu vào bộ nhớ
+        localStorage.setItem("ss_stream_quality", currentQuality);
+
+        // Cập nhật giao diện
+        updateQualityUI();
+
+        // Thông báo cho người dùng
+        const msg =
+          currentQuality === "high"
+            ? "Đã chuyển sang Chất lượng cao (320kbps)"
+            : "Đã chuyển sang Tiết kiệm dữ liệu (128kbps)";
+
+        showToast(msg, "success", '<i class="fa-solid fa-sliders"></i>');
+      }
+
+      // 4. Hàm cập nhật giao diện nút bấm
+      function updateQualityUI() {
+        const btn = document.getElementById("btnStreamQuality");
+        if (!btn) return;
+
+        // Lấy ngôn ngữ hiện tại để hiển thị đúng text
+        const lang = currentLang;
+
+        if (currentQuality === "high") {
+          btn.innerHTML = translations[lang]["st_qual_high"];
+          btn.style.background = "var(--neon-secondary)";
+          btn.style.color = "#000";
+          btn.style.border = "none";
+        } else {
+          btn.innerHTML = translations[lang]["st_qual_std"];
+          btn.style.background = "transparent";
+          btn.style.color = "#ccc";
+          btn.style.border = "1px solid #555";
+        }
+      }
+      // === CÁCH 2: TỰ ĐỘNG TÍNH & LƯU CACHE (SMART LOAD) ===
+
+      async function loadDurationsSmart() {
+        // 1. Lấy kho dữ liệu thời lượng đã lưu từ trước (nếu có)
+        const cachedData = JSON.parse(
+          localStorage.getItem("ss_durations_cache") || "{}"
+        );
+        let hasNewData = false;
+
+        // 2. Duyệt qua từng bài hát
+        for (let i = 0; i < songs.length; i++) {
+          const s = songs[i];
+          const durElement = document.getElementById(`dur-${i}`);
+
+          // TRƯỜNG HỢP 1: Đã có trong bộ nhớ -> Lấy ra dùng luôn (Siêu nhanh)
+          if (cachedData[s.src]) {
+            s.duration = cachedData[s.src];
+            if (durElement) durElement.innerText = s.duration;
+            continue; // Xong bài này, qua bài tiếp theo ngay
+          }
+
+          // TRƯỜNG HỢP 2: Chưa có -> Phải tải để tính (Sẽ chậm ở lần đầu)
+          // Dùng await để tải lần lượt từng bài, tránh làm đơ máy
+          try {
+            const duration = await getAudioDuration(s.src);
+            s.duration = duration;
+            if (durElement) durElement.innerText = duration;
+
+            // Lưu kết quả vào biến tạm
+            cachedData[s.src] = duration;
+            hasNewData = true;
+          } catch (err) {
+            console.log("Lỗi tải duration:", s.title);
+            if (durElement) durElement.innerText = "--:--";
+          }
+        }
+
+        // 3. Nếu có dữ liệu mới tính toán -> Lưu ngược vào Ổ cứng (LocalStorage) cho lần sau
+        if (hasNewData) {
+          localStorage.setItem(
+            "ss_durations_cache",
+            JSON.stringify(cachedData)
+          );
+          console.log("✅ Đã cập nhật cache thời lượng mới!");
+        }
+      }
+
+      // Hàm phụ trợ: Tạo audio ẩn để lấy thông tin giây
+      function getAudioDuration(url) {
+        return new Promise((resolve) => {
+          const audio = new Audio(url);
+          audio.preload = "metadata";
+
+          audio.onloadedmetadata = () => {
+            resolve(formatTime(audio.duration));
+          };
+
+          // Nếu file lỗi hoặc mạng chậm quá, trả về --:-- để không bị kẹt
+          audio.onerror = () => {
+            resolve("--:--");
+          };
+        });
       }
     </script>
     <button
@@ -5222,4 +5047,3 @@
     </div>
   </body>
 </html>
-
