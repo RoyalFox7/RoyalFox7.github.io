@@ -7,6 +7,13 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>SoundSphere - Final Fixed</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="theme-color" content="#050710" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
     <link
       rel="stylesheet"
@@ -2944,6 +2951,102 @@
           bottom: env(safe-area-inset-bottom) !important;
         }
       }
+      /* ==================== MOBILE LYRICS BEAUTIFIER (SPOTIFY STYLE) ==================== */
+      @media (max-width: 768px) {
+        /* 1. ẨN CỘT TRÁI (Đĩa nhạc & Thông tin) để lấy chỗ cho Lyrics */
+        .lyrics-fs-left {
+          display: none !important;
+        }
+
+        /* 2. MỞ RỘNG CỘT PHẢI (Khu vực chứa lời) ra toàn màn hình */
+        .lyrics-fs-right {
+          flex: 1;
+          width: 100%;
+          padding: 0 20px !important; /* Canh lề 2 bên cho thoáng */
+          height: calc(100vh - 160px); /* Trừ hao Header và Player bên dưới */
+        }
+
+        /* 3. TÙY BIẾN THANH TAB (Lyrics / Playlist / Info) */
+        .fs-top-header {
+          padding: 10px 16px;
+          background: transparent !important; /* Làm trong suốt cho đẹp */
+          border-bottom: none; /* Bỏ kẻ ngang */
+        }
+        .fs-tab-nav {
+          background: rgba(0, 0, 0, 0.3); /* Nền tối mờ cho cụm nút */
+          backdrop-filter: blur(10px);
+          margin: 0 auto; /* Căn giữa */
+        }
+        .fs-tab-btn {
+          padding: 8px 16px;
+          font-size: 13px;
+        }
+
+        /* 4. BIẾN HÓA CHỮ (Typography) - PHẦN QUAN TRỌNG NHẤT */
+        .lyrics-scroll-area {
+          padding-top: 50%; /* Khoảng trống lớn ở trên để dòng đầu tiên nằm giữa */
+          padding-bottom: 50%; /* Khoảng trống ở dưới */
+          text-align: center; /* Căn giữa hoàn toàn */
+          mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%
+          );
+          -webkit-mask-image: linear-gradient(
+            to bottom,
+            transparent 0%,
+            black 20%,
+            black 80%,
+            transparent 100%
+          );
+        }
+
+        .lyrics-line {
+          font-size: 24px !important; /* Chữ to rõ ràng */
+          line-height: 1.6;
+          margin-bottom: 30px; /* Các dòng cách xa nhau cho dễ đọc */
+          color: rgba(255, 255, 255, 0.3); /* Chữ chưa hát thì mờ hẳn đi */
+          font-weight: 600;
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          transform: scale(0.95);
+          filter: blur(0.5px); /* Làm mờ nhẹ chữ chưa hát */
+        }
+
+        /* 5. HIỆU ỨNG DÒNG ĐANG HÁT (ACTIVE) */
+        .lyrics-line.active {
+          color: #ffffff; /* Sáng rực */
+          font-size: 28px !important; /* Phóng to lên */
+          font-weight: 800;
+          transform: scale(1.1); /* Nổi bật lên */
+          filter: blur(0);
+          text-shadow: 0 0 20px rgba(0, 229, 255, 0.6); /* Phát sáng Neon */
+          opacity: 1;
+        }
+
+        /* 6. Khi bấm vào lời bài hát thì có hiệu ứng nhún nhẹ */
+        .lyrics-line:active {
+          transform: scale(1.05);
+        }
+      }
+      /* ==================== MOBILE MENU ITEM ==================== */
+
+      /* Mặc định ẩn trên PC */
+      .mobile-only-nav {
+        display: none !important;
+      }
+
+      /* Chỉ hiện lên khi ở giao diện Mobile */
+      @media (max-width: 768px) {
+        .mobile-only-nav {
+          display: flex !important;
+          color: var(--neon-primary); /* Tô màu nổi bật chút */
+          background: rgba(0, 229, 255, 0.05);
+          margin-top: 10px;
+          border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+      }
     </style>
   </head>
   <body>
@@ -2999,6 +3102,15 @@
         <div class="nav-item" onclick="showSettingsPage()">
           <i class="fa-solid fa-gear"></i>
           <span data-lang="sb_settings">Cài đặt</span>
+        </div>
+        <div class="nav-item" onclick="showSettingsPage()">
+          <i class="fa-solid fa-gear"></i>
+          <span data-lang="sb_settings">Cài đặt</span>
+        </div>
+
+        <div class="nav-item mobile-only-nav" onclick="toggleAppFullScreen()">
+          <i class="fa-solid fa-expand" id="sidebarFsIcon"></i>
+          <span>Toàn màn hình</span>
         </div>
       </div>
 
@@ -3116,7 +3228,28 @@
           </div>
 
           <div class="settings-section">
-            <h3 data-lang="st_other_title">Thông tin khác</h3>
+            <h3>Giao diện</h3>
+            <div class="settings-item" onclick="toggleAppFullScreen()">
+              <div class="settings-info">
+                <span class="st-title">Chế độ toàn màn hình</span>
+                <span class="st-desc"
+                  >Ẩn thanh địa chỉ trình duyệt (Android/PC)</span
+                >
+              </div>
+              <button
+                class="btn-lang-toggle"
+                style="
+                  border: none;
+                  background: rgba(255, 255, 255, 0.1);
+                  width: 40px;
+                  height: 40px;
+                  border-radius: 50%;
+                "
+              >
+                <i class="fa-solid fa-expand" id="iconFullScreen"></i>
+              </button>
+            </div>
+
             <div
               class="settings-item link-item"
               onclick="openInfoModal('about')"
@@ -5965,6 +6098,79 @@
       audio.addEventListener("loadedmetadata", () => {
         if (fsProgressBar) fsProgressBar.max = audio.duration;
       });
+      // ==================== FULL SCREEN BROWSER LOGIC ====================
+
+      function toggleAppFullScreen() {
+        // Kiểm tra xem trình duyệt có đang full screen chưa
+        if (
+          !document.fullscreenElement && // Chuẩn chung
+          !document.webkitFullscreenElement
+        ) {
+          // Safari/Chrome cũ
+
+          // NẾU CHƯA -> BẬT FULL SCREEN
+          if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen(); // Cho Safari/Chrome cũ
+          }
+
+          showToast(
+            "Đã vào chế độ toàn màn hình",
+            "success",
+            '<i class="fa-solid fa-expand"></i>'
+          );
+        } else {
+          // NẾU ĐANG FULL -> THOÁT RA
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+
+          showToast(
+            "Đã thoát toàn màn hình",
+            "info",
+            '<i class="fa-solid fa-compress"></i>'
+          );
+        }
+      }
+
+      // Lắng nghe sự kiện thay đổi để đổi icon (Expand <-> Compress)
+      document.addEventListener("fullscreenchange", updateFullScreenIcon);
+      document.addEventListener("webkitfullscreenchange", updateFullScreenIcon);
+
+      function updateFullScreenIcon() {
+        // Danh sách các icon cần đổi (Trong Cài đặt + Trong Sidebar)
+        const icons = [
+          document.getElementById("iconFullScreen"),
+          document.getElementById("sidebarFsIcon"),
+        ];
+
+        const isFull =
+          document.fullscreenElement || document.webkitFullscreenElement;
+
+        icons.forEach((icon) => {
+          if (!icon) return;
+
+          if (isFull) {
+            // Đang Full -> Hiện icon thu nhỏ
+            icon.className = "fa-solid fa-compress";
+
+            // Nếu là nút trong Sidebar thì đổi chữ luôn cho xịn
+            if (icon.id === "sidebarFsIcon") {
+              icon.nextElementSibling.innerText = "Thoát toàn màn hình";
+            }
+          } else {
+            // Đang thường -> Hiện icon phóng to
+            icon.className = "fa-solid fa-expand";
+
+            if (icon.id === "sidebarFsIcon") {
+              icon.nextElementSibling.innerText = "Toàn màn hình";
+            }
+          }
+        });
+      }
     </script>
     <button
       class="back-to-top"
