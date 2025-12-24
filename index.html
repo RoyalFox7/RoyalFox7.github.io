@@ -4052,6 +4052,7 @@
               el.disc.classList.add("playing");
               el.deck.classList.add("playing");
               renderList();
+              updateMediaSession();
             })
             .catch(() => {
               el.playIcon.className = "fa-solid fa-play";
@@ -4060,6 +4061,7 @@
         } else {
           el.playIcon.className = "fa-solid fa-play";
           state.isPlaying = false;
+          updateMediaSession();
         }
       }
 
@@ -4072,6 +4074,8 @@
             el.disc.classList.add("playing");
             el.deck.classList.add("playing");
             renderList();
+            if ("mediaSession" in navigator)
+              navigator.mediaSession.playbackState = "playing";
           });
         } else {
           audio.pause();
@@ -4080,6 +4084,8 @@
           el.disc.classList.remove("playing");
           el.deck.classList.remove("playing");
           renderList();
+          if ("mediaSession" in navigator)
+            navigator.mediaSession.playbackState = "paused";
         }
       }
 
@@ -5230,18 +5236,19 @@
       function updateMediaSession() {
         if ("mediaSession" in navigator) {
           const song = songs[state.currentSongIndex];
+          const coverUrl = new URL(song.cover, document.baseURI).href;
 
           navigator.mediaSession.metadata = new MediaMetadata({
             title: song.title,
             artist: song.artist,
             album: "SoundSphere Collection",
             artwork: [
-              { src: song.cover, sizes: "96x96", type: "image/jpeg" },
-              { src: song.cover, sizes: "128x128", type: "image/jpeg" },
-              { src: song.cover, sizes: "192x192", type: "image/jpeg" },
-              { src: song.cover, sizes: "256x256", type: "image/jpeg" },
-              { src: song.cover, sizes: "384x384", type: "image/jpeg" },
-              { src: song.cover, sizes: "512x512", type: "image/jpeg" },
+              { src: coverUrl, sizes: "96x96", type: "image/jpeg" },
+              { src: coverUrl, sizes: "128x128", type: "image/jpeg" },
+              { src: coverUrl, sizes: "192x192", type: "image/jpeg" },
+              { src: coverUrl, sizes: "256x256", type: "image/jpeg" },
+              { src: coverUrl, sizes: "384x384", type: "image/jpeg" },
+              { src: coverUrl, sizes: "512x512", type: "image/jpeg" },
             ],
           });
 
