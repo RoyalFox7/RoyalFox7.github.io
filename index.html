@@ -5585,10 +5585,12 @@
       // Hàm phụ để cập nhật Avatar sau khi login (Tách ra cho gọn)
           function updateUserUI(username) {
               const navAccount = document.getElementById("navAccount");
-              
-              // Logic tạo avatar theo tên (như cũ)
+          
+              // Logic tạo avatar theo tên
               const words = username.trim().split(/\s+/);
               const charLength = words.length >= 2 ? 2 : 1;
+              
+              // SỬA: Thay user.value bằng username
               const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128&length=${charLength}&bold=true`;
           
               navAccount.innerHTML = `
@@ -5596,7 +5598,6 @@
                   <span style="color: var(--neon-primary); font-weight: 700;" title="${username}">${username}</span>
               `;
           
-              // Gán sự kiện click vào avatar -> Mở popup đăng xuất
               navAccount.onclick = function () {
                   openLogoutModal();
               };
@@ -6364,4 +6365,5 @@
     </div>
   </body>
 </html>
+
 
