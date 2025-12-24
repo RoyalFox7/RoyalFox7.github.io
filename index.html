@@ -4332,13 +4332,14 @@
 
         // THÊM VÀO setupEvents() hoặc init()
 
-        // Khi nhạc đang tải (mạng yếu) -> Hiện vòng xoay
-        audio.addEventListener("waiting", () => {
+        // [ĐÃ SỬA LỖI MOBILE] Tạm tắt đoạn này vì nó gây lỗi xoay mãi trên điện thoại
+        /* audio.addEventListener("loadstart", () => {
           el.disc.classList.add("buffering");
           document
             .querySelector(".footer-cover-wrapper")
             .classList.add("buffering");
         });
+        */
 
         // Khi nhạc đã tải xong và bắt đầu hát -> Ẩn vòng xoay
         audio.addEventListener("playing", () => {
